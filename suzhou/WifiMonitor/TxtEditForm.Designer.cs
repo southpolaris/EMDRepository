@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TxtEditForm));
             this.lblTxtVar = new System.Windows.Forms.Label();
             this.btnTxtSav = new System.Windows.Forms.Button();
             this.lblWidth = new System.Windows.Forms.Label();
@@ -156,6 +157,7 @@
             this.Controls.Add(this.btnTxtSav);
             this.Controls.Add(this.lblTxtVar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "TxtEditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

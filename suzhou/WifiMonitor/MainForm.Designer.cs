@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnSavEdit = new System.Windows.Forms.Button();
             this.contextMenuStripLbl = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -44,21 +45,22 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnEdit.Location = new System.Drawing.Point(3, 256);
+            this.btnEdit.Location = new System.Drawing.Point(3, 328);
+            this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnEdit.Size = new System.Drawing.Size(84, 27);
             this.btnEdit.TabIndex = 0;
-            this.btnEdit.Text = "启用编辑";
+            this.btnEdit.Text = "工具箱...";
             this.btnEdit.UseVisualStyleBackColor = false;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnSavEdit
             // 
             this.btnSavEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSavEdit.Enabled = false;
-            this.btnSavEdit.Location = new System.Drawing.Point(84, 256);
+            this.btnSavEdit.Location = new System.Drawing.Point(93, 328);
+            this.btnSavEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSavEdit.Name = "btnSavEdit";
-            this.btnSavEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnSavEdit.Size = new System.Drawing.Size(87, 27);
             this.btnSavEdit.TabIndex = 1;
             this.btnSavEdit.Text = "保存编辑";
             this.btnSavEdit.UseVisualStyleBackColor = false;
@@ -95,12 +97,13 @@
             // btnStart
             // 
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStart.Location = new System.Drawing.Point(297, 256);
+            this.btnStart.Location = new System.Drawing.Point(352, 328);
+            this.btnStart.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(75, 23);
+            this.btnStart.Size = new System.Drawing.Size(87, 27);
             this.btnStart.TabIndex = 2;
             this.btnStart.Text = "启动";
-            this.btnStart.UseVisualStyleBackColor = false;
+            this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // tabControl1
@@ -108,26 +111,29 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Location = new System.Drawing.Point(3, 5);
+            this.tabControl1.Location = new System.Drawing.Point(3, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(374, 245);
+            this.tabControl1.Size = new System.Drawing.Size(436, 321);
             this.tabControl1.TabIndex = 3;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(379, 286);
+            this.ClientSize = new System.Drawing.Size(442, 359);
             this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.btnStart);
             this.Controls.Add(this.btnSavEdit);
             this.Controls.Add(this.btnEdit);
-            this.Controls.Add(this.btnStart);
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "主界面";
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);

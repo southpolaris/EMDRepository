@@ -27,7 +27,7 @@ namespace WifiMonitor
         {
             GlobalVar.bEdit = false;
             mMainForm.btnEdit.Enabled = true;//启用编辑按钮
-            mMainForm.btnSavEdit.Enabled = false;//禁用保存按钮
+            //mMainForm.btnSavEdit.Enabled = false;//禁用保存按钮
         }
 
         #region 添加标签部分
@@ -75,8 +75,8 @@ namespace WifiMonitor
 
         private void btnSavNum_Click(object sender, EventArgs e)
         {
-            IniFile.WriteIniData("CommProperty", "RcvCmdNum", txtDataNum.Text, GlobalVar.sIniPath);
-            GlobalVar.RcvCmdNum = int.Parse(txtDataNum.Text);
+            IniFile.WriteIniData("CommProperty", "RcvCmdNum", numVar.Value.ToString(), GlobalVar.sIniPath);
+            GlobalVar.RcvCmdNum = int.Parse(numVar.Value.ToString());
             MessageBox.Show("监视变量数量已保存");
         }
 

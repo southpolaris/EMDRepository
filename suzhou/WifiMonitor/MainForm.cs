@@ -113,7 +113,7 @@ namespace WifiMonitor
                     lbl.Text = TempLabelText;
                     lbl.Width = TempWidth;
                     lbl.Height = TempHeight;
-                    //lbl.Click += new EventHandler(lbl_Click);
+                    lbl.TextAlign = ContentAlignment.MiddleRight;
                     lbl.DoubleClick += new EventHandler(lbl_DoubleClick);
                     lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
                     lbl.MouseMove += new MouseEventHandler(lbl_MouseMove);
@@ -185,7 +185,7 @@ namespace WifiMonitor
                 default:
                     base.WndProc(ref m);   // 调用基类函数处理其他消息
                     break;
-            }
+            }           
         }
 
         public void mTitleChange_btnSave_Click(object sender, EventArgs e)
@@ -376,10 +376,9 @@ namespace WifiMonitor
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show("设置变量个数和实际读取个数不符，请重新检查后再关联。", "注意");
+                MessageBox.Show("设置变量个数和实际读取个数不符，请点击启动按钮读取数据，重新检查后再关联。", "注意");
                 currTxt.Text = "";
-                //IniFile.WriteIniData(TxtKnot, "RelateVar", "1", GlobalVar.sIniPath);
-                currTxt.RelateVar = int.Parse(mCurrTxtEditForm.cbbTxtVar.SelectedValue.ToString());//将该文本框关联的变量标号赋给该文本框属性
+                currTxt.RelateVar = 0;//将该文本框关联的变量标号赋给该文本框属性
             }
 
             mCurrTxtEditForm.Close();//保存完成后关闭
@@ -450,7 +449,7 @@ namespace WifiMonitor
             if (false == GlobalVar.bEdit)
             {
                 btnEdit.Enabled = false;//禁用编辑按钮
-                btnSavEdit.Enabled = true;//启用保存按钮
+                //btnSavEdit.Enabled = true;//启用保存按钮
                 GlobalVar.bEdit = true;
                 mToolForm.Location = new Point(GlobalVar.nMainFormPosX + GlobalVar.nMainFormWidth + 12,GlobalVar.nMainFormPosY);
                 mToolForm.Show();
@@ -469,22 +468,14 @@ namespace WifiMonitor
             {
                 MessageBox.Show("未正常建立通信");
             }
-
-            /*if(false == TxtTimer.Enabled)
-            {
-                TxtTimer = new System.Timers.Timer(100);//实例化Timer类，设置间隔时间为100ms
-                TxtTimer.Elapsed += new System.Timers.ElapsedEventHandler(TxtTimer_Start);//到达时间的时候执行事件
-                TxtTimer.AutoReset = true;//设置是执行一次（false）还是一直执行(true)；
-                TxtTimer.Enabled = true;//是否执行System.Timers.Timer.Elapsed事件；
-            }*/
         }
 
         //  连接赋值函数
         void GetConn()
         {
             sc.openPort();
-            sc.DataReceived += new SerialComm.SerialPortDataReceiveEventArgs(sc_DataReceived);
-            while (true)
+            sc.DataReceived += new SerialComm.SerialPortDataReceiveEventArgs(DataReceivedCallback);
+            while (GlobalVar.runningFlag)
             {
                 //串口读数，赋值
                 //sc.SendData("RDS 3000 U");
@@ -504,36 +495,58 @@ namespace WifiMonitor
             }
         }
 
-        void sc_DataReceived(object sender, SerialDataReceivedEventArgs e, byte[] bits)
+        /// <summary>
+        /// 串口数据接收回调函数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="bits">接收到的数据</param>
+        void DataReceivedCallback(object sender, SerialDataReceivedEventArgs e, byte[] bits)
         {
             string[] ArrSerialCommand = Encoding.Default.GetString(bits).Split(' ');
             GlobalVar.RcvCmdLst.Clear();
             for (int i = 0; i < ArrSerialCommand.Length ;i++ )
             {
                 GlobalVar.RcvCmdLst.Add(ArrSerialCommand[i]);
+                GlobalVar.RcvCmdNum++;
             }
 
-            foreach (Control c in Controls)
+            foreach (TabPage pages in tabControl1.TabPages)
             {
-                if (c is TextBoxEx)
+                foreach (Control ctrl in pages.Controls)
                 {
-                    TextBoxEx txt = (TextBoxEx)c;
-                    txt.Text = GlobalVar.RcvCmdLst[txt.RelateVar - 1].ToString();
+                    if (ctrl is TextBoxEx)
+                    {
+                        TextBoxEx txt = (TextBoxEx)ctrl;
+                        if (txt.RelateVar != 0) //判断变量已经关联
+                            txt.Text = GlobalVar.RcvCmdLst[txt.RelateVar - 1].ToString();
+                        else
+                            txt.Text = "未关联变量";
+                    }
                 }
             }
-
-            //MessageBox.Show(Encoding.Default.GetString(bits));
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            DialogResult result = MessageBox.Show("退出前是否保存更改", "注意", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            switch (result) 
+            {
+                case DialogResult.Yes:
+                    btnSavEdit.PerformClick();
+                    break;
+                case DialogResult.No:
+                    break;
+                default:
+                    break;       
+            }
             sc.closePort();
             if (GlobalVar.runningFlag)
             {
-                CommThd.Abort();
-                GlobalVar.runningFlag = false;
-            }          
-            Application.Exit();
+                 CommThd.Abort();
+                 GlobalVar.runningFlag = false;
+            }
+            this.Dispose();  
         }
 
         private void btnSavEdit_Click(object sender, EventArgs e)

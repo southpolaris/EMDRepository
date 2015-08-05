@@ -32,10 +32,8 @@
             this.lblAddLbl = new System.Windows.Forms.Label();
             this.lblAddText = new System.Windows.Forms.Label();
             this.btnAddText = new System.Windows.Forms.Button();
-            this.txtAddLamp = new System.Windows.Forms.TextBox();
             this.lblAddLamp = new System.Windows.Forms.Label();
             this.btnAddLamp = new System.Windows.Forms.Button();
-            this.txtDataNum = new System.Windows.Forms.TextBox();
             this.lblDataNum = new System.Windows.Forms.Label();
             this.btnSavNum = new System.Windows.Forms.Button();
             this.btnCreateTab = new System.Windows.Forms.Button();
@@ -43,8 +41,12 @@
             this.numText = new System.Windows.Forms.NumericUpDown();
             this.btnRemoveTab = new System.Windows.Forms.Button();
             this.btnChangeTabName = new System.Windows.Forms.Button();
+            this.numLamp = new System.Windows.Forms.NumericUpDown();
+            this.numVar = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numLabel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numText)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLamp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numVar)).BeginInit();
             this.SuspendLayout();
             // 
             // btnAddLbl
@@ -85,15 +87,6 @@
             this.btnAddText.UseVisualStyleBackColor = false;
             this.btnAddText.Click += new System.EventHandler(this.btnAddText_Click);
             // 
-            // txtAddLamp
-            // 
-            this.txtAddLamp.Location = new System.Drawing.Point(76, 136);
-            this.txtAddLamp.Name = "txtAddLamp";
-            this.txtAddLamp.Size = new System.Drawing.Size(60, 21);
-            this.txtAddLamp.TabIndex = 8;
-            this.txtAddLamp.Text = "1";
-            this.txtAddLamp.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // lblAddLamp
             // 
             this.lblAddLamp.AutoSize = true;
@@ -112,23 +105,14 @@
             this.btnAddLamp.Text = "添加指示灯";
             this.btnAddLamp.UseVisualStyleBackColor = false;
             // 
-            // txtDataNum
-            // 
-            this.txtDataNum.Location = new System.Drawing.Point(92, 202);
-            this.txtDataNum.Name = "txtDataNum";
-            this.txtDataNum.Size = new System.Drawing.Size(44, 21);
-            this.txtDataNum.TabIndex = 11;
-            this.txtDataNum.Text = "1";
-            this.txtDataNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // lblDataNum
             // 
             this.lblDataNum.AutoSize = true;
             this.lblDataNum.Location = new System.Drawing.Point(7, 207);
             this.lblDataNum.Name = "lblDataNum";
-            this.lblDataNum.Size = new System.Drawing.Size(89, 12);
+            this.lblDataNum.Size = new System.Drawing.Size(77, 12);
             this.lblDataNum.TabIndex = 10;
-            this.lblDataNum.Text = "监视变量数量：";
+            this.lblDataNum.Text = "监视变量数：";
             // 
             // btnSavNum
             // 
@@ -203,20 +187,54 @@
             this.btnChangeTabName.UseVisualStyleBackColor = false;
             this.btnChangeTabName.Click += new System.EventHandler(this.btnChangeTabName_Click);
             // 
+            // numLamp
+            // 
+            this.numLamp.Location = new System.Drawing.Point(78, 137);
+            this.numLamp.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numLamp.Name = "numLamp";
+            this.numLamp.Size = new System.Drawing.Size(58, 21);
+            this.numLamp.TabIndex = 19;
+            this.numLamp.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // numVar
+            // 
+            this.numVar.Location = new System.Drawing.Point(76, 203);
+            this.numVar.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numVar.Name = "numVar";
+            this.numVar.Size = new System.Drawing.Size(58, 21);
+            this.numVar.TabIndex = 20;
+            this.numVar.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // ToolForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(144, 474);
+            this.Controls.Add(this.numVar);
+            this.Controls.Add(this.numLamp);
             this.Controls.Add(this.btnChangeTabName);
             this.Controls.Add(this.btnRemoveTab);
             this.Controls.Add(this.btnCreateTab);
             this.Controls.Add(this.numText);
             this.Controls.Add(this.numLabel);
-            this.Controls.Add(this.txtDataNum);
             this.Controls.Add(this.lblDataNum);
             this.Controls.Add(this.btnSavNum);
-            this.Controls.Add(this.txtAddLamp);
             this.Controls.Add(this.lblAddLamp);
             this.Controls.Add(this.btnAddLamp);
             this.Controls.Add(this.lblAddText);
@@ -231,6 +249,8 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ToolForm_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.numLabel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numText)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLamp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numVar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -242,10 +262,8 @@
         private System.Windows.Forms.Label lblAddLbl;
         private System.Windows.Forms.Label lblAddText;
         private System.Windows.Forms.Button btnAddText;
-        private System.Windows.Forms.TextBox txtAddLamp;
         private System.Windows.Forms.Label lblAddLamp;
         private System.Windows.Forms.Button btnAddLamp;
-        private System.Windows.Forms.TextBox txtDataNum;
         private System.Windows.Forms.Label lblDataNum;
         private System.Windows.Forms.Button btnSavNum;
         private System.Windows.Forms.Button btnCreateTab;
@@ -253,5 +271,7 @@
         private System.Windows.Forms.NumericUpDown numText;
         private System.Windows.Forms.Button btnRemoveTab;
         private System.Windows.Forms.Button btnChangeTabName;
+        private System.Windows.Forms.NumericUpDown numLamp;
+        private System.Windows.Forms.NumericUpDown numVar;
     }
 }
