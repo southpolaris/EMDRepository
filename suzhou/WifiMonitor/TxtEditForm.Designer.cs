@@ -46,17 +46,18 @@
             // lblTxtVar
             // 
             this.lblTxtVar.AutoSize = true;
-            this.lblTxtVar.Location = new System.Drawing.Point(9, 24);
+            this.lblTxtVar.Location = new System.Drawing.Point(10, 34);
             this.lblTxtVar.Name = "lblTxtVar";
-            this.lblTxtVar.Size = new System.Drawing.Size(101, 12);
+            this.lblTxtVar.Size = new System.Drawing.Size(104, 17);
             this.lblTxtVar.TabIndex = 1;
             this.lblTxtVar.Text = "文本框关联变量：";
             // 
             // btnTxtSav
             // 
-            this.btnTxtSav.Location = new System.Drawing.Point(153, 222);
+            this.btnTxtSav.Location = new System.Drawing.Point(178, 230);
+            this.btnTxtSav.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnTxtSav.Name = "btnTxtSav";
-            this.btnTxtSav.Size = new System.Drawing.Size(75, 23);
+            this.btnTxtSav.Size = new System.Drawing.Size(87, 33);
             this.btnTxtSav.TabIndex = 2;
             this.btnTxtSav.Text = "确认";
             this.btnTxtSav.UseVisualStyleBackColor = true;
@@ -64,68 +65,72 @@
             // lblWidth
             // 
             this.lblWidth.AutoSize = true;
-            this.lblWidth.Location = new System.Drawing.Point(9, 51);
+            this.lblWidth.Location = new System.Drawing.Point(10, 72);
             this.lblWidth.Name = "lblWidth";
-            this.lblWidth.Size = new System.Drawing.Size(77, 12);
+            this.lblWidth.Size = new System.Drawing.Size(80, 17);
             this.lblWidth.TabIndex = 4;
             this.lblWidth.Text = "文本框宽度：";
             // 
             // txtWidth
             // 
-            this.txtWidth.Location = new System.Drawing.Point(108, 47);
+            this.txtWidth.Location = new System.Drawing.Point(126, 67);
+            this.txtWidth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWidth.Name = "txtWidth";
-            this.txtWidth.Size = new System.Drawing.Size(120, 21);
+            this.txtWidth.Size = new System.Drawing.Size(139, 23);
             this.txtWidth.TabIndex = 3;
             this.txtWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblHeight
             // 
             this.lblHeight.AutoSize = true;
-            this.lblHeight.Location = new System.Drawing.Point(9, 78);
+            this.lblHeight.Location = new System.Drawing.Point(10, 110);
             this.lblHeight.Name = "lblHeight";
-            this.lblHeight.Size = new System.Drawing.Size(77, 12);
+            this.lblHeight.Size = new System.Drawing.Size(80, 17);
             this.lblHeight.TabIndex = 6;
             this.lblHeight.Text = "文本框高度：";
             // 
             // txtHeight
             // 
-            this.txtHeight.Location = new System.Drawing.Point(108, 74);
+            this.txtHeight.Location = new System.Drawing.Point(126, 105);
+            this.txtHeight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtHeight.Name = "txtHeight";
-            this.txtHeight.Size = new System.Drawing.Size(120, 21);
+            this.txtHeight.Size = new System.Drawing.Size(139, 23);
             this.txtHeight.TabIndex = 5;
             this.txtHeight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblPosY
             // 
             this.lblPosY.AutoSize = true;
-            this.lblPosY.Location = new System.Drawing.Point(9, 134);
+            this.lblPosY.Location = new System.Drawing.Point(10, 190);
             this.lblPosY.Name = "lblPosY";
-            this.lblPosY.Size = new System.Drawing.Size(83, 12);
+            this.lblPosY.Size = new System.Drawing.Size(87, 17);
             this.lblPosY.TabIndex = 10;
             this.lblPosY.Text = "文本框坐标Y：";
             // 
             // txtPosY
             // 
-            this.txtPosY.Location = new System.Drawing.Point(108, 130);
+            this.txtPosY.Location = new System.Drawing.Point(126, 184);
+            this.txtPosY.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosY.Name = "txtPosY";
-            this.txtPosY.Size = new System.Drawing.Size(120, 21);
+            this.txtPosY.Size = new System.Drawing.Size(139, 23);
             this.txtPosY.TabIndex = 9;
             this.txtPosY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblPosX
             // 
             this.lblPosX.AutoSize = true;
-            this.lblPosX.Location = new System.Drawing.Point(9, 107);
+            this.lblPosX.Location = new System.Drawing.Point(10, 152);
             this.lblPosX.Name = "lblPosX";
-            this.lblPosX.Size = new System.Drawing.Size(83, 12);
+            this.lblPosX.Size = new System.Drawing.Size(88, 17);
             this.lblPosX.TabIndex = 8;
             this.lblPosX.Text = "文本框坐标X：";
             // 
             // txtPosX
             // 
-            this.txtPosX.Location = new System.Drawing.Point(108, 103);
+            this.txtPosX.Location = new System.Drawing.Point(126, 146);
+            this.txtPosX.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosX.Name = "txtPosX";
-            this.txtPosX.Size = new System.Drawing.Size(120, 21);
+            this.txtPosX.Size = new System.Drawing.Size(139, 23);
             this.txtPosX.TabIndex = 7;
             this.txtPosX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -133,18 +138,19 @@
             // 
             this.cbbTxtVar.DisplayMember = "Key";
             this.cbbTxtVar.FormattingEnabled = true;
-            this.cbbTxtVar.Location = new System.Drawing.Point(108, 21);
+            this.cbbTxtVar.Location = new System.Drawing.Point(126, 30);
+            this.cbbTxtVar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbbTxtVar.Name = "cbbTxtVar";
-            this.cbbTxtVar.Size = new System.Drawing.Size(120, 20);
+            this.cbbTxtVar.Size = new System.Drawing.Size(139, 25);
             this.cbbTxtVar.TabIndex = 11;
             this.cbbTxtVar.ValueMember = "Value";
             // 
             // TxtEditForm
             // 
             this.AcceptButton = this.btnTxtSav;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(240, 257);
+            this.ClientSize = new System.Drawing.Size(280, 278);
             this.Controls.Add(this.cbbTxtVar);
             this.Controls.Add(this.lblPosY);
             this.Controls.Add(this.txtPosY);
@@ -156,8 +162,10 @@
             this.Controls.Add(this.txtWidth);
             this.Controls.Add(this.btnTxtSav);
             this.Controls.Add(this.lblTxtVar);
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.Name = "TxtEditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

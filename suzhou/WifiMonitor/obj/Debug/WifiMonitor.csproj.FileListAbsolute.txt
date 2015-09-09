@@ -38,3 +38,5 @@ F:\Project\Git\suzhou\WifiMonitor\obj\Debug\WifiMonitor.TitleChange.resources
 F:\Project\Git\suzhou\WifiMonitor\obj\Debug\WifiMonitor.ToolForm.resources
 F:\Project\Git\suzhou\WifiMonitor\obj\Debug\WifiMonitor.TxtEditForm.resources
 F:\Project\Git\suzhou\WifiMonitor\obj\Debug\WifiMonitor.csproj.GenerateResource.Cache
+F:\Project\Git\suzhou\WifiMonitor\obj\Debug\WifiMonitor.Lamp.resources
+F:\Project\Git\suzhou\WifiMonitor\obj\Debug\WifiMonitor.LampEditForm.resources

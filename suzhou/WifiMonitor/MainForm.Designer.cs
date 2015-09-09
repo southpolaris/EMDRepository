@@ -38,8 +38,11 @@
             this.ItemDelTxt = new System.Windows.Forms.ToolStripMenuItem();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.contextMenuStripLamp = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.DelLampToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripLbl.SuspendLayout();
             this.contextMenuStripTxt.SuspendLayout();
+            this.contextMenuStripLamp.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnEdit
@@ -51,7 +54,7 @@
             this.btnEdit.Size = new System.Drawing.Size(84, 27);
             this.btnEdit.TabIndex = 0;
             this.btnEdit.Text = "工具箱...";
-            this.btnEdit.UseVisualStyleBackColor = false;
+            this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnSavEdit
@@ -63,7 +66,7 @@
             this.btnSavEdit.Size = new System.Drawing.Size(87, 27);
             this.btnSavEdit.TabIndex = 1;
             this.btnSavEdit.Text = "保存编辑";
-            this.btnSavEdit.UseVisualStyleBackColor = false;
+            this.btnSavEdit.UseVisualStyleBackColor = true;
             this.btnSavEdit.Click += new System.EventHandler(this.btnSavEdit_Click);
             // 
             // contextMenuStripLbl
@@ -118,6 +121,20 @@
             this.tabControl1.Size = new System.Drawing.Size(436, 321);
             this.tabControl1.TabIndex = 3;
             // 
+            // contextMenuStripLamp
+            // 
+            this.contextMenuStripLamp.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DelLampToolStripMenuItem});
+            this.contextMenuStripLamp.Name = "contextMenuStripLamp";
+            this.contextMenuStripLamp.Size = new System.Drawing.Size(153, 48);
+            // 
+            // DelLampToolStripMenuItem
+            // 
+            this.DelLampToolStripMenuItem.Name = "DelLampToolStripMenuItem";
+            this.DelLampToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.DelLampToolStripMenuItem.Text = "删除指示灯";
+            this.DelLampToolStripMenuItem.Click += new System.EventHandler(this.DelLampToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -134,6 +151,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "主界面";
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
@@ -141,6 +159,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.contextMenuStripLbl.ResumeLayout(false);
             this.contextMenuStripTxt.ResumeLayout(false);
+            this.contextMenuStripLamp.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -155,6 +174,8 @@
         public System.Windows.Forms.ToolStripMenuItem ItemDelTxt;
         private System.Windows.Forms.Button btnStart;
         public System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripLamp;
+        private System.Windows.Forms.ToolStripMenuItem DelLampToolStripMenuItem;
 
     }
 }

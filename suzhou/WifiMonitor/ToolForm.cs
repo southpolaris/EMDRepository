@@ -27,7 +27,6 @@ namespace WifiMonitor
         {
             GlobalVar.bEdit = false;
             mMainForm.btnEdit.Enabled = true;//启用编辑按钮
-            //mMainForm.btnSavEdit.Enabled = false;//禁用保存按钮
         }
 
         #region 添加标签部分
@@ -94,6 +93,7 @@ namespace WifiMonitor
         private void btnChangeTabName_Click(object sender, EventArgs e)
         {
             tabTitleChange = new TitleChange();
+            tabTitleChange.Text = "更改标签页名称";
             tabTitleChange.txtTitle.Text = mMainForm.tabControl1.SelectedTab.Text;
             tabTitleChange.btnSave.Click += new EventHandler(tabTitleChangebtnSave_Click);
             tabTitleChange.Show();
@@ -103,6 +103,30 @@ namespace WifiMonitor
         {
             mMainForm.tabControl1.SelectedTab.Text = tabTitleChange.txtTitle.Text;
             tabTitleChange.Dispose();
+        }
+
+        //添加指示灯
+        private void btnAddLamp_Click(object sender, EventArgs e)
+        {
+            int tabIndex = mMainForm.tabControl1.SelectedIndex + 1; //获取控件所在标签页，从1开始
+            for (int index = 1; index <= numLamp.Value; index++)
+            {
+                Lamp lamp = new Lamp();
+                lamp.Location = new Point(10, 20 * index * 2);
+                lamp.Name = "lamp" + tabIndex + "_" + index;
+                lamp.onFlag = false;
+                lamp.MouseDoubleClick += new MouseEventHandler(mMainForm.lamp_DoubleClick);
+                lamp.MouseDown += new MouseEventHandler(mMainForm.lamp_MouseDown);
+                lamp.MouseMove +=new MouseEventHandler(mMainForm.lamp_MouseMove);
+                mMainForm.tabControl1.SelectedTab.Controls.Add(lamp);
+            }
+        }
+
+        //删除选中标签页及其上所有控件(界面)
+        private void btnRemoveTab_Click(object sender, EventArgs e)
+        {
+            int currentIndex = mMainForm.tabControl1.SelectedIndex;
+            mMainForm.tabControl1.TabPages.RemoveAt(currentIndex);
         }
     }
 }

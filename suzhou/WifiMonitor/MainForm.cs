@@ -36,9 +36,17 @@ namespace WifiMonitor
         Point txtStart;
         Point txtLocat;
 
+        //灯的位置
+        Point lampStart;
+        Point lampLocat;
+
         //当前编辑文本框及其编辑框
         TextBoxEx currTxt;
         TxtEditForm mCurrTxtEditForm;
+
+        //指示灯
+        Lamp currLamp;
+        LampEditForm mCurrLampEditForm;
 
         //标题栏弹出编辑框
         TitleChange mTitleChange;
@@ -52,7 +60,7 @@ namespace WifiMonitor
         {          
             InitializeComponent();
 
-            System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;//取消跨线程检测  最好用Invoke
+            System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;//取消跨线程检测  最好用Invoke，禁止编译器对跨线程访问作检查，可以实现访问
 
             #region 加载主窗体参数
             //判断返回值，避免第一次运行时为空出错  
@@ -70,16 +78,17 @@ namespace WifiMonitor
             int indexLbl = 1;
             int indexTxt = 1;
             int indexTab = 1;
+            int indexLamp = 1;
 
-            //读取接收的数据个数 RcvCmdNum
-            GlobalVar.RcvCmdNum = int.Parse(IniFile.ReadIniData("CommProperty", "RcvCmdNum", "0", GlobalVar.sIniPath));
+            ////读取接收的数据个数 RcvCmdNum
+            //GlobalVar.RcvCmdNum = int.Parse(IniFile.ReadIniData("CommProperty", "RcvCmdNum", "0", GlobalVar.sIniPath));
 
-            //读取Label个数
-            GlobalVar.iLabel = int.Parse(IniFile.ReadIniData("LabelProperty", "LabelNum", "0", GlobalVar.sIniPath));
-            //读取TextBox个数
-            GlobalVar.iTextBox = int.Parse(IniFile.ReadIniData("TextBoxProperty", "TextBoxNum", "0", GlobalVar.sIniPath));
-            //读取tab个数，至少为一个
-            GlobalVar.iTab = int.Parse(IniFile.ReadIniData("TabProperty", "TabPageCount", "1", GlobalVar.sIniPath));
+            ////读取Label个数
+            //GlobalVar.iLabel = int.Parse(IniFile.ReadIniData("LabelProperty", "LabelNum", "0", GlobalVar.sIniPath));
+            ////读取TextBox个数
+            //GlobalVar.iTextBox = int.Parse(IniFile.ReadIniData("TextBoxProperty", "TextBoxNum", "0", GlobalVar.sIniPath));
+            ////读取tab个数，至少为一个
+            //GlobalVar.iTab = int.Parse(IniFile.ReadIniData("TabProperty", "TabPageCount", "1", GlobalVar.sIniPath));
 
             foreach (string str in sSectionName)
             {
@@ -160,6 +169,36 @@ namespace WifiMonitor
                     indexTxt++;
                 }
                 #endregion
+
+                #region 根据配置加载指示灯控件
+                if ("Lamp" + indexLamp.ToString() == str)
+                {
+                    string tempLampID = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "LampID", "NoItem");
+                    int tempPosX = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosX", "NoItem"));
+                    int tempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
+                    bool tempLampVar = bool.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "False"));
+                    int tempAdscription = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Adscription", "NoItem"));
+
+                    Lamp lamp = new Lamp();
+                    lamp.Location = new Point(tempPosX, tempPosY);
+                    lamp.Name = tempLampID;
+                    lamp.onFlag = tempLampVar;
+                    try
+                    {
+                        //lamp.onFlag = GlobalVar.RcvCmdLst[]
+                    }
+                    catch (Exception)
+                    {
+                        
+                    }
+                    //lamp.Click += new EventHandler(lamp_Click);
+                    lamp.DoubleClick += new EventHandler(lamp_DoubleClick);
+                    lamp.MouseDown += new MouseEventHandler(lamp_MouseDown);
+                    lamp.MouseMove += new MouseEventHandler(lamp_MouseMove);
+                    this.tabControl1.TabPages[tempAdscription - 1].Controls.Add(lamp);
+                    indexLamp++;
+                }
+                #endregion
             }
 
             //显示配置文件中设定的主窗体大小、标题
@@ -209,7 +248,7 @@ namespace WifiMonitor
             currLbl = new Label();
             if (sender is Label)
             {
-                currLbl = (Label)sender;
+                currLbl = sender as Label;
             }
             //记下控件坐标及鼠标坐标
             lblStart = Control.MousePosition;
@@ -218,6 +257,7 @@ namespace WifiMonitor
             if (e.Button == MouseButtons.Right)
             {
                 contextMenuStripLbl.Show(Control.MousePosition.X, Control.MousePosition.Y);
+                //ItemDelLbl_Click(sender, e);
             }
         }
 
@@ -267,26 +307,6 @@ namespace WifiMonitor
         //右键菜单 删除标签
         public void ItemDelLbl_Click(object sender, EventArgs e)
         {
-            //待删除标签已存入INI文件，则删除INI中该标签信息
-            bool bDone = false;
-            string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
-
-            foreach (string str in sSectionName)
-            {
-                if (currLbl.Name == str)
-                {
-                    bDone = true;
-                }
-            }
-            if (bDone)
-            {
-                IniFile.INIDeleteSection(GlobalVar.sIniPath, currLbl.Name);
-                GlobalVar.iLabel -= 1;
-                bDone = false;
-                //当前Label控件的个数
-                IniFile.WriteIniData("LabelProperty", "LabelNum", GlobalVar.iLabel.ToString(), GlobalVar.sIniPath);
-            }
-
             this.tabControl1.SelectedTab.Controls.Remove(currLbl);
         }
         #endregion 添加标签部分
@@ -359,7 +379,15 @@ namespace WifiMonitor
                 mCurrTxtEditForm.cbbTxtVar.DataSource = GlobalVar.TempCmdLst;
                 mCurrTxtEditForm.cbbTxtVar.DisplayMember = "Key";
                 mCurrTxtEditForm.cbbTxtVar.ValueMember = "Value";
-                mCurrTxtEditForm.cbbTxtVar.SelectedIndex = currTxt.RelateVar-1;//下拉框显示当前关联变量项
+                try
+                {
+                    mCurrTxtEditForm.cbbTxtVar.SelectedIndex = currTxt.RelateVar - 1;//下拉框显示当前关联变量项
+                }
+                catch (Exception)
+                {
+                    
+                }
+                
             }
         }
 
@@ -387,26 +415,6 @@ namespace WifiMonitor
         //右键菜单 删除文本框
         private void ItemDelTxt_Click(object sender, EventArgs e)
         {
-            //待删除标签已存入INI文件，则删除INI中该标签信息
-            bool bDone = false;
-            string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
-
-            foreach (string str in sSectionName)
-            {
-                if (currTxt.Name == str)
-                {
-                    bDone = true;
-                }
-            }
-            if (bDone)
-            {
-                IniFile.INIDeleteSection(GlobalVar.sIniPath, currTxt.Name);
-                GlobalVar.iTextBox -= 1;
-                bDone = false;
-                //当前Label控件的个数
-                IniFile.WriteIniData("TextBoxProperty", "TextBoxNum", GlobalVar.iTextBox.ToString(), GlobalVar.sIniPath);
-            }
-
             this.tabControl1.SelectedTab.Controls.Remove(currTxt);
         }
 
@@ -416,6 +424,95 @@ namespace WifiMonitor
             HideCaret((sender as TextBox).Handle);
         }
         #endregion 添加文本部分
+
+        #region 添加指示灯
+        public void lamp_MouseDown(object sender, MouseEventArgs e)
+        {
+            currLamp = new Lamp();
+            if (sender is Lamp)
+            {
+                currLamp = sender as Lamp;
+            }
+            //记下位置坐标
+            lampStart = Control.MousePosition;
+            lampLocat = currLamp.Location;
+            if (e.Button == MouseButtons.Right)
+            {
+                currLamp.ContextMenuStrip = contextMenuStripLamp;
+                contextMenuStripLamp.Show(MousePosition);
+            }
+        }
+
+        //drag to move
+        public void lamp_MouseMove(object sender, MouseEventArgs e)
+        {
+            Lamp lamp = new Lamp();
+            if (sender is Lamp)
+            {
+                lamp = sender as Lamp;
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                Point temp = Control.MousePosition;
+                lamp.Location = new Point(lampLocat.X + temp.X - lampStart.X, lampLocat.Y + temp.Y - lampStart.Y);
+            }
+        }
+
+        //double click open edit form
+        public void lamp_DoubleClick(object sender, EventArgs e)
+        {
+            if (sender is Lamp)
+            {
+                currLamp = sender as Lamp;
+                mCurrLampEditForm = new LampEditForm();
+                mCurrLampEditForm.tbLampX.Text = currLamp.Location.X.ToString();
+                mCurrLampEditForm.tbLampY.Text = currLamp.Location.Y.ToString();
+                mCurrLampEditForm.buttonOk.Click += new EventHandler(LampEditbuttonOk_Click);
+                //给下拉框赋值
+                GlobalVar.TempCmdLst.Clear();
+                for (int i = 1; i <= GlobalVar.RcvCmdNum; i++)
+                {
+                    GlobalVar.TempCmdLst.Add(new DictionaryEntry("监控变量" + i.ToString(), i.ToString()));
+                }
+                mCurrLampEditForm.Show();
+                mCurrLampEditForm.cbLampVar.DataSource = GlobalVar.TempCmdLst;
+                mCurrLampEditForm.cbLampVar.DisplayMember = "Key";
+                mCurrLampEditForm.cbLampVar.ValueMember = "Value";
+                try
+                {
+                    //下拉框显示当前关联变量项，变量在接受数据中的位置。
+                    mCurrLampEditForm.cbLampVar.SelectedIndex = currLamp.RelateVar - 1;
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        //保存当前指示灯属性
+        void LampEditbuttonOk_Click(object sender, EventArgs e)
+        {
+            int posX = int.Parse(mCurrLampEditForm.tbLampX.Text);
+            int posY = int.Parse(mCurrLampEditForm.tbLampY.Text);
+            currLamp.Location = new Point(posX, posY);
+            try
+            {
+                string receive = GlobalVar.RcvCmdLst[int.Parse(mCurrLampEditForm.cbLampVar.SelectedIndex.ToString()) - 1].ToString();
+                currLamp.onFlag = (int.Parse(receive) == 0) ? false : true;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("设置变量个数和实际读取个数不符，请点击启动按钮读取数据，重新检查后再关联。", "注意");
+                currLamp.onFlag = false;
+            }
+            mCurrLampEditForm.Close();
+        }
+
+        private void DelLampToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedTab.Controls.Remove(currLamp);
+        }
+        #endregion
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
@@ -549,39 +646,38 @@ namespace WifiMonitor
             this.Dispose();  
         }
 
+        /// <summary>
+        /// 保存当前窗体控件信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnSavEdit_Click(object sender, EventArgs e)
         {
-            string lblKnot = "";
-            int tabindex = 1;
+            int tabIndex = 1;
+            int labelIndex = 1;
+            int txtIndex = 1;
+            int lampIndex = 1;
+
+            //遍历INI文件中所有lbl节名
+            string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
+            foreach (string str in sSectionName) //删除所有空间信息
+            {
+                if (str.Contains("Label") || str.Contains("TextBox") || str.Contains("Lamp") || str.Contains("TabPage"))
+                {
+                    IniFile.INIDeleteSection(GlobalVar.sIniPath, str);
+                }
+            }
+
+            //重新写入控件信息
             foreach (TabPage page in tabControl1.TabPages)
             {
                 foreach (Control ctrl in page.Controls)
                 {
                     if (ctrl is Label)
                     {
-                        //遍历INI文件中所有lbl节名
-                        string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
-
-                        foreach (string str in sSectionName)
-                        {
-                            if (ctrl.Name == str)
-                            {
-                                GlobalVar.bLblExist = true;
-                            }
-                        }
-
-                        if (!GlobalVar.bLblExist)//如果不存在 加1
-                        {
-                            GlobalVar.iLabel += 1;
-                            GlobalVar.bLblExist = false;
-                            lblKnot = "Label" + GlobalVar.iLabel.ToString();//节名 
-                            ctrl.Name = lblKnot;//重新分配标签标识  以节名命名
-                        }
-                        else
-                        {
-                            GlobalVar.bLblExist = false;//待测
-                            lblKnot = ctrl.Name;//节名
-                        }
+                        string lblKnot = "";
+                        lblKnot = "Label" + labelIndex.ToString();//节名 
+                        ctrl.Name = lblKnot;//重新分配标签标识  以节名命名
 
                         IniFile.WriteIniData(lblKnot, "LabelID", ctrl.Name, GlobalVar.sIniPath);
                         IniFile.WriteIniData(lblKnot, "LabelText", ctrl.Text, GlobalVar.sIniPath);
@@ -589,35 +685,17 @@ namespace WifiMonitor
                         IniFile.WriteIniData(lblKnot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lblKnot, "Width", ctrl.Width.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lblKnot, "Height", ctrl.Height.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "Adscription", tabindex.ToString(), GlobalVar.sIniPath); //所在标签页索引
+                        IniFile.WriteIniData(lblKnot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath); //所在标签页索引
+
+                        labelIndex++;
                     }
                     if (ctrl is TextBoxEx)
                     {
                         string TxtKnot = "";
-                        //遍历INI文件中所有Txt节名
-                        string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
                         currTxt = new TextBoxEx();
 
-                        foreach (string str in sSectionName)
-                        {
-                            if (ctrl.Name == str)
-                            {
-                                GlobalVar.bTxtExist = true;
-                            }
-                        }
-
-                        if (!GlobalVar.bTxtExist)//如果不存在 加1
-                        {
-                            GlobalVar.iTextBox += 1;
-                            GlobalVar.bTxtExist = false;
-                            TxtKnot = "TextBox" + GlobalVar.iTextBox.ToString();//节名 
-                            ctrl.Name = TxtKnot;//重新分配标识  以节名命名
-                        }
-                        else
-                        {
-                            GlobalVar.bTxtExist = false;//待测
-                            TxtKnot = ctrl.Name;//节名
-                        }
+                        TxtKnot = "TextBox" + txtIndex.ToString();//节名 
+                        ctrl.Name = TxtKnot;//重新分配标识  以节名命名
 
                         IniFile.WriteIniData(TxtKnot, "PosX", ctrl.Location.X.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(TxtKnot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
@@ -625,18 +703,38 @@ namespace WifiMonitor
                         IniFile.WriteIniData(TxtKnot, "Height", ctrl.Height.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(TxtKnot, "TextBoxID", ctrl.Name, GlobalVar.sIniPath);
                         IniFile.WriteIniData(TxtKnot, "RelateVar", ((TextBoxEx)ctrl).RelateVar.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "Adscription", tabindex.ToString(), GlobalVar.sIniPath); //所在标签页索引
+                        IniFile.WriteIniData(TxtKnot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath); //所在标签页索引
+
+                        txtIndex++;
+                    }
+                    if (ctrl is Lamp)
+                    {
+                        string lampNot = "";
+                        currLamp = new Lamp();
+
+                        lampNot = "Lamp" + lampIndex.ToString();
+                        ctrl.Name = lampNot;                        
+
+                        IniFile.WriteIniData(lampNot, "PosX", ctrl.Location.X.ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "LampID", ctrl.Name, GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "RelateVar", (ctrl as Lamp).onFlag.ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath);
+
+                        lampIndex++;
                     }
                 }
-                IniFile.WriteIniData("TabPage" + tabindex.ToString(), "Text", tabControl1.TabPages[tabindex - 1].Text, GlobalVar.sIniPath);
+                IniFile.WriteIniData("TabPage" + tabIndex.ToString(), "Text", tabControl1.TabPages[tabIndex - 1].Text, GlobalVar.sIniPath);
 
-                tabindex++;//标签页索引
+                tabIndex++;//标签页索引
             }
 
-            IniFile.WriteIniData("LabelProperty", "LabelNum", GlobalVar.iLabel.ToString(), GlobalVar.sIniPath); //标签总数
+            IniFile.WriteIniData("LabelProperty", "LabelNum", (labelIndex - 1).ToString(), GlobalVar.sIniPath); //标签总数
             IniFile.WriteIniData("TabProperty", "TabPageCount", this.tabControl1.TabCount.ToString(), GlobalVar.sIniPath); //标签页总数
-            IniFile.WriteIniData("TextBoxProperty", "TextBoxNum", GlobalVar.iTextBox.ToString(), GlobalVar.sIniPath); //当前TextBox控件的个数
+            IniFile.WriteIniData("TextBoxProperty", "TextBoxNum", (txtIndex - 1).ToString(), GlobalVar.sIniPath); //当前TextBox控件的个数
+            IniFile.WriteIniData("LampProperty", "LampNum", (lampIndex -1).ToString(), GlobalVar.sIniPath);
         }
+
 
     }
 }

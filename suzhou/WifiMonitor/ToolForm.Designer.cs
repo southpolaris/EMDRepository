@@ -104,6 +104,7 @@
             this.btnAddLamp.TabIndex = 6;
             this.btnAddLamp.Text = "添加指示灯";
             this.btnAddLamp.UseVisualStyleBackColor = false;
+            this.btnAddLamp.Click += new System.EventHandler(this.btnAddLamp_Click);
             // 
             // lblDataNum
             // 
@@ -176,6 +177,7 @@
             this.btnRemoveTab.TabIndex = 17;
             this.btnRemoveTab.Text = "删除当前标签页";
             this.btnRemoveTab.UseVisualStyleBackColor = false;
+            this.btnRemoveTab.Click += new System.EventHandler(this.btnRemoveTab_Click);
             // 
             // btnChangeTabName
             // 

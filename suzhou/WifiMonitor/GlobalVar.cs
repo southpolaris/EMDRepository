@@ -18,13 +18,7 @@ namespace WifiMonitor
         public static int nMainFormPosY = 0;
         public static string sMainFormTitle = "主界面";
 
-        public static bool bEdit = false;//主窗体编辑保存按钮使能标志
-        public static bool bLblExist = false;//标签是否存在
-        public static bool bTxtExist = false;//文本框是否存在
-
-        public static int iLabel = 0;
-        public static int iTextBox = 0;
-        public static int iTab = 1;
+        public static bool bEdit = false;
 
         public static string sPortName = "";
         public static int nBaudRate = 9600;
