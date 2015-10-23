@@ -22,21 +22,24 @@ namespace WifiMonitor
              InitializeComponent();
              this.mMainForm = mainForm;
         }
-
+        
         private void ToolForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            GlobalVar.bEdit = false;
+            GlobalVar.editFlag = false;
             mMainForm.btnEdit.Enabled = true;//启用编辑按钮
+            mMainForm.btnStart.Enabled = true; //启用启动按钮
+            mMainForm.btnSavEdit.Visible = false; //隐藏保存按钮
         }
 
         #region 添加标签部分
         private void btnAddLbl_Click(object sender, EventArgs e)
         {
-            int tabIndex = mMainForm.tabControl1.SelectedIndex + 1; //获取控件所在标签页，从1开始
+            int tabIndex = mMainForm.tabControl.SelectedIndex + 1; //获取控件所在标签页，从1开始
             for (int index = 1; index <= numLabel.Value; index++)
             {
                 Label lbl = new Label();
                 lbl.Location = new Point(10, 20 * index * 2);
+                lbl.BackColor = Color.Transparent;
                 lbl.Name = "lbl" + tabIndex + "_" + index;
                 lbl.Text = "标签" + index;
                 lbl.TextAlign = ContentAlignment.MiddleRight;//标签文本位置靠右
@@ -44,7 +47,7 @@ namespace WifiMonitor
                 lbl.DoubleClick += new EventHandler(mMainForm.lbl_DoubleClick);
                 lbl.MouseDown += new MouseEventHandler(mMainForm.lbl_MouseDown);
                 lbl.MouseMove += new MouseEventHandler(mMainForm.lbl_MouseMove);
-                mMainForm.tabControl1.SelectedTab.Controls.Add(lbl);
+                mMainForm.tabControl.SelectedTab.Controls.Add(lbl);
             }
         }
         #endregion 添加标签部分
@@ -52,7 +55,7 @@ namespace WifiMonitor
         #region 添加文本框部分
         private void btnAddText_Click(object sender, EventArgs e)
         {
-            int tabIndex = mMainForm.tabControl1.SelectedIndex + 1; //获取控件所在标签页，从1开始
+            int tabIndex = mMainForm.tabControl.SelectedIndex + 1; //获取控件所在标签页，从1开始
             for (int index = 1; index <= numText.Value; index++)
             {
                 TextBoxEx txt = new TextBoxEx();
@@ -67,26 +70,19 @@ namespace WifiMonitor
                 txt.DoubleClick += new EventHandler(mMainForm.txt_DoubleClick);
                 txt.MouseDown += new MouseEventHandler(mMainForm.txt_MouseDown);
                 txt.MouseMove += new MouseEventHandler(mMainForm.txt_MouseMove);
-                mMainForm.tabControl1.SelectedTab.Controls.Add(txt);
+                mMainForm.tabControl.SelectedTab.Controls.Add(txt);
             }
         }
         #endregion 添加文本框部分
-
-        private void btnSavNum_Click(object sender, EventArgs e)
-        {
-            IniFile.WriteIniData("CommProperty", "RcvCmdNum", numVar.Value.ToString(), GlobalVar.sIniPath);
-            GlobalVar.RcvCmdNum = int.Parse(numVar.Value.ToString());
-            MessageBox.Show("监视变量数量已保存");
-        }
-
+        
         private void btnCreateTab_Click(object sender, EventArgs e)
         {
-            int index = mMainForm.tabControl1.TabCount + 1;
+            int index = mMainForm.tabControl.TabCount + 1;
             string pageText = "新标签页" + index;
             string pageName = "TabPage" + index;
             TabPage tabPage = new TabPage(pageText);
             tabPage.UseVisualStyleBackColor = true;
-            mMainForm.tabControl1.TabPages.Add(tabPage);
+            mMainForm.tabControl.TabPages.Add(tabPage);
         }
 
         TitleChange tabTitleChange;
@@ -94,21 +90,21 @@ namespace WifiMonitor
         {
             tabTitleChange = new TitleChange();
             tabTitleChange.Text = "更改标签页名称";
-            tabTitleChange.txtTitle.Text = mMainForm.tabControl1.SelectedTab.Text;
+            tabTitleChange.txtTitle.Text = mMainForm.tabControl.SelectedTab.Text;
             tabTitleChange.btnSave.Click += new EventHandler(tabTitleChangebtnSave_Click);
             tabTitleChange.Show();
         }
 
         private void tabTitleChangebtnSave_Click(object o, EventArgs e)
         {
-            mMainForm.tabControl1.SelectedTab.Text = tabTitleChange.txtTitle.Text;
+            mMainForm.tabControl.SelectedTab.Text = tabTitleChange.txtTitle.Text;
             tabTitleChange.Dispose();
         }
 
         //添加指示灯
         private void btnAddLamp_Click(object sender, EventArgs e)
         {
-            int tabIndex = mMainForm.tabControl1.SelectedIndex + 1; //获取控件所在标签页，从1开始
+            int tabIndex = mMainForm.tabControl.SelectedIndex + 1; //获取控件所在标签页，从1开始
             for (int index = 1; index <= numLamp.Value; index++)
             {
                 Lamp lamp = new Lamp();
@@ -118,15 +114,15 @@ namespace WifiMonitor
                 lamp.MouseDoubleClick += new MouseEventHandler(mMainForm.lamp_DoubleClick);
                 lamp.MouseDown += new MouseEventHandler(mMainForm.lamp_MouseDown);
                 lamp.MouseMove +=new MouseEventHandler(mMainForm.lamp_MouseMove);
-                mMainForm.tabControl1.SelectedTab.Controls.Add(lamp);
+                mMainForm.tabControl.SelectedTab.Controls.Add(lamp);
             }
         }
 
         //删除选中标签页及其上所有控件(界面)
         private void btnRemoveTab_Click(object sender, EventArgs e)
         {
-            int currentIndex = mMainForm.tabControl1.SelectedIndex;
-            mMainForm.tabControl1.TabPages.RemoveAt(currentIndex);
+            int currentIndex = mMainForm.tabControl.SelectedIndex;
+            mMainForm.tabControl.TabPages.RemoveAt(currentIndex);
         }
     }
 }

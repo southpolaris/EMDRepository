@@ -18,20 +18,12 @@ namespace WifiMonitor
         public static int nMainFormPosY = 0;
         public static string sMainFormTitle = "主界面";
 
-        public static bool bEdit = false;
-
-        public static string sPortName = "";
-        public static int nBaudRate = 9600;
-
-        //定义动态数组
-        //public static List<string> RcvCmdLst = new List<string>();
-        public static ArrayList TempCmdLst = new ArrayList();
-        public static ArrayList RcvCmdLst = new ArrayList();
-
         //串口读入的参数的个数
         public static int RcvCmdNum = 0;    
   
         //运行 标志位
         public static bool runningFlag = false;
+        //编辑 标志位
+        public static bool editFlag = false;
     }
 }

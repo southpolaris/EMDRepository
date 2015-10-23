@@ -45,7 +45,7 @@
             // lblWidth
             // 
             this.lblWidth.AutoSize = true;
-            this.lblWidth.Location = new System.Drawing.Point(22, 72);
+            this.lblWidth.Location = new System.Drawing.Point(21, 81);
             this.lblWidth.Name = "lblWidth";
             this.lblWidth.Size = new System.Drawing.Size(68, 17);
             this.lblWidth.TabIndex = 4;
@@ -53,7 +53,7 @@
             // 
             // txtWidth
             // 
-            this.txtWidth.Location = new System.Drawing.Point(106, 68);
+            this.txtWidth.Location = new System.Drawing.Point(106, 78);
             this.txtWidth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWidth.Name = "txtWidth";
             this.txtWidth.Size = new System.Drawing.Size(134, 23);
@@ -63,7 +63,7 @@
             // lblHeight
             // 
             this.lblHeight.AutoSize = true;
-            this.lblHeight.Location = new System.Drawing.Point(22, 110);
+            this.lblHeight.Location = new System.Drawing.Point(21, 119);
             this.lblHeight.Name = "lblHeight";
             this.lblHeight.Size = new System.Drawing.Size(68, 17);
             this.lblHeight.TabIndex = 6;
@@ -71,7 +71,7 @@
             // 
             // txtHeight
             // 
-            this.txtHeight.Location = new System.Drawing.Point(106, 106);
+            this.txtHeight.Location = new System.Drawing.Point(106, 116);
             this.txtHeight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtHeight.Name = "txtHeight";
             this.txtHeight.Size = new System.Drawing.Size(134, 23);
@@ -81,7 +81,7 @@
             // lblPosY
             // 
             this.lblPosY.AutoSize = true;
-            this.lblPosY.Location = new System.Drawing.Point(22, 190);
+            this.lblPosY.Location = new System.Drawing.Point(22, 200);
             this.lblPosY.Name = "lblPosY";
             this.lblPosY.Size = new System.Drawing.Size(75, 17);
             this.lblPosY.TabIndex = 10;
@@ -89,7 +89,7 @@
             // 
             // txtPosY
             // 
-            this.txtPosY.Location = new System.Drawing.Point(106, 186);
+            this.txtPosY.Location = new System.Drawing.Point(106, 196);
             this.txtPosY.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosY.Name = "txtPosY";
             this.txtPosY.Size = new System.Drawing.Size(134, 23);
@@ -99,7 +99,7 @@
             // lblPosX
             // 
             this.lblPosX.AutoSize = true;
-            this.lblPosX.Location = new System.Drawing.Point(22, 152);
+            this.lblPosX.Location = new System.Drawing.Point(21, 160);
             this.lblPosX.Name = "lblPosX";
             this.lblPosX.Size = new System.Drawing.Size(76, 17);
             this.lblPosX.TabIndex = 8;
@@ -107,7 +107,7 @@
             // 
             // txtPosX
             // 
-            this.txtPosX.Location = new System.Drawing.Point(106, 147);
+            this.txtPosX.Location = new System.Drawing.Point(106, 157);
             this.txtPosX.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosX.Name = "txtPosX";
             this.txtPosX.Size = new System.Drawing.Size(134, 23);
@@ -117,19 +117,19 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(22, 33);
+            this.lblName.Location = new System.Drawing.Point(22, 24);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(56, 17);
+            this.lblName.Size = new System.Drawing.Size(68, 17);
             this.lblName.TabIndex = 12;
-            this.lblName.Text = "标签名：";
+            this.lblName.Text = "标签文本：";
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(106, 29);
+            this.txtName.Location = new System.Drawing.Point(106, 20);
             this.txtName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(134, 23);
-            this.txtName.TabIndex = 11;
+            this.txtName.TabIndex = 1;
             this.txtName.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // btnLblSav

@@ -34,26 +34,23 @@
             this.btnAddText = new System.Windows.Forms.Button();
             this.lblAddLamp = new System.Windows.Forms.Label();
             this.btnAddLamp = new System.Windows.Forms.Button();
-            this.lblDataNum = new System.Windows.Forms.Label();
-            this.btnSavNum = new System.Windows.Forms.Button();
             this.btnCreateTab = new System.Windows.Forms.Button();
             this.numLabel = new System.Windows.Forms.NumericUpDown();
             this.numText = new System.Windows.Forms.NumericUpDown();
             this.btnRemoveTab = new System.Windows.Forms.Button();
             this.btnChangeTabName = new System.Windows.Forms.Button();
             this.numLamp = new System.Windows.Forms.NumericUpDown();
-            this.numVar = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numLabel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numText)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLamp)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numVar)).BeginInit();
             this.SuspendLayout();
             // 
             // btnAddLbl
             // 
-            this.btnAddLbl.Location = new System.Drawing.Point(9, 35);
+            this.btnAddLbl.Location = new System.Drawing.Point(10, 40);
+            this.btnAddLbl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddLbl.Name = "btnAddLbl";
-            this.btnAddLbl.Size = new System.Drawing.Size(127, 30);
+            this.btnAddLbl.Size = new System.Drawing.Size(148, 29);
             this.btnAddLbl.TabIndex = 0;
             this.btnAddLbl.Text = "添加标签";
             this.btnAddLbl.UseVisualStyleBackColor = false;
@@ -62,26 +59,27 @@
             // lblAddLbl
             // 
             this.lblAddLbl.AutoSize = true;
-            this.lblAddLbl.Location = new System.Drawing.Point(7, 12);
+            this.lblAddLbl.Location = new System.Drawing.Point(8, 9);
             this.lblAddLbl.Name = "lblAddLbl";
-            this.lblAddLbl.Size = new System.Drawing.Size(65, 12);
+            this.lblAddLbl.Size = new System.Drawing.Size(68, 17);
             this.lblAddLbl.TabIndex = 1;
             this.lblAddLbl.Text = "标签数量：";
             // 
             // lblAddText
             // 
             this.lblAddText.AutoSize = true;
-            this.lblAddText.Location = new System.Drawing.Point(7, 76);
+            this.lblAddText.Location = new System.Drawing.Point(5, 94);
             this.lblAddText.Name = "lblAddText";
-            this.lblAddText.Size = new System.Drawing.Size(77, 12);
+            this.lblAddText.Size = new System.Drawing.Size(80, 17);
             this.lblAddText.TabIndex = 4;
             this.lblAddText.Text = "文本框数量：";
             // 
             // btnAddText
             // 
-            this.btnAddText.Location = new System.Drawing.Point(9, 99);
+            this.btnAddText.Location = new System.Drawing.Point(10, 124);
+            this.btnAddText.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddText.Name = "btnAddText";
-            this.btnAddText.Size = new System.Drawing.Size(127, 30);
+            this.btnAddText.Size = new System.Drawing.Size(148, 30);
             this.btnAddText.TabIndex = 3;
             this.btnAddText.Text = "添加文本框";
             this.btnAddText.UseVisualStyleBackColor = false;
@@ -90,46 +88,29 @@
             // lblAddLamp
             // 
             this.lblAddLamp.AutoSize = true;
-            this.lblAddLamp.Location = new System.Drawing.Point(7, 141);
+            this.lblAddLamp.Location = new System.Drawing.Point(8, 184);
             this.lblAddLamp.Name = "lblAddLamp";
-            this.lblAddLamp.Size = new System.Drawing.Size(77, 12);
+            this.lblAddLamp.Size = new System.Drawing.Size(80, 17);
             this.lblAddLamp.TabIndex = 7;
             this.lblAddLamp.Text = "指示灯数量：";
             // 
             // btnAddLamp
             // 
-            this.btnAddLamp.Location = new System.Drawing.Point(9, 164);
+            this.btnAddLamp.Location = new System.Drawing.Point(10, 214);
+            this.btnAddLamp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddLamp.Name = "btnAddLamp";
-            this.btnAddLamp.Size = new System.Drawing.Size(127, 30);
+            this.btnAddLamp.Size = new System.Drawing.Size(148, 31);
             this.btnAddLamp.TabIndex = 6;
             this.btnAddLamp.Text = "添加指示灯";
             this.btnAddLamp.UseVisualStyleBackColor = false;
             this.btnAddLamp.Click += new System.EventHandler(this.btnAddLamp_Click);
             // 
-            // lblDataNum
-            // 
-            this.lblDataNum.AutoSize = true;
-            this.lblDataNum.Location = new System.Drawing.Point(7, 207);
-            this.lblDataNum.Name = "lblDataNum";
-            this.lblDataNum.Size = new System.Drawing.Size(77, 12);
-            this.lblDataNum.TabIndex = 10;
-            this.lblDataNum.Text = "监视变量数：";
-            // 
-            // btnSavNum
-            // 
-            this.btnSavNum.Location = new System.Drawing.Point(9, 230);
-            this.btnSavNum.Name = "btnSavNum";
-            this.btnSavNum.Size = new System.Drawing.Size(127, 30);
-            this.btnSavNum.TabIndex = 9;
-            this.btnSavNum.Text = "保存数量值";
-            this.btnSavNum.UseVisualStyleBackColor = false;
-            this.btnSavNum.Click += new System.EventHandler(this.btnSavNum_Click);
-            // 
             // btnCreateTab
             // 
-            this.btnCreateTab.Location = new System.Drawing.Point(9, 405);
+            this.btnCreateTab.Location = new System.Drawing.Point(10, 402);
+            this.btnCreateTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCreateTab.Name = "btnCreateTab";
-            this.btnCreateTab.Size = new System.Drawing.Size(127, 30);
+            this.btnCreateTab.Size = new System.Drawing.Size(148, 32);
             this.btnCreateTab.TabIndex = 12;
             this.btnCreateTab.Text = "新建标签页";
             this.btnCreateTab.UseVisualStyleBackColor = false;
@@ -137,14 +118,15 @@
             // 
             // numLabel
             // 
-            this.numLabel.Location = new System.Drawing.Point(76, 8);
+            this.numLabel.Location = new System.Drawing.Point(89, 7);
+            this.numLabel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numLabel.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numLabel.Name = "numLabel";
-            this.numLabel.Size = new System.Drawing.Size(58, 21);
+            this.numLabel.Size = new System.Drawing.Size(68, 23);
             this.numLabel.TabIndex = 13;
             this.numLabel.Value = new decimal(new int[] {
             1,
@@ -154,14 +136,15 @@
             // 
             // numText
             // 
-            this.numText.Location = new System.Drawing.Point(78, 72);
+            this.numText.Location = new System.Drawing.Point(91, 92);
+            this.numText.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numText.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numText.Name = "numText";
-            this.numText.Size = new System.Drawing.Size(58, 21);
+            this.numText.Size = new System.Drawing.Size(68, 23);
             this.numText.TabIndex = 14;
             this.numText.Value = new decimal(new int[] {
             1,
@@ -171,9 +154,10 @@
             // 
             // btnRemoveTab
             // 
-            this.btnRemoveTab.Location = new System.Drawing.Point(9, 441);
+            this.btnRemoveTab.Location = new System.Drawing.Point(10, 442);
+            this.btnRemoveTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRemoveTab.Name = "btnRemoveTab";
-            this.btnRemoveTab.Size = new System.Drawing.Size(127, 30);
+            this.btnRemoveTab.Size = new System.Drawing.Size(148, 33);
             this.btnRemoveTab.TabIndex = 17;
             this.btnRemoveTab.Text = "删除当前标签页";
             this.btnRemoveTab.UseVisualStyleBackColor = false;
@@ -181,9 +165,10 @@
             // 
             // btnChangeTabName
             // 
-            this.btnChangeTabName.Location = new System.Drawing.Point(9, 368);
+            this.btnChangeTabName.Location = new System.Drawing.Point(10, 361);
+            this.btnChangeTabName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnChangeTabName.Name = "btnChangeTabName";
-            this.btnChangeTabName.Size = new System.Drawing.Size(127, 30);
+            this.btnChangeTabName.Size = new System.Drawing.Size(148, 33);
             this.btnChangeTabName.TabIndex = 18;
             this.btnChangeTabName.Text = "更改当前标签名称";
             this.btnChangeTabName.UseVisualStyleBackColor = false;
@@ -191,14 +176,15 @@
             // 
             // numLamp
             // 
-            this.numLamp.Location = new System.Drawing.Point(78, 137);
+            this.numLamp.Location = new System.Drawing.Point(91, 182);
+            this.numLamp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numLamp.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numLamp.Name = "numLamp";
-            this.numLamp.Size = new System.Drawing.Size(58, 21);
+            this.numLamp.Size = new System.Drawing.Size(68, 23);
             this.numLamp.TabIndex = 19;
             this.numLamp.Value = new decimal(new int[] {
             1,
@@ -206,45 +192,28 @@
             0,
             0});
             // 
-            // numVar
-            // 
-            this.numVar.Location = new System.Drawing.Point(76, 203);
-            this.numVar.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numVar.Name = "numVar";
-            this.numVar.Size = new System.Drawing.Size(58, 21);
-            this.numVar.TabIndex = 20;
-            this.numVar.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // ToolForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(144, 474);
-            this.Controls.Add(this.numVar);
+            this.ClientSize = new System.Drawing.Size(168, 479);
             this.Controls.Add(this.numLamp);
             this.Controls.Add(this.btnChangeTabName);
             this.Controls.Add(this.btnRemoveTab);
             this.Controls.Add(this.btnCreateTab);
             this.Controls.Add(this.numText);
             this.Controls.Add(this.numLabel);
-            this.Controls.Add(this.lblDataNum);
-            this.Controls.Add(this.btnSavNum);
             this.Controls.Add(this.lblAddLamp);
             this.Controls.Add(this.btnAddLamp);
             this.Controls.Add(this.lblAddText);
             this.Controls.Add(this.btnAddText);
             this.Controls.Add(this.lblAddLbl);
             this.Controls.Add(this.btnAddLbl);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ToolForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "工具箱";
@@ -252,7 +221,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numLabel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLamp)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numVar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -266,14 +234,11 @@
         private System.Windows.Forms.Button btnAddText;
         private System.Windows.Forms.Label lblAddLamp;
         private System.Windows.Forms.Button btnAddLamp;
-        private System.Windows.Forms.Label lblDataNum;
-        private System.Windows.Forms.Button btnSavNum;
         private System.Windows.Forms.Button btnCreateTab;
         private System.Windows.Forms.NumericUpDown numLabel;
         private System.Windows.Forms.NumericUpDown numText;
         private System.Windows.Forms.Button btnRemoveTab;
         private System.Windows.Forms.Button btnChangeTabName;
         private System.Windows.Forms.NumericUpDown numLamp;
-        private System.Windows.Forms.NumericUpDown numVar;
     }
 }

@@ -35,26 +35,34 @@
             this.txtWidth = new System.Windows.Forms.TextBox();
             this.lblHeight = new System.Windows.Forms.Label();
             this.txtHeight = new System.Windows.Forms.TextBox();
-            this.colorBoxLblTxt = new System.Windows.Forms.ColorDialog();
             this.lblPosY = new System.Windows.Forms.Label();
             this.txtPosY = new System.Windows.Forms.TextBox();
             this.lblPosX = new System.Windows.Forms.Label();
             this.txtPosX = new System.Windows.Forms.TextBox();
             this.cbbTxtVar = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtSlaveAddress = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblTxtVar
             // 
             this.lblTxtVar.AutoSize = true;
-            this.lblTxtVar.Location = new System.Drawing.Point(10, 34);
+            this.lblTxtVar.Location = new System.Drawing.Point(6, 62);
             this.lblTxtVar.Name = "lblTxtVar";
-            this.lblTxtVar.Size = new System.Drawing.Size(104, 17);
+            this.lblTxtVar.Size = new System.Drawing.Size(92, 17);
             this.lblTxtVar.TabIndex = 1;
-            this.lblTxtVar.Text = "文本框关联变量：";
+            this.lblTxtVar.Text = "关联变量地址：";
             // 
             // btnTxtSav
             // 
-            this.btnTxtSav.Location = new System.Drawing.Point(178, 230);
+            this.btnTxtSav.Location = new System.Drawing.Point(238, 210);
             this.btnTxtSav.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnTxtSav.Name = "btnTxtSav";
             this.btnTxtSav.Size = new System.Drawing.Size(87, 33);
@@ -65,7 +73,7 @@
             // lblWidth
             // 
             this.lblWidth.AutoSize = true;
-            this.lblWidth.Location = new System.Drawing.Point(10, 72);
+            this.lblWidth.Location = new System.Drawing.Point(9, 25);
             this.lblWidth.Name = "lblWidth";
             this.lblWidth.Size = new System.Drawing.Size(80, 17);
             this.lblWidth.TabIndex = 4;
@@ -73,7 +81,7 @@
             // 
             // txtWidth
             // 
-            this.txtWidth.Location = new System.Drawing.Point(126, 67);
+            this.txtWidth.Location = new System.Drawing.Point(118, 22);
             this.txtWidth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWidth.Name = "txtWidth";
             this.txtWidth.Size = new System.Drawing.Size(139, 23);
@@ -83,7 +91,7 @@
             // lblHeight
             // 
             this.lblHeight.AutoSize = true;
-            this.lblHeight.Location = new System.Drawing.Point(10, 110);
+            this.lblHeight.Location = new System.Drawing.Point(9, 56);
             this.lblHeight.Name = "lblHeight";
             this.lblHeight.Size = new System.Drawing.Size(80, 17);
             this.lblHeight.TabIndex = 6;
@@ -91,7 +99,7 @@
             // 
             // txtHeight
             // 
-            this.txtHeight.Location = new System.Drawing.Point(126, 105);
+            this.txtHeight.Location = new System.Drawing.Point(118, 53);
             this.txtHeight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtHeight.Name = "txtHeight";
             this.txtHeight.Size = new System.Drawing.Size(139, 23);
@@ -101,7 +109,7 @@
             // lblPosY
             // 
             this.lblPosY.AutoSize = true;
-            this.lblPosY.Location = new System.Drawing.Point(10, 190);
+            this.lblPosY.Location = new System.Drawing.Point(291, 56);
             this.lblPosY.Name = "lblPosY";
             this.lblPosY.Size = new System.Drawing.Size(87, 17);
             this.lblPosY.TabIndex = 10;
@@ -109,7 +117,7 @@
             // 
             // txtPosY
             // 
-            this.txtPosY.Location = new System.Drawing.Point(126, 184);
+            this.txtPosY.Location = new System.Drawing.Point(407, 53);
             this.txtPosY.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosY.Name = "txtPosY";
             this.txtPosY.Size = new System.Drawing.Size(139, 23);
@@ -119,7 +127,7 @@
             // lblPosX
             // 
             this.lblPosX.AutoSize = true;
-            this.lblPosX.Location = new System.Drawing.Point(10, 152);
+            this.lblPosX.Location = new System.Drawing.Point(291, 25);
             this.lblPosX.Name = "lblPosX";
             this.lblPosX.Size = new System.Drawing.Size(88, 17);
             this.lblPosX.TabIndex = 8;
@@ -127,7 +135,7 @@
             // 
             // txtPosX
             // 
-            this.txtPosX.Location = new System.Drawing.Point(126, 146);
+            this.txtPosX.Location = new System.Drawing.Point(407, 22);
             this.txtPosX.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosX.Name = "txtPosX";
             this.txtPosX.Size = new System.Drawing.Size(139, 23);
@@ -137,41 +145,134 @@
             // cbbTxtVar
             // 
             this.cbbTxtVar.DisplayMember = "Key";
+            this.cbbTxtVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbTxtVar.FormattingEnabled = true;
-            this.cbbTxtVar.Location = new System.Drawing.Point(126, 30);
+            this.cbbTxtVar.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"});
+            this.cbbTxtVar.Location = new System.Drawing.Point(118, 59);
             this.cbbTxtVar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbbTxtVar.Name = "cbbTxtVar";
             this.cbbTxtVar.Size = new System.Drawing.Size(139, 25);
             this.cbbTxtVar.TabIndex = 11;
             this.cbbTxtVar.ValueMember = "Value";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 17);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "关联变量类型：";
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(118, 26);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(97, 21);
+            this.radioButton3.TabIndex = 13;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "3 数值量只读";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.lblPosY);
+            this.groupBox1.Controls.Add(this.txtPosY);
+            this.groupBox1.Controls.Add(this.lblPosX);
+            this.groupBox1.Controls.Add(this.txtPosX);
+            this.groupBox1.Controls.Add(this.lblHeight);
+            this.groupBox1.Controls.Add(this.txtHeight);
+            this.groupBox1.Controls.Add(this.lblWidth);
+            this.groupBox1.Controls.Add(this.txtWidth);
+            this.groupBox1.Location = new System.Drawing.Point(9, 113);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(560, 90);
+            this.groupBox1.TabIndex = 14;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "控件信息";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.txtSlaveAddress);
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.radioButton4);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.lblTxtVar);
+            this.groupBox2.Controls.Add(this.radioButton3);
+            this.groupBox2.Controls.Add(this.cbbTxtVar);
+            this.groupBox2.Location = new System.Drawing.Point(9, 6);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(560, 94);
+            this.groupBox2.TabIndex = 15;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "关联变量";
+            // 
+            // txtSlaveAddress
+            // 
+            this.txtSlaveAddress.Location = new System.Drawing.Point(407, 59);
+            this.txtSlaveAddress.Name = "txtSlaveAddress";
+            this.txtSlaveAddress.Size = new System.Drawing.Size(139, 23);
+            this.txtSlaveAddress.TabIndex = 16;
+            this.txtSlaveAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(291, 62);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 17);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "关联设备ID：";
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Location = new System.Drawing.Point(234, 26);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(97, 21);
+            this.radioButton4.TabIndex = 14;
+            this.radioButton4.TabStop = true;
+            this.radioButton4.Text = "4 数值量读写";
+            this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
+            // 
             // TxtEditForm
             // 
             this.AcceptButton = this.btnTxtSav;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(280, 278);
-            this.Controls.Add(this.cbbTxtVar);
-            this.Controls.Add(this.lblPosY);
-            this.Controls.Add(this.txtPosY);
-            this.Controls.Add(this.lblPosX);
-            this.Controls.Add(this.txtPosX);
-            this.Controls.Add(this.lblHeight);
-            this.Controls.Add(this.txtHeight);
-            this.Controls.Add(this.lblWidth);
-            this.Controls.Add(this.txtWidth);
+            this.ClientSize = new System.Drawing.Size(578, 249);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnTxtSav);
-            this.Controls.Add(this.lblTxtVar);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "TxtEditForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "文本框编辑";
+            this.Text = "文本框选项";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -183,11 +284,17 @@
         public System.Windows.Forms.TextBox txtWidth;
         private System.Windows.Forms.Label lblHeight;
         public System.Windows.Forms.TextBox txtHeight;
-        private System.Windows.Forms.ColorDialog colorBoxLblTxt;
         private System.Windows.Forms.Label lblPosY;
         public System.Windows.Forms.TextBox txtPosY;
         private System.Windows.Forms.Label lblPosX;
         public System.Windows.Forms.TextBox txtPosX;
         public System.Windows.Forms.ComboBox cbbTxtVar;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        public System.Windows.Forms.RadioButton radioButton3;
+        public System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.Label label2;
+        public System.Windows.Forms.TextBox txtSlaveAddress;
     }
 }
