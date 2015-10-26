@@ -29,3 +29,7 @@ Not compelement:
 2.Read bool data, function 1 and 2;
 3.Read float data using function 3 and 4;
 4.One more wifi232 module communication test;
+
+
+2015.10.24 ver0.6
+Add function code 1 and complete lamp display code, now can read coils of modbusslave.

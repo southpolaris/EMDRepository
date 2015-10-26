@@ -45,7 +45,7 @@
             // lblWidth
             // 
             this.lblWidth.AutoSize = true;
-            this.lblWidth.Location = new System.Drawing.Point(21, 81);
+            this.lblWidth.Location = new System.Drawing.Point(12, 81);
             this.lblWidth.Name = "lblWidth";
             this.lblWidth.Size = new System.Drawing.Size(68, 17);
             this.lblWidth.TabIndex = 4;
@@ -53,7 +53,7 @@
             // 
             // txtWidth
             // 
-            this.txtWidth.Location = new System.Drawing.Point(106, 78);
+            this.txtWidth.Location = new System.Drawing.Point(96, 78);
             this.txtWidth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWidth.Name = "txtWidth";
             this.txtWidth.Size = new System.Drawing.Size(134, 23);
@@ -63,7 +63,7 @@
             // lblHeight
             // 
             this.lblHeight.AutoSize = true;
-            this.lblHeight.Location = new System.Drawing.Point(21, 119);
+            this.lblHeight.Location = new System.Drawing.Point(12, 115);
             this.lblHeight.Name = "lblHeight";
             this.lblHeight.Size = new System.Drawing.Size(68, 17);
             this.lblHeight.TabIndex = 6;
@@ -71,7 +71,7 @@
             // 
             // txtHeight
             // 
-            this.txtHeight.Location = new System.Drawing.Point(106, 116);
+            this.txtHeight.Location = new System.Drawing.Point(96, 112);
             this.txtHeight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtHeight.Name = "txtHeight";
             this.txtHeight.Size = new System.Drawing.Size(134, 23);
@@ -81,7 +81,7 @@
             // lblPosY
             // 
             this.lblPosY.AutoSize = true;
-            this.lblPosY.Location = new System.Drawing.Point(22, 200);
+            this.lblPosY.Location = new System.Drawing.Point(12, 184);
             this.lblPosY.Name = "lblPosY";
             this.lblPosY.Size = new System.Drawing.Size(75, 17);
             this.lblPosY.TabIndex = 10;
@@ -89,7 +89,7 @@
             // 
             // txtPosY
             // 
-            this.txtPosY.Location = new System.Drawing.Point(106, 196);
+            this.txtPosY.Location = new System.Drawing.Point(96, 181);
             this.txtPosY.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosY.Name = "txtPosY";
             this.txtPosY.Size = new System.Drawing.Size(134, 23);
@@ -99,7 +99,7 @@
             // lblPosX
             // 
             this.lblPosX.AutoSize = true;
-            this.lblPosX.Location = new System.Drawing.Point(21, 160);
+            this.lblPosX.Location = new System.Drawing.Point(12, 150);
             this.lblPosX.Name = "lblPosX";
             this.lblPosX.Size = new System.Drawing.Size(76, 17);
             this.lblPosX.TabIndex = 8;
@@ -107,7 +107,7 @@
             // 
             // txtPosX
             // 
-            this.txtPosX.Location = new System.Drawing.Point(106, 157);
+            this.txtPosX.Location = new System.Drawing.Point(96, 147);
             this.txtPosX.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosX.Name = "txtPosX";
             this.txtPosX.Size = new System.Drawing.Size(134, 23);
@@ -117,15 +117,15 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(22, 24);
+            this.lblName.Location = new System.Drawing.Point(12, 24);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(68, 17);
             this.lblName.TabIndex = 12;
-            this.lblName.Text = "标签文本：";
+            this.lblName.Text = "显示文本：";
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(106, 20);
+            this.txtName.Location = new System.Drawing.Point(96, 20);
             this.txtName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(134, 23);
@@ -134,10 +134,10 @@
             // 
             // btnLblSav
             // 
-            this.btnLblSav.Location = new System.Drawing.Point(153, 236);
+            this.btnLblSav.Location = new System.Drawing.Point(143, 225);
             this.btnLblSav.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnLblSav.Name = "btnLblSav";
-            this.btnLblSav.Size = new System.Drawing.Size(87, 33);
+            this.btnLblSav.Size = new System.Drawing.Size(87, 25);
             this.btnLblSav.TabIndex = 13;
             this.btnLblSav.Text = "确认";
             this.btnLblSav.UseVisualStyleBackColor = true;
@@ -147,7 +147,7 @@
             this.AcceptButton = this.btnLblSav;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(266, 286);
+            this.ClientSize = new System.Drawing.Size(247, 264);
             this.Controls.Add(this.btnLblSav);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.txtName);
@@ -160,12 +160,13 @@
             this.Controls.Add(this.lblWidth);
             this.Controls.Add(this.txtWidth);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "LblEditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "标签编辑";
+            this.Text = "标签选项";
             this.ResumeLayout(false);
             this.PerformLayout();
 

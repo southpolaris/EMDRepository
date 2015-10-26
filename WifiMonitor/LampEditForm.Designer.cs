@@ -36,6 +36,7 @@
             this.tbLampX = new System.Windows.Forms.TextBox();
             this.tbLampY = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.textBoxSlaveAddress = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -51,8 +52,20 @@
             // cbLampVar
             // 
             this.cbLampVar.DisplayMember = "Key";
+            this.cbLampVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLampVar.FormattingEnabled = true;
-            this.cbLampVar.Location = new System.Drawing.Point(102, 53);
+            this.cbLampVar.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"});
+            this.cbLampVar.Location = new System.Drawing.Point(102, 59);
             this.cbLampVar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbLampVar.Name = "cbLampVar";
             this.cbLampVar.Size = new System.Drawing.Size(138, 25);
@@ -62,16 +75,16 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 56);
+            this.label1.Location = new System.Drawing.Point(12, 62);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 17);
+            this.label1.Size = new System.Drawing.Size(68, 17);
             this.label1.TabIndex = 2;
-            this.label1.Text = "关联变量地址";
+            this.label1.Text = "变量地址：";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 114);
+            this.label2.Location = new System.Drawing.Point(12, 120);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 17);
             this.label2.TabIndex = 3;
@@ -88,7 +101,7 @@
             // 
             // tbLampX
             // 
-            this.tbLampX.Location = new System.Drawing.Point(102, 111);
+            this.tbLampX.Location = new System.Drawing.Point(102, 117);
             this.tbLampX.Name = "tbLampX";
             this.tbLampX.Size = new System.Drawing.Size(138, 23);
             this.tbLampX.TabIndex = 5;
@@ -103,18 +116,26 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 21);
+            this.label4.Location = new System.Drawing.Point(12, 24);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 17);
+            this.label4.Size = new System.Drawing.Size(68, 17);
             this.label4.TabIndex = 7;
-            this.label4.Text = "关联变量类型";
+            this.label4.Text = "从站地址：";
+            // 
+            // textBoxSlaveAddress
+            // 
+            this.textBoxSlaveAddress.Location = new System.Drawing.Point(102, 21);
+            this.textBoxSlaveAddress.Name = "textBoxSlaveAddress";
+            this.textBoxSlaveAddress.Size = new System.Drawing.Size(138, 23);
+            this.textBoxSlaveAddress.TabIndex = 8;
             // 
             // LampEditForm
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(264, 240);
+            this.ClientSize = new System.Drawing.Size(256, 240);
+            this.Controls.Add(this.textBoxSlaveAddress);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tbLampY);
             this.Controls.Add(this.tbLampX);
@@ -124,11 +145,13 @@
             this.Controls.Add(this.cbLampVar);
             this.Controls.Add(this.buttonOk);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "LampEditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "编辑指示灯";
+            this.Text = "指示灯选项";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -144,5 +167,6 @@
         public System.Windows.Forms.ComboBox cbLampVar;
         public System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Label label4;
+        public System.Windows.Forms.TextBox textBoxSlaveAddress;
     }
 }

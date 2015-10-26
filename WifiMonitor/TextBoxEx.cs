@@ -58,10 +58,11 @@ namespace WifiMonitor
                 {
                     case ModbusInterface.InputRegister:
                         this.ReadOnly = true;
-                        this.BackColor = Color.Silver;
+                        this.BackColor = Color.Gainsboro;
                         break;
                     case ModbusInterface.HoldingRegister:
                         this.ReadOnly = false;
+                        this.BackColor = Color.White;
                         break;
                     default:
                         break;

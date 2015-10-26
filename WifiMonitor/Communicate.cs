@@ -68,7 +68,7 @@ namespace WifiMonitor
                 ModbusSlave module = new ModbusSlave(tcpClient);
                 moduleList.Add(module);
                 OnConnectionChange();
-                Thread communicateThread = new Thread(GetModbusData);                            
+                Thread communicateThread = new Thread(GetModbusData);            
                 communicateThread.Start(module);
             }
         }
@@ -80,7 +80,8 @@ namespace WifiMonitor
         /// Modbus slave module
         /// </param>
         protected void GetModbusData(object obj)
-        {            
+        {
+            bool successFlag = false;
             while (fWaiting)
             {
                 ModbusSlave module = (ModbusSlave)obj;
@@ -92,20 +93,35 @@ namespace WifiMonitor
                 }
                 try
                 {
-                    module.SendFc4((byte)1, (ushort)0, (ushort)0x0a);
-                    Thread.Sleep(800); //3.5 times interval to start next modbus message
-                    module.SendFc3((byte)1, (ushort)0, (ushort)0x0a);
-                    Thread.Sleep(800); //3.5 times interval to start next modbus message
+                    successFlag = module.SendFc1((byte)1, (ushort)0, (ushort)0x0a);
+                    Thread.Sleep(120);
+                    successFlag = module.SendFc4((byte)1, (ushort)0, (ushort)0x0a);
+                    Thread.Sleep(120); //3.5 times interval to start next modbus message (4.00910405ms for baud rate 9600)
+                    successFlag = module.SendFc3((byte)1, (ushort)0, (ushort)0x0a);
+                    Thread.Sleep(120); //3.5 times interval to start next modbus message
+                    
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+
                     if (fWaiting)
                     {
                         RemoveModule(module);
                     }
+                    throw ex;
                     break;
                 }                
             }
+        }
+
+        public void SendModbusData(ModbusSlave module, ushort registerAddress, ushort value)
+        {
+            bool successFlag = false;
+            while (successFlag)
+            {
+                successFlag = module.SendFc6((byte)1, registerAddress, value);
+                GlobalVar.writeFlag = false;
+            }            
         }
 
         public void RemoveModule(ModbusSlave module)

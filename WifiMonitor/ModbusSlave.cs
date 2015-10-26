@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace WifiMonitor
 {
@@ -18,8 +19,13 @@ namespace WifiMonitor
         public string modbusStatus;
         public ushort slaveIndex;
 
-        public ushort[] DataReadWrite = new ushort[10]; // [4区]输出寄存器 读取03 写入06、16
-        public ushort[] DataReadOnly = new ushort[10]; // [3区]输入寄存器 读取04
+     /*   AutoResetEvent writeEvent = new AutoResetEvent();*/
+
+        public ushort pendingWrite = 0;   // 写入输出寄存器缓存区（无符号16位）
+
+        public bool[] DataCoil = new bool[10];           // [0区] 输出继电器
+        public ushort[] DataReadWrite = new ushort[10];  // [4区] 输出寄存器 读取03 写入06、16
+        public ushort[] DataReadOnly = new ushort[10];   // [3区] 输入寄存器 读取04
  
         public ModbusSlave(TcpClient tcpClient)
         {
@@ -115,6 +121,50 @@ namespace WifiMonitor
             for (int i = 0; i < response.Length; i++)
             {
                 response[i] = (byte)(ns.ReadByte());
+            }
+        }
+        #endregion
+
+        #region Function 6 - Write Single Registers
+        public bool SendFc6(byte address, ushort registerAddress, ushort value)
+        {
+            //Ensure port is open
+            if (client.Client.Connected)
+            {
+                //Function 6 request is always 8 bytes:
+                byte[] message = new byte[8];
+                //Function 6 response is fixed at 8 bytes, same as request
+                byte[] response = new byte[8];
+
+                //Build out going message
+                BuildMessage(address, (byte)6, registerAddress, value, ref message);
+
+                //Send Modbus frame through TCP
+                try
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+                catch (Exception err)
+                {
+                    modbusStatus = "Error in write event: " + err.Message;
+                    return false;
+                }
+                if (CheckResponse(response))
+                {
+                    modbusStatus = "Write successful";
+                    return true;
+                }
+                else
+                {
+                    modbusStatus = "CRC error";
+                    return false;
+                }
+            }
+            else
+            {
+                modbusStatus = "Connection lost";
+                return false;
             }
         }
         #endregion
@@ -258,6 +308,81 @@ namespace WifiMonitor
                     }
                     modbusStatus = "Read successful";
                     return true;
+                }
+                else
+                {
+                    modbusStatus = "CRC error";
+                    return false;
+                }
+            }
+            else
+            {
+                modbusStatus = "Connection lost";
+                return false;
+            }
+        }
+        #endregion
+
+        #region Function 1 - Read Coil (Single bit read-write)
+        public bool SendFc1(byte address, ushort start, ushort coils)
+        {
+            //Ensure port is open
+            if (client.Client.Connected)
+            {
+                //Function 1 request is always 8 bits
+                byte[] message = new byte[8];
+                byte[] response;
+                //Function 4 reponse buffer
+                if (coils % 8 != 0)
+                {
+                    response = new byte[5 + coils / 8 + 1];
+                }
+                else
+                {
+                    response = new byte[5 + coils / 8];
+                }                
+                //Build outgoing modbus message
+                BuildMessage(address, (byte)1, start, coils, ref message);
+                //Send modbus message to slaves
+                try
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+                catch (Exception err)
+                {
+                    modbusStatus = "Error in read event: " + err.Message;
+                    return false;
+                }
+                //Evaluate message
+                if (CheckResponse(response))
+                {
+                    //Return request register values:
+                    ushort mask = 0x01;
+                    try
+                    {
+                        for (int byteIndex = 3; byteIndex < response.Length - 2; byteIndex++)
+                        {
+                            for (int offset = 0; offset < 8; offset++)
+                            {
+                                mask <<= offset;
+                                ushort tempData = (ushort)(response[byteIndex] & mask);
+                                tempData >>= offset;
+                                if ((offset + (byteIndex - 3) * 8) < coils)
+                                {
+                                    DataCoil[offset + (byteIndex - 3) * 8] = (tempData == 0x01 ? true : false);
+                                }
+                            }
+                        }
+
+                        modbusStatus = "Read successful";
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                    
                 }
                 else
                 {

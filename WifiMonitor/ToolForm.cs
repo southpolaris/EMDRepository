@@ -26,9 +26,6 @@ namespace WifiMonitor
         private void ToolForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             GlobalVar.editFlag = false;
-            mMainForm.btnEdit.Enabled = true;//启用编辑按钮
-            mMainForm.btnStart.Enabled = true; //启用启动按钮
-            mMainForm.btnSavEdit.Visible = false; //隐藏保存按钮
         }
 
         #region 添加标签部分

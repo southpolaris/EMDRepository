@@ -43,6 +43,7 @@ namespace WifiMonitor
         TitleChange mTitleChange;
 
         ConnectionForm mConnectionForm;
+        ToolForm mToolForm;
 
         //通信类
         internal Communicate communicate = new Communicate();
@@ -175,7 +176,29 @@ namespace WifiMonitor
         //文本单击事件
         public void txt_Click(object sender, EventArgs e)
         {
+            HideCaret((sender as TextBoxEx).Handle);
+            if (!GlobalVar.editFlag)
+            {
+                currTxt = new TextBoxEx();
+                if (sender is TextBoxEx)
+                {
+                    currTxt = sender as TextBoxEx;
+                }
+                mTitleChange = new TitleChange();
+                mTitleChange.Text = "写入单个变量";
+                mTitleChange.lblTitle.Text = "写入新的数值";
+                mTitleChange.txtTitle.Text = currTxt.Text;
+                mTitleChange.btnSave.Click += new EventHandler(WriteSingleValue);
+                mTitleChange.ShowDialog();
+            }
+        }
 
+        public void WriteSingleValue(object sender, EventArgs e)
+        {
+            int slaveIndex = currTxt.SlaveAddress;
+            ushort value = ushort.Parse(mTitleChange.txtTitle.Text);
+            mTitleChange.Close();
+            communicate.SendModbusData()
         }
 
         //鼠标按下
@@ -293,46 +316,59 @@ namespace WifiMonitor
         #region Lamp Options
         public void lamp_MouseDown(object sender, MouseEventArgs e)
         {
-            currLamp = new Lamp();
-            if (sender is Lamp)
+            if (GlobalVar.editFlag)
             {
-                currLamp = sender as Lamp;
-            }
-            //记下位置坐标
-            lampStart = Control.MousePosition;
-            lampLocat = currLamp.Location;
-            if (e.Button == MouseButtons.Right)
-            {
-                currLamp.ContextMenuStrip = contextMenuStripLamp;
-                contextMenuStripLamp.Show(MousePosition);
-            }
+                currLamp = new Lamp();
+                if (sender is Lamp)
+                {
+                    currLamp = sender as Lamp;
+                }
+                //记下位置坐标
+                lampStart = Control.MousePosition;
+                lampLocat = currLamp.Location;
+                if (e.Button == MouseButtons.Right)
+                {
+                    currLamp.ContextMenuStrip = contextMenuStripLamp;
+                    contextMenuStripLamp.Show(MousePosition);
+                }
+            }            
         }
 
         //drag to move
         public void lamp_MouseMove(object sender, MouseEventArgs e)
         {
-            Lamp lamp = new Lamp();
-            if (sender is Lamp)
+            if (GlobalVar.editFlag)
             {
-                lamp = sender as Lamp;
-            }
-            if (e.Button == MouseButtons.Left)
-            {
-                Point temp = Control.MousePosition;
-                lamp.Location = new Point(lampLocat.X + temp.X - lampStart.X, lampLocat.Y + temp.Y - lampStart.Y);
-            }
+                Lamp lamp = new Lamp();
+                if (sender is Lamp)
+                {
+                    lamp = sender as Lamp;
+                }
+                if (e.Button == MouseButtons.Left)
+                {
+                    Point temp = Control.MousePosition;
+                    lamp.Location = new Point(lampLocat.X + temp.X - lampStart.X, lampLocat.Y + temp.Y - lampStart.Y);
+                }
+            }            
         }
 
         //double click open edit form
         public void lamp_DoubleClick(object sender, EventArgs e)
         {
-            if (sender is Lamp)
+            if (GlobalVar.editFlag && sender is Lamp)
             {
-                currLamp = sender as Lamp;
+                currLamp = new Lamp();
+                if (sender is Lamp)
+                {
+                    currLamp = sender as Lamp;
+                }
                 mCurrLampEditForm = new LampEditForm();
                 mCurrLampEditForm.tbLampX.Text = currLamp.Location.X.ToString();
                 mCurrLampEditForm.tbLampY.Text = currLamp.Location.Y.ToString();
-                mCurrLampEditForm.buttonOk.Click += new EventHandler(LampEditbuttonOk_Click);               
+                mCurrLampEditForm.textBoxSlaveAddress.Text = currLamp.SlaveAddress.ToString();
+                mCurrLampEditForm.cbLampVar.SelectedIndex = currLamp.RelateVar;
+                mCurrLampEditForm.buttonOk.Click += new EventHandler(LampEditbuttonOk_Click);
+                mCurrLampEditForm.Show();
             }
         }
 
@@ -342,15 +378,8 @@ namespace WifiMonitor
             int posX = int.Parse(mCurrLampEditForm.tbLampX.Text);
             int posY = int.Parse(mCurrLampEditForm.tbLampY.Text);
             currLamp.Location = new Point(posX, posY);
-            try
-            {
-                //currLamp.onFlag = (int.Parse(receive) == 0) ? false : true;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("设置变量个数和实际读取个数不符，请点击启动按钮读取数据，重新检查后再关联。", "注意");
-                currLamp.onFlag = false;
-            }
+            currLamp.SlaveAddress = int.Parse(mCurrLampEditForm.textBoxSlaveAddress.Text);
+            currLamp.RelateVar = mCurrLampEditForm.cbLampVar.SelectedIndex;
             mCurrLampEditForm.Close();
         }
 
@@ -376,7 +405,7 @@ namespace WifiMonitor
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            ToolForm mToolForm = new ToolForm(this);
+            mToolForm = new ToolForm(this);
 
             if ((IniFile.ReadIniData("MainForm", "Width", null, GlobalVar.sIniPath) != "") && (IniFile.ReadIniData("MainForm", "Height", null, GlobalVar.sIniPath) != "")
                 &&(int.Parse(IniFile.ReadIniData("MainForm", "PosX", null, GlobalVar.sIniPath))!= 0)&&(int.Parse(IniFile.ReadIniData("MainForm", "PosY", null, GlobalVar.sIniPath))!=0))
@@ -394,6 +423,7 @@ namespace WifiMonitor
                 btnEdit.Enabled = false;//禁用编辑按钮
                 btnStart.Enabled = false; //编辑时禁止启动检测
                 btnSavEdit.Visible = true;
+                btnEditStop.Visible = true;
                 GlobalVar.editFlag = true;
                 mToolForm.Location = new Point(GlobalVar.nMainFormPosX + GlobalVar.nMainFormWidth + 12,GlobalVar.nMainFormPosY);
                 mToolForm.Show();
@@ -424,12 +454,12 @@ namespace WifiMonitor
             else
             {
                 this.btnEdit.Visible = true;
-                this.btnSavEdit.Visible = true;
                 this.btnConnectionList.Visible = false;
                 this.timerRefesh.Enabled = false;
                 try
                 {
                     communicate.StopCommunication();
+                    mConnectionForm.Close();
                 }
                 catch (Exception ex)
                 {
@@ -473,8 +503,7 @@ namespace WifiMonitor
             
             if (GlobalVar.runningFlag)
             {
-                 //CommThd.Abort();
-                 GlobalVar.runningFlag = false;
+                btnStart.PerformClick();
             }
 
             this.Dispose();  
@@ -554,7 +583,8 @@ namespace WifiMonitor
                         IniFile.WriteIniData(lampNot, "PosX", ctrl.Location.X.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "LampID", ctrl.Name, GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "RelateVar", (ctrl as Lamp).onFlag.ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "SlaveAddress", ((Lamp)ctrl).SlaveAddress.ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "RelateVar", ((Lamp)ctrl).RelateVar.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath);
 
                         lampIndex++;
@@ -565,15 +595,13 @@ namespace WifiMonitor
                 tabIndex++;//标签页索引
             }
 
-            IniFile.WriteIniData("LabelProperty", "LabelNum", (labelIndex - 1).ToString(), GlobalVar.sIniPath); //标签总数
             IniFile.WriteIniData("TabProperty", "TabPageCount", this.tabControl.TabCount.ToString(), GlobalVar.sIniPath); //标签页总数
-            IniFile.WriteIniData("TextBoxProperty", "TextBoxNum", (txtIndex - 1).ToString(), GlobalVar.sIniPath); //当前TextBox控件的个数
-            IniFile.WriteIniData("LampProperty", "LampNum", (lampIndex -1).ToString(), GlobalVar.sIniPath);
         }
 
         //Monitor connection
         private void btnConnectionList_Click(object sender, EventArgs e)
         {
+            mConnectionForm.Location = new Point(GlobalVar.nMainFormPosX, GlobalVar.nMainFormPosY + GlobalVar.nMainFormHeight + 12);
             mConnectionForm.Show();
         }
 
@@ -590,25 +618,29 @@ namespace WifiMonitor
                 {
                     foreach (var module in communicate.moduleList)
                     {
-                         if (ctrl is TextBoxEx) //Updata textbox data
+                         if (ctrl is TextBoxEx) //Updata textbox data (number)
                          {
                             TextBoxEx textBox = ctrl as TextBoxEx;
                             if (textBox.SlaveAddress == module.slaveIndex)
                             {
                                 if (textBox.MbInterface == ModbusInterface.HoldingRegister)
                                 {
-                                    textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
+                                    textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
                                 }
                                 if (textBox.MbInterface == ModbusInterface.InputRegister)
                                 {
-                                    textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
+                                    textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
                                 }
                             }                            
                         }
                         
-                        if (ctrl is Lamp) //Update lamp data
+                        if (ctrl is Lamp) //Update lamp data (switch)
                         {
-                            //Adding bit data here
+                            Lamp lamp = ctrl as Lamp;
+                            if (lamp.SlaveAddress == module.slaveIndex)
+                            {
+                                lamp.onFlag = module.DataCoil[lamp.RelateVar];
+                            }
                         }                    
                     }                                   
                 }
@@ -735,21 +767,16 @@ namespace WifiMonitor
                     string tempLampID = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "LampID", "NoItem");
                     int tempPosX = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosX", "NoItem"));
                     int tempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
-                    bool tempLampVar = bool.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "False"));
+                    int tempLampVar = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "NoItem"));
+                    int tempSlaveAddress = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "SlaveAddress", "NoItem"));
                     int tempAdscription = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Adscription", "NoItem"));
 
                     Lamp lamp = new Lamp();
                     lamp.Location = new Point(tempPosX, tempPosY);
                     lamp.Name = tempLampID;
-                    lamp.onFlag = tempLampVar;
-                    try
-                    {
-                        //lamp.onFlag = GlobalVar.RcvCmdLst[]
-                    }
-                    catch (Exception)
-                    {
-                        
-                    }
+                    lamp.RelateVar = tempLampVar;
+                    lamp.SlaveAddress = tempSlaveAddress;
+                    
                     //lamp.Click += new EventHandler(lamp_Click);
                     lamp.DoubleClick += new EventHandler(lamp_DoubleClick);
                     lamp.MouseDown += new MouseEventHandler(lamp_MouseDown);
@@ -764,6 +791,16 @@ namespace WifiMonitor
             this.Width = GlobalVar.nMainFormWidth;
             this.Height = GlobalVar.nMainFormHeight;
             this.Text = GlobalVar.sMainFormTitle;
+        }
+
+        private void btnEditStop_Click(object sender, EventArgs e)
+        {
+            GlobalVar.editFlag = false;
+            btnEdit.Enabled = true;//启用编辑按钮
+            btnStart.Enabled = true; //启用启动按钮
+            btnSavEdit.Visible = false; //隐藏保存按钮
+            btnEditStop.Visible = false;
+            mToolForm.Close();
         }
     }
 }

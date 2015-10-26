@@ -36,8 +36,6 @@
             this.ItemDelLbl = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripTxt = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ItemDelTxt = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.修改数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.contextMenuStripLamp = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -45,6 +43,7 @@
             this.labelInfo = new System.Windows.Forms.Label();
             this.btnConnectionList = new System.Windows.Forms.Button();
             this.timerRefesh = new System.Windows.Forms.Timer(this.components);
+            this.btnEditStop = new System.Windows.Forms.Button();
             this.contextMenuStripLbl.SuspendLayout();
             this.contextMenuStripTxt.SuspendLayout();
             this.contextMenuStripLamp.SuspendLayout();
@@ -65,7 +64,7 @@
             // btnSavEdit
             // 
             this.btnSavEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSavEdit.Location = new System.Drawing.Point(82, 328);
+            this.btnSavEdit.Location = new System.Drawing.Point(161, 328);
             this.btnSavEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSavEdit.Name = "btnSavEdit";
             this.btnSavEdit.Size = new System.Drawing.Size(65, 27);
@@ -92,11 +91,9 @@
             // contextMenuStripTxt
             // 
             this.contextMenuStripTxt.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ItemDelTxt,
-            this.toolStripMenuItem1,
-            this.修改数据ToolStripMenuItem});
+            this.ItemDelTxt});
             this.contextMenuStripTxt.Name = "contextMenuStripLbl";
-            this.contextMenuStripTxt.Size = new System.Drawing.Size(137, 54);
+            this.contextMenuStripTxt.Size = new System.Drawing.Size(137, 26);
             // 
             // ItemDelTxt
             // 
@@ -104,17 +101,6 @@
             this.ItemDelTxt.Size = new System.Drawing.Size(136, 22);
             this.ItemDelTxt.Text = "删除文本框";
             this.ItemDelTxt.Click += new System.EventHandler(this.ItemDelTxt_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(133, 6);
-            // 
-            // 修改数据ToolStripMenuItem
-            // 
-            this.修改数据ToolStripMenuItem.Name = "修改数据ToolStripMenuItem";
-            this.修改数据ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.修改数据ToolStripMenuItem.Text = "修改数据";
             // 
             // btnStart
             // 
@@ -126,7 +112,7 @@
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(87, 27);
             this.btnStart.TabIndex = 2;
-            this.btnStart.Text = "启动";
+            this.btnStart.Text = "开始(&S)";
             this.btnStart.UseVisualStyleBackColor = false;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
@@ -183,18 +169,32 @@
             this.timerRefesh.Interval = 600;
             this.timerRefesh.Tick += new System.EventHandler(this.timerRefesh_Tick);
             // 
+            // btnEditStop
+            // 
+            this.btnEditStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnEditStop.Location = new System.Drawing.Point(82, 328);
+            this.btnEditStop.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnEditStop.Name = "btnEditStop";
+            this.btnEditStop.Size = new System.Drawing.Size(73, 27);
+            this.btnEditStop.TabIndex = 7;
+            this.btnEditStop.Text = "停止编辑";
+            this.btnEditStop.UseVisualStyleBackColor = true;
+            this.btnEditStop.Visible = false;
+            this.btnEditStop.Click += new System.EventHandler(this.btnEditStop_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(566, 359);
+            this.Controls.Add(this.btnEditStop);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnConnectionList);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.btnSavEdit);
             this.Controls.Add(this.labelInfo);
+            this.Controls.Add(this.btnSavEdit);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -228,11 +228,10 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStripLamp;
         private System.Windows.Forms.ToolStripMenuItem DelLampToolStripMenuItem;
         public System.Windows.Forms.Label labelInfo;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem 修改数据ToolStripMenuItem;
         private System.Windows.Forms.Button btnConnectionList;
         public System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Timer timerRefesh;
+        protected System.Windows.Forms.Button btnEditStop;
 
     }
 }

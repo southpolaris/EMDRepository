@@ -47,7 +47,7 @@
             // 
             // btnAddLbl
             // 
-            this.btnAddLbl.Location = new System.Drawing.Point(10, 40);
+            this.btnAddLbl.Location = new System.Drawing.Point(10, 35);
             this.btnAddLbl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddLbl.Name = "btnAddLbl";
             this.btnAddLbl.Size = new System.Drawing.Size(148, 29);
@@ -76,7 +76,7 @@
             // 
             // btnAddText
             // 
-            this.btnAddText.Location = new System.Drawing.Point(10, 124);
+            this.btnAddText.Location = new System.Drawing.Point(10, 120);
             this.btnAddText.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddText.Name = "btnAddText";
             this.btnAddText.Size = new System.Drawing.Size(148, 30);
@@ -96,7 +96,7 @@
             // 
             // btnAddLamp
             // 
-            this.btnAddLamp.Location = new System.Drawing.Point(10, 214);
+            this.btnAddLamp.Location = new System.Drawing.Point(10, 211);
             this.btnAddLamp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddLamp.Name = "btnAddLamp";
             this.btnAddLamp.Size = new System.Drawing.Size(148, 31);
@@ -107,7 +107,7 @@
             // 
             // btnCreateTab
             // 
-            this.btnCreateTab.Location = new System.Drawing.Point(10, 402);
+            this.btnCreateTab.Location = new System.Drawing.Point(10, 327);
             this.btnCreateTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCreateTab.Name = "btnCreateTab";
             this.btnCreateTab.Size = new System.Drawing.Size(148, 32);
@@ -154,7 +154,7 @@
             // 
             // btnRemoveTab
             // 
-            this.btnRemoveTab.Location = new System.Drawing.Point(10, 442);
+            this.btnRemoveTab.Location = new System.Drawing.Point(10, 367);
             this.btnRemoveTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRemoveTab.Name = "btnRemoveTab";
             this.btnRemoveTab.Size = new System.Drawing.Size(148, 33);
@@ -165,7 +165,7 @@
             // 
             // btnChangeTabName
             // 
-            this.btnChangeTabName.Location = new System.Drawing.Point(10, 361);
+            this.btnChangeTabName.Location = new System.Drawing.Point(10, 286);
             this.btnChangeTabName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnChangeTabName.Name = "btnChangeTabName";
             this.btnChangeTabName.Size = new System.Drawing.Size(148, 33);
@@ -196,7 +196,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(168, 479);
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ClientSize = new System.Drawing.Size(168, 443);
+            this.ControlBox = false;
             this.Controls.Add(this.numLamp);
             this.Controls.Add(this.btnChangeTabName);
             this.Controls.Add(this.btnRemoveTab);
@@ -215,6 +217,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ToolForm";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "工具箱";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ToolForm_FormClosed);

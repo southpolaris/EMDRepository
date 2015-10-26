@@ -40,14 +40,21 @@ namespace WifiMonitor
                 dataGridView1.Rows.Clear();
                 if (communicate.moduleList.Count != 0)
                 {
-                    foreach (var slave in communicate.moduleList)
+                    try
                     {
-                        index = dataGridView1.Rows.Add();
-                        dataGridView1.Rows[index].Cells[0].Value = System.DateTime.Now;
-                        dataGridView1.Rows[index].Cells[1].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[0];
-                        dataGridView1.Rows[index].Cells[2].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[1];
-                        dataGridView1.Rows[index].Cells[3].Value = slave.modbusStatus;
+                        foreach (var slave in communicate.moduleList)
+                        {
+                            index = dataGridView1.Rows.Add();
+                            dataGridView1.Rows[index].Cells[0].Value = System.DateTime.Now;
+                            dataGridView1.Rows[index].Cells[1].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[0];
+                            dataGridView1.Rows[index].Cells[2].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[1];
+                            dataGridView1.Rows[index].Cells[3].Value = slave.modbusStatus;
+                        }
                     }
+                    catch (Exception)
+                    {
+                        throw;
+                    }                    
                 }
             }
                

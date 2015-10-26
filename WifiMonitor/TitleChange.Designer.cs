@@ -36,20 +36,21 @@
             // 
             // txtTitle
             // 
-            this.txtTitle.Location = new System.Drawing.Point(108, 38);
+            this.txtTitle.Location = new System.Drawing.Point(133, 38);
             this.txtTitle.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(189, 23);
+            this.txtTitle.Size = new System.Drawing.Size(164, 23);
             this.txtTitle.TabIndex = 0;
             // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
-            this.lblTitle.Location = new System.Drawing.Point(40, 44);
+            this.lblTitle.Location = new System.Drawing.Point(43, 41);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(56, 17);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "新名称：";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // btnSave
             // 
@@ -71,7 +72,7 @@
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtTitle);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
@@ -88,7 +89,7 @@
         #endregion
 
         public System.Windows.Forms.TextBox txtTitle;
-        private System.Windows.Forms.Label lblTitle;
         public System.Windows.Forms.Button btnSave;
+        public System.Windows.Forms.Label lblTitle;
     }
 }

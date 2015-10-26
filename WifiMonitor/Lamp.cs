@@ -13,18 +13,12 @@ namespace WifiMonitor
         public Lamp()
         {
             InitializeComponent();
-            powerOn = false;
-        }
-
-        public Lamp(IContainer container)
-        {
-            container.Add(this);
-            powerOn = false;
-            InitializeComponent();
+            onFlag = false;
         }
 
         private bool powerOn;
-        public int RelateVar; //当前关联项
+        private int relateVar; //当前关联项
+        private int slaveAddress;
         
         /// <summary>
         /// 指示灯亮灭属性
@@ -47,5 +41,15 @@ namespace WifiMonitor
             get { return this.powerOn; }
         }
 
+        public int SlaveAddress
+        {
+            set { this.slaveAddress = value; }
+            get { return this.slaveAddress; }
+        }
+        public int RelateVar
+        {
+            set { this.relateVar = value; }
+            get { return this.relateVar; }
+        }
     }
 }
