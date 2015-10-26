@@ -25,7 +25,5 @@ namespace WifiMonitor
         public static bool runningFlag = false;
         //编辑 标志位
         public static bool editFlag = false;
-        //写入 标志位
-        public static bool writeFlag = false;
     }
 }

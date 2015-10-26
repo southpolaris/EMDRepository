@@ -68,7 +68,7 @@ namespace WifiMonitor
                 ModbusSlave module = new ModbusSlave(tcpClient);
                 moduleList.Add(module);
                 OnConnectionChange();
-                Thread communicateThread = new Thread(GetModbusData);            
+                Thread communicateThread = new Thread(GetModbusData);                              
                 communicateThread.Start(module);
             }
         }
@@ -93,17 +93,18 @@ namespace WifiMonitor
                 }
                 try
                 {
+                    module._mutex.WaitOne();
                     successFlag = module.SendFc1((byte)1, (ushort)0, (ushort)0x0a);
                     Thread.Sleep(120);
                     successFlag = module.SendFc4((byte)1, (ushort)0, (ushort)0x0a);
                     Thread.Sleep(120); //3.5 times interval to start next modbus message (4.00910405ms for baud rate 9600)
                     successFlag = module.SendFc3((byte)1, (ushort)0, (ushort)0x0a);
+                    module._mutex.ReleaseMutex();
                     Thread.Sleep(120); //3.5 times interval to start next modbus message
                     
                 }
                 catch (Exception ex)
                 {
-
                     if (fWaiting)
                     {
                         RemoveModule(module);
@@ -114,13 +115,20 @@ namespace WifiMonitor
             }
         }
 
-        public void SendModbusData(ModbusSlave module, ushort registerAddress, ushort value)
+        public void SendModbusData(int slaveIndex, ushort registerAddress, ushort value)
         {
-            bool successFlag = false;
-            while (successFlag)
+            foreach (ModbusSlave module in moduleList)
             {
-                successFlag = module.SendFc6((byte)1, registerAddress, value);
-                GlobalVar.writeFlag = false;
+                if (module.slaveIndex == slaveIndex)
+                {
+                    bool successFlag = false;
+                    while (!successFlag)
+                    {
+                        module._mutex.WaitOne();
+                        successFlag = module.SendFc6((byte)1, registerAddress, value);
+                        module._mutex.ReleaseMutex();
+                    }                               
+                }
             }            
         }
 
@@ -128,6 +136,7 @@ namespace WifiMonitor
         {
             moduleList.Remove(module);
             module.Close();
+            
             OnConnectionChange();
         }
 

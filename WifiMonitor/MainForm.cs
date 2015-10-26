@@ -16,8 +16,8 @@ namespace WifiMonitor
 
         #region 参数定义
         //鼠标拖动标签时标签位置
-        Point lblStart;
-        Point lblLocat;
+        private Point lblStart;
+        private Point lblLocat;
 
         //当前编辑标签及其编辑框
         Label currLbl;
@@ -39,9 +39,7 @@ namespace WifiMonitor
         Lamp currLamp;
         LampEditForm mCurrLampEditForm;
 
-        //标题栏弹出编辑框
         TitleChange mTitleChange;
-
         ConnectionForm mConnectionForm;
         ToolForm mToolForm;
 
@@ -177,19 +175,22 @@ namespace WifiMonitor
         public void txt_Click(object sender, EventArgs e)
         {
             HideCaret((sender as TextBoxEx).Handle);
-            if (!GlobalVar.editFlag)
+            if (GlobalVar.runningFlag)
             {
                 currTxt = new TextBoxEx();
                 if (sender is TextBoxEx)
                 {
                     currTxt = sender as TextBoxEx;
-                }
-                mTitleChange = new TitleChange();
-                mTitleChange.Text = "写入单个变量";
-                mTitleChange.lblTitle.Text = "写入新的数值";
-                mTitleChange.txtTitle.Text = currTxt.Text;
-                mTitleChange.btnSave.Click += new EventHandler(WriteSingleValue);
-                mTitleChange.ShowDialog();
+                    if (!currTxt.ReadOnly)
+                    {
+                        mTitleChange = new TitleChange();
+                        mTitleChange.Text = "写入单个变量";
+                        mTitleChange.lblTitle.Text = "写入新的数值";
+                        mTitleChange.txtTitle.Text = currTxt.Text;
+                        mTitleChange.btnSave.Click += new EventHandler(WriteSingleValue);
+                        mTitleChange.ShowDialog();
+                    }                    
+                }                
             }
         }
 
@@ -198,7 +199,7 @@ namespace WifiMonitor
             int slaveIndex = currTxt.SlaveAddress;
             ushort value = ushort.Parse(mTitleChange.txtTitle.Text);
             mTitleChange.Close();
-            communicate.SendModbusData()
+            communicate.SendModbusData(currTxt.SlaveAddress, (ushort)currTxt.RelateVar, ushort.Parse(mTitleChange.txtTitle.Text));
         }
 
         //鼠标按下

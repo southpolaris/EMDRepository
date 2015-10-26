@@ -33,3 +33,7 @@ Not compelement:
 
 2015.10.24 ver0.6
 Add function code 1 and complete lamp display code, now can read coils of modbusslave.
+
+
+2015.10.26 ver0.61
+Impelement single register write function (function code 16), add to wifi monitor.

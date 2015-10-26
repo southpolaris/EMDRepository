@@ -19,7 +19,7 @@ namespace WifiMonitor
         public string modbusStatus;
         public ushort slaveIndex;
 
-     /*   AutoResetEvent writeEvent = new AutoResetEvent();*/
+        public Mutex _mutex = new Mutex();
 
         public ushort pendingWrite = 0;   // 写入输出寄存器缓存区（无符号16位）
 

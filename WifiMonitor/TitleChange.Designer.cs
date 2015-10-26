@@ -36,7 +36,7 @@
             // 
             // txtTitle
             // 
-            this.txtTitle.Location = new System.Drawing.Point(133, 38);
+            this.txtTitle.Location = new System.Drawing.Point(133, 29);
             this.txtTitle.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTitle.Name = "txtTitle";
             this.txtTitle.Size = new System.Drawing.Size(164, 23);
@@ -45,7 +45,7 @@
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
-            this.lblTitle.Location = new System.Drawing.Point(43, 41);
+            this.lblTitle.Location = new System.Drawing.Point(27, 32);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(56, 17);
             this.lblTitle.TabIndex = 1;
@@ -54,10 +54,10 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(210, 96);
+            this.btnSave.Location = new System.Drawing.Point(210, 74);
             this.btnSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(87, 27);
+            this.btnSave.Size = new System.Drawing.Size(87, 29);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "确认";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -67,7 +67,7 @@
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(331, 136);
+            this.ClientSize = new System.Drawing.Size(331, 121);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtTitle);
