@@ -37,3 +37,11 @@ Add function code 1 and complete lamp display code, now can read coils of modbus
 
 2015.10.26 ver0.61
 Impelement single register write function (function code 16), add to wifi monitor.
+
+2015.10.27 ver0.62
+Pass double MCGS tests for 16bits unsigned number read and write, maybe some problems exists in TCP connection.
+
+Things need to do：
+modbus浮点数手法协议
+写入数据有时会使界面卡死。需要优化，独立线程或增加次数判断。
+界面优化，是否可以标签透明或自动更改长度

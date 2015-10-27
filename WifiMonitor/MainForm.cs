@@ -197,9 +197,16 @@ namespace WifiMonitor
         public void WriteSingleValue(object sender, EventArgs e)
         {
             int slaveIndex = currTxt.SlaveAddress;
-            ushort value = ushort.Parse(mTitleChange.txtTitle.Text);
-            mTitleChange.Close();
-            communicate.SendModbusData(currTxt.SlaveAddress, (ushort)currTxt.RelateVar, ushort.Parse(mTitleChange.txtTitle.Text));
+            try
+            {
+                ushort value = ushort.Parse(mTitleChange.txtTitle.Text);
+                mTitleChange.Close();
+                communicate.SendModbusData(currTxt.SlaveAddress, (ushort)currTxt.RelateVar, ushort.Parse(mTitleChange.txtTitle.Text));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("输入的值无效或超过65536");
+            }            
         }
 
         //鼠标按下
@@ -441,8 +448,8 @@ namespace WifiMonitor
                 this.timerRefesh.Enabled = true;
                 try
                 {
-                    communicate.StartServer();
                     mConnectionForm = new ConnectionForm(this);
+                    communicate.StartServer();
                 }
                 catch (Exception ex)
                 {
@@ -460,7 +467,7 @@ namespace WifiMonitor
                 try
                 {
                     communicate.StopCommunication();
-                    mConnectionForm.Close();
+                    mConnectionForm.Dispose();
                 }
                 catch (Exception ex)
                 {

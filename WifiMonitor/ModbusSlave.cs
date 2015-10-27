@@ -30,10 +30,17 @@ namespace WifiMonitor
         public ModbusSlave(TcpClient tcpClient)
         {
             client = tcpClient;
-            ns = client.GetStream();    
+            ns = client.GetStream();
+            ns.ReadTimeout = 10000;
+            ns.WriteTimeout = 10000;
             br = new BinaryReader(ns);
             bw = new BinaryWriter(ns);
             slaveIndex = ushort.Parse(client.Client.RemoteEndPoint.ToString().Split('.')[3].Split(':')[0]);
+        }
+
+        public bool IsOnline(TcpClient tcpClient)
+        {
+            return !((tcpClient.Client.Poll(10000, SelectMode.SelectRead) && tcpClient.Client.Available == 0) || !tcpClient.Client.Connected);
         }
 
         public void Close()

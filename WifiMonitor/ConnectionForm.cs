@@ -21,8 +21,37 @@ namespace WifiMonitor
         public ConnectionForm(MainForm parent)
         {
             InitializeComponent();
+            InitialDataGridView();
             mMainForm = parent as MainForm;
             mMainForm.communicate.connectionChange += new ConnectionEventHandler(updateList);
+        }
+
+        public void InitialDataGridView()
+        {
+            dataGridView.Rows.Clear();
+            dataGridView.Columns.Clear();
+
+            DataGridViewCell textCell = new DataGridViewTextBoxCell();
+            DataGridViewColumn timeColumn = new DataGridViewColumn();
+            timeColumn.HeaderText = "记录时间";
+            timeColumn.Width = 160;
+            timeColumn.CellTemplate = textCell;
+            DataGridViewColumn ipColumn = new DataGridViewColumn();
+            ipColumn.HeaderText = "IP地址";
+            ipColumn.Width = 120;
+            ipColumn.CellTemplate = textCell;
+            DataGridViewColumn portColumn = new DataGridViewColumn();
+            portColumn.HeaderText = "端口号";
+            portColumn.Width = 80;
+            portColumn.CellTemplate = textCell;
+            DataGridViewColumn statusColumn = new DataGridViewColumn();
+            statusColumn.HeaderText = "工作状态";
+            statusColumn.Width = 180;
+            statusColumn.CellTemplate = textCell;
+            dataGridView.Columns.Add(timeColumn);
+            dataGridView.Columns.Add(ipColumn);
+            dataGridView.Columns.Add(portColumn);
+            dataGridView.Columns.Add(statusColumn);
         }
 
         public delegate void UpdateDataGridView(object sender, EventArgs e);
@@ -37,18 +66,19 @@ namespace WifiMonitor
             }
             else
             {
-                dataGridView1.Rows.Clear();
+                InitialDataGridView();
+
                 if (communicate.moduleList.Count != 0)
                 {
                     try
                     {
                         foreach (var slave in communicate.moduleList)
                         {
-                            index = dataGridView1.Rows.Add();
-                            dataGridView1.Rows[index].Cells[0].Value = System.DateTime.Now;
-                            dataGridView1.Rows[index].Cells[1].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[0];
-                            dataGridView1.Rows[index].Cells[2].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[1];
-                            dataGridView1.Rows[index].Cells[3].Value = slave.modbusStatus;
+                            index = dataGridView.Rows.Add();
+                            dataGridView.Rows[index].Cells[0].Value = System.DateTime.Now;
+                            dataGridView.Rows[index].Cells[1].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[0];
+                            dataGridView.Rows[index].Cells[2].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[1];
+                            dataGridView.Rows[index].Cells[3].Value = slave.modbusStatus;
                         }
                     }
                     catch (Exception)
