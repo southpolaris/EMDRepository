@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace WifiMonitor
 {
-    public delegate void ConnectionEventHandler(object sender, EventArgs e); //连接信息改变
     public partial class ConnectionForm : Form
     {
         private MainForm mMainForm;

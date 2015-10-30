@@ -41,7 +41,13 @@ Impelement single register write function (function code 16), add to wifi monito
 2015.10.27 ver0.62
 Pass double MCGS tests for 16bits unsigned number read and write, maybe some problems exists in TCP connection.
 
+2015.10.30 ver0.7
+Add support to 32bit integer and single float number read and write.
+Problems
+thread syncronazition, need optimize in efficiency.
+not test fc2 and write coil because of not finish mcgs problem.
+
+
+
 Things need to do：
-modbus浮点数手法协议
-写入数据有时会使界面卡死。需要优化，独立线程或增加次数判断。
 界面优化，是否可以标签透明或自动更改长度

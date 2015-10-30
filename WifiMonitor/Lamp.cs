@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace WifiMonitor
@@ -17,6 +12,7 @@ namespace WifiMonitor
         }
 
         private bool powerOn;
+        private bool readOnly;
         private int relateVar; //当前关联项
         private int slaveAddress;
         
@@ -29,13 +25,19 @@ namespace WifiMonitor
             set 
             { 
                 this.powerOn = value;
-                if (powerOn == true)
+                if (powerOn)
                 {
-                    this.Image = Properties.Resources.lampon;
+                    if (readOnly)
+                        this.Image = Properties.Resources.lampon;
+                    else
+                        this.Image = Properties.Resources.buttonDown;
                 }
                 else
                 {
-                    this.Image = Properties.Resources.lampoff;
+                    if (readOnly)
+                        this.Image = Properties.Resources.lampoff;
+                    else
+                        this.Image = Properties.Resources.buttonUp;
                 }
             }
             get { return this.powerOn; }
@@ -50,6 +52,22 @@ namespace WifiMonitor
         {
             set { this.relateVar = value; }
             get { return this.relateVar; }
+        }
+        public bool ReadOnly
+        {
+            set
+            { 
+                this.readOnly = value;
+                if (readOnly)
+                {
+                    this.Image = Properties.Resources.lampoff;
+                }
+                else
+                {
+                    this.Image = Properties.Resources.buttonUp;
+                }
+            }
+            get { return this.readOnly; }
         }
     }
 }

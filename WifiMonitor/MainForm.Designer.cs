@@ -42,7 +42,6 @@
             this.DelLampToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelInfo = new System.Windows.Forms.Label();
             this.btnConnectionList = new System.Windows.Forms.Button();
-            this.timerRefesh = new System.Windows.Forms.Timer(this.components);
             this.btnEditStop = new System.Windows.Forms.Button();
             this.contextMenuStripLbl.SuspendLayout();
             this.contextMenuStripTxt.SuspendLayout();
@@ -164,11 +163,6 @@
             this.btnConnectionList.Visible = false;
             this.btnConnectionList.Click += new System.EventHandler(this.btnConnectionList_Click);
             // 
-            // timerRefesh
-            // 
-            this.timerRefesh.Interval = 600;
-            this.timerRefesh.Tick += new System.EventHandler(this.timerRefesh_Tick);
-            // 
             // btnEditStop
             // 
             this.btnEditStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -198,7 +192,6 @@
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.ShowIcon = false;
@@ -230,7 +223,6 @@
         public System.Windows.Forms.Label labelInfo;
         private System.Windows.Forms.Button btnConnectionList;
         public System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Timer timerRefesh;
         protected System.Windows.Forms.Button btnEditStop;
 
     }

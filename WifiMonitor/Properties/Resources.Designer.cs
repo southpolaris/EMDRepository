@@ -67,6 +67,20 @@ namespace WifiMonitor.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap buttonDown {
+            get {
+                object obj = ResourceManager.GetObject("buttonDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap buttonUp {
+            get {
+                object obj = ResourceManager.GetObject("buttonUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap lampoff {
             get {
                 object obj = ResourceManager.GetObject("lampoff", resourceCulture);

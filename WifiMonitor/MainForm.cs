@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections; //ArrayList
 using System.Drawing;
-using System.IO.Ports;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading; //用于创建线程
 using System.Windows.Forms;
 
 namespace WifiMonitor
@@ -51,8 +47,7 @@ namespace WifiMonitor
 
         public MainForm()
         {          
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
 
         //重写标题栏双击事件
@@ -78,7 +73,7 @@ namespace WifiMonitor
             }           
         }
 
-        public void mTitleChange_btnSave_Click(object sender, EventArgs e)
+        private void mTitleChange_btnSave_Click(object sender, EventArgs e)
         {
             IniFile.WriteIniData("MainForm", "Title", mTitleChange.txtTitle.Text, GlobalVar.sIniPath);
             GlobalVar.sMainFormTitle = mTitleChange.txtTitle.Text;
@@ -87,11 +82,6 @@ namespace WifiMonitor
         }
 
         #region Label options
-        //标签单击事件
-        public void lbl_Click(object sender, EventArgs e)
-        {
-
-        }
 
         //鼠标按下
         public void lbl_MouseDown(object sender, MouseEventArgs e)
@@ -172,7 +162,7 @@ namespace WifiMonitor
 
         #region TextBox Options
         //文本单击事件
-        public void txt_Click(object sender, EventArgs e)
+        public void Text_Click(object sender, EventArgs e)
         {
             HideCaret((sender as TextBoxEx).Handle);
             if (GlobalVar.runningFlag)
@@ -184,33 +174,58 @@ namespace WifiMonitor
                     if (!currTxt.ReadOnly)
                     {
                         mTitleChange = new TitleChange();
-                        mTitleChange.Text = "写入单个变量";
-                        mTitleChange.lblTitle.Text = "写入新的数值";
+                        mTitleChange.Text = "保持寄存器——数值量写入";
                         mTitleChange.txtTitle.Text = currTxt.Text;
-                        mTitleChange.btnSave.Click += new EventHandler(WriteSingleValue);
+                        if (currTxt.MbDataType == ModbusDataType.SignedInt)
+                        {
+                            mTitleChange.btnSave.Click += new EventHandler(WriteInt);
+                            mTitleChange.lblTitle.Text = "写入32位整形：";
+                        }
+                        else if (currTxt.MbDataType == ModbusDataType.Float)
+                        {
+                            mTitleChange.btnSave.Click += new EventHandler(WriteFloat);
+                            mTitleChange.lblTitle.Text = "写入浮点数：";
+                        }
                         mTitleChange.ShowDialog();
                     }                    
                 }                
             }
         }
 
-        public void WriteSingleValue(object sender, EventArgs e)
+        void WriteFloat(object sender, EventArgs e)
         {
             int slaveIndex = currTxt.SlaveAddress;
-            try
+            float pendingWrite;
+            if (Single.TryParse(mTitleChange.txtTitle.Text, out pendingWrite))
             {
-                ushort value = ushort.Parse(mTitleChange.txtTitle.Text);
                 mTitleChange.Close();
-                communicate.SendModbusData(currTxt.SlaveAddress, (ushort)currTxt.RelateVar, ushort.Parse(mTitleChange.txtTitle.Text));
+                communicate.SendModbusData(currTxt.SlaveAddress, (ushort)(currTxt.RelateVar * 2 + 40), pendingWrite);
             }
-            catch (Exception)
+            else
             {
-                MessageBox.Show("输入的值无效或超过65536");
-            }            
+                mTitleChange.Close();
+                MessageBox.Show("输入的值无效");
+            }
+        }
+
+        public void WriteInt(object sender, EventArgs e)
+        {
+            int slaveIndex = currTxt.SlaveAddress;
+            int pendingWrite;
+            if (Int32.TryParse(mTitleChange.txtTitle.Text, out pendingWrite))
+            {
+                mTitleChange.Close();
+                communicate.SendModbusData(currTxt.SlaveAddress, (ushort)(currTxt.RelateVar * 2), pendingWrite);
+            }
+            else
+            {
+                mTitleChange.Close();
+                MessageBox.Show("输入的值无效");
+            }           
         }
 
         //鼠标按下
-        public void txt_MouseDown(object sender, MouseEventArgs e)
+        public void Text_MouseDown(object sender, MouseEventArgs e)
         {
             HideCaret((sender as TextBoxEx).Handle);//取消光标显示
             if (GlobalVar.editFlag)
@@ -233,7 +248,7 @@ namespace WifiMonitor
         }
 
         //鼠标拖动 实时改变控件坐标
-        public void txt_MouseMove(object sender, MouseEventArgs e)
+        public void Text_MouseMove(object sender, MouseEventArgs e)
         {
             if (GlobalVar.editFlag)
             {
@@ -252,7 +267,7 @@ namespace WifiMonitor
         }
 
         //打开文本框编辑对话框
-        public void txt_DoubleClick(object sender, EventArgs e)
+        public void Text_DoubleClick(object sender, EventArgs e)
         {
             if (GlobalVar.editFlag)
             {
@@ -278,6 +293,21 @@ namespace WifiMonitor
                         default:
                             break;
                     }
+                    switch (currTxt.MbDataType)
+                    {
+                        //case ModbusDataType.UnsignedShort:
+                        //    mCurrTxtEditForm.cbDataType.SelectedIndex = 0;
+                        //    break;
+                        case ModbusDataType.SignedInt:
+                            mCurrTxtEditForm.cbDataType.SelectedIndex = 0;
+                            break;
+                        case ModbusDataType.Float:
+                            mCurrTxtEditForm.cbDataType.SelectedIndex = 1;
+                            break;
+                        default:
+                            mCurrTxtEditForm.cbDataType.SelectedIndex = 0;
+                            break;
+                    }
                     mCurrTxtEditForm.cbbTxtVar.SelectedIndex = currTxt.RelateVar;
 
                     mCurrTxtEditForm.Show();
@@ -296,11 +326,12 @@ namespace WifiMonitor
             {               
                 currTxt.RelateVar = int.Parse(mCurrTxtEditForm.cbbTxtVar.SelectedIndex.ToString());//将该文本框关联的变量标号赋给该文本框属性
                 currTxt.MbInterface = mCurrTxtEditForm.modbusInterface;  //变量通道
+                currTxt.MbDataType = mCurrTxtEditForm.modbusDataType;  //变量类型
                 currTxt.SlaveAddress = int.Parse(mCurrTxtEditForm.txtSlaveAddress.Text); //modbus slave 对应 id
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
-                MessageBox.Show("请完整设置从站地址、变量位置、变量通道。", "注意");  
+                MessageBox.Show("请完整设置从站地址、变量位置、变量通道和变量类型。", "注意");  
                 currTxt.Text = "";
                 currTxt.RelateVar = 0;//将该文本框关联的变量标号赋给该文本框属性
             }
@@ -315,14 +346,33 @@ namespace WifiMonitor
         }
 
         //取消光标显示
-        public void txt_GotFocus(object sender, EventArgs e)
+        public void Text_GotFocus(object sender, EventArgs e)
         {
             HideCaret((sender as TextBox).Handle);
         }
         #endregion 添加文本部分
 
         #region Lamp Options
-        public void lamp_MouseDown(object sender, MouseEventArgs e)
+        public void Lamp_Click(object sender, EventArgs e)
+        {
+            if (GlobalVar.runningFlag)
+            {
+                currLamp = new Lamp();
+                if (sender is Lamp)
+                {
+                    currLamp = sender as Lamp;
+                    if (!currLamp.ReadOnly)
+                    {
+                        currLamp.onFlag = !currLamp.onFlag;
+                        int slaveIndex = currLamp.SlaveAddress;
+                        UseWaitCursor = true;
+                        communicate.SendModbusData(slaveIndex, (ushort)currLamp.RelateVar, currLamp.onFlag);
+                        UseWaitCursor = false;
+                    }
+                }
+            }
+        }
+        public void Lamp_MouseDown(object sender, MouseEventArgs e)
         {
             if (GlobalVar.editFlag)
             {
@@ -343,7 +393,7 @@ namespace WifiMonitor
         }
 
         //drag to move
-        public void lamp_MouseMove(object sender, MouseEventArgs e)
+        public void Lamp_MouseMove(object sender, MouseEventArgs e)
         {
             if (GlobalVar.editFlag)
             {
@@ -361,7 +411,7 @@ namespace WifiMonitor
         }
 
         //double click open edit form
-        public void lamp_DoubleClick(object sender, EventArgs e)
+        public void Lamp_DoubleClick(object sender, EventArgs e)
         {
             if (GlobalVar.editFlag && sender is Lamp)
             {
@@ -375,6 +425,7 @@ namespace WifiMonitor
                 mCurrLampEditForm.tbLampY.Text = currLamp.Location.Y.ToString();
                 mCurrLampEditForm.textBoxSlaveAddress.Text = currLamp.SlaveAddress.ToString();
                 mCurrLampEditForm.cbLampVar.SelectedIndex = currLamp.RelateVar;
+                mCurrLampEditForm.ReadOnly = currLamp.ReadOnly;
                 mCurrLampEditForm.buttonOk.Click += new EventHandler(LampEditbuttonOk_Click);
                 mCurrLampEditForm.Show();
             }
@@ -388,6 +439,7 @@ namespace WifiMonitor
             currLamp.Location = new Point(posX, posY);
             currLamp.SlaveAddress = int.Parse(mCurrLampEditForm.textBoxSlaveAddress.Text);
             currLamp.RelateVar = mCurrLampEditForm.cbLampVar.SelectedIndex;
+            currLamp.ReadOnly = mCurrLampEditForm.ReadOnly;
             mCurrLampEditForm.Close();
         }
 
@@ -445,10 +497,10 @@ namespace WifiMonitor
                 this.btnEdit.Visible = false;
                 this.btnSavEdit.Visible = false;
                 this.btnConnectionList.Visible = true;
-                this.timerRefesh.Enabled = true;
                 try
                 {
                     mConnectionForm = new ConnectionForm(this);
+                    communicate.refreshDisplay += new RefreshUserInterfaceEventHandler(DisplayRefresh);
                     communicate.StartServer();
                 }
                 catch (Exception ex)
@@ -463,10 +515,9 @@ namespace WifiMonitor
             {
                 this.btnEdit.Visible = true;
                 this.btnConnectionList.Visible = false;
-                this.timerRefesh.Enabled = false;
                 try
                 {
-                    communicate.StopCommunication();
+                    communicate.Dispose();
                     mConnectionForm.Dispose();
                 }
                 catch (Exception ex)
@@ -575,7 +626,8 @@ namespace WifiMonitor
                         IniFile.WriteIniData(TxtKnot, "TextBoxID", ctrl.Name, GlobalVar.sIniPath);
                         IniFile.WriteIniData(TxtKnot, "RelateVar", ((TextBoxEx)ctrl).RelateVar.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(TxtKnot, "SlaveAddress", ((TextBoxEx)ctrl).SlaveAddress.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "Interface", ((int)((ctrl as TextBoxEx).MbInterface)).ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(TxtKnot, "Interface", ((int)(ctrl as TextBoxEx).MbInterface).ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(TxtKnot, "DataType", ((int)(ctrl as TextBoxEx).MbDataType).ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(TxtKnot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath); //所在标签页索引
 
                         txtIndex++;
@@ -592,6 +644,7 @@ namespace WifiMonitor
                         IniFile.WriteIniData(lampNot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "LampID", ctrl.Name, GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "SlaveAddress", ((Lamp)ctrl).SlaveAddress.ToString(), GlobalVar.sIniPath);
+                        IniFile.WriteIniData(lampNot, "Interface", ((Lamp)ctrl).ReadOnly == true ? "1" : "0", GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "RelateVar", ((Lamp)ctrl).RelateVar.ToString(), GlobalVar.sIniPath);
                         IniFile.WriteIniData(lampNot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath);
 
@@ -613,47 +666,79 @@ namespace WifiMonitor
             mConnectionForm.Show();
         }
 
-        /// <summary>
-        /// 刷新界面显示
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void timerRefesh_Tick(object sender, EventArgs e)
+        #region Refresh data display
+        public delegate void RefreshDisplayHandler(object sender, EventArgs e);
+        private void DisplayRefresh(object sender, EventArgs e)
         {
             for (int index = 0; index < tabControl.TabPages.Count; index++)
-            {                
+            {
                 foreach (Control ctrl in tabControl.TabPages[index].Controls)
                 {
-                    foreach (var module in communicate.moduleList)
+                    if (ctrl.InvokeRequired)
                     {
-                         if (ctrl is TextBoxEx) //Updata textbox data (number)
-                         {
+                        RefreshDisplayHandler delegateMethod = new RefreshDisplayHandler(DisplayRefresh);
+                        this.Invoke(delegateMethod, new object[] { sender, e });
+                    }
+                    else
+                    {
+                        ModbusSlave module = sender as ModbusSlave;
+                        if (ctrl is TextBoxEx) //Update text box data (number)
+                        {
                             TextBoxEx textBox = ctrl as TextBoxEx;
                             if (textBox.SlaveAddress == module.slaveIndex)
                             {
+                                module._mutex.WaitOne(1000);
                                 if (textBox.MbInterface == ModbusInterface.HoldingRegister)
                                 {
-                                    textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
+                                    switch (textBox.MbDataType)
+                                    {
+                                        case ModbusDataType.SignedInt:
+                                            textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
+                                            break;
+                                        case ModbusDataType.Float:
+                                            textBox.Text = module.DataReadWriteDF[textBox.RelateVar].ToString();
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
                                 if (textBox.MbInterface == ModbusInterface.InputRegister)
                                 {
-                                    textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
+                                    switch (textBox.MbDataType)
+                                    {
+                                        case ModbusDataType.SignedInt:
+                                            textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
+                                            break;
+                                        case ModbusDataType.Float:
+                                            textBox.Text = module.DataReadOnlyDF[textBox.RelateVar].ToString();
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
-                            }                            
+                                module._mutex.ReleaseMutex();
+                            }
                         }
-                        
+
                         if (ctrl is Lamp) //Update lamp data (switch)
                         {
                             Lamp lamp = ctrl as Lamp;
                             if (lamp.SlaveAddress == module.slaveIndex)
                             {
-                                lamp.onFlag = module.DataCoil[lamp.RelateVar];
+                                module._mutex.WaitOne(1000);
+                                if (!lamp.ReadOnly)
+                                    lamp.onFlag = module.DataCoil[lamp.RelateVar];
+                                else
+                                    lamp.onFlag = module.DataDiscreteInput[lamp.RelateVar];
+                                module._mutex.ReleaseMutex();
                             }
-                        }                    
-                    }                                   
+                        }   
+                    }                     
                 }
-            }            
+            }  
         }
+
+        #endregion
 
         /// <summary>
         /// 主界面初始化
@@ -724,13 +809,14 @@ namespace WifiMonitor
                 }
                 #endregion
 
-                #region 根据读取的TextBox个数加载TextBox控件
+                #region 根据读取加载TextBox控件
                 if ("TextBox" + indexTxt.ToString() == str)
                 {
                     string TempTextBoxID = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "TextBoxID", "NoItem");
                     int tempTextBoxSlaveAddress = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "SlaveAddress", "NoItem"));  //从站地址
                     int TempTextBoxRelateVar = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "NoItem"));        //变量地址
                     int TempTextBoxMBInterface = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Interface", "NoItem"));      //变量通道
+                    int tempTextBoxMBDataType = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "DataType", "NoItem"));
                     int TempPosX = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosX", "NoItem"));
                     int TempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
                     int TempWidth = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Width", "NoItem"));
@@ -744,26 +830,41 @@ namespace WifiMonitor
                     txt.Height = TempHeight;
                     txt.TextAlign = HorizontalAlignment.Right;//文本内容位置靠右
                     txt.ReadOnly = true;
-                    txt.Cursor = Cursors.Hand;
                     txt.BackColor = Color.White;
                     txt.SlaveAddress = tempTextBoxSlaveAddress;
                     txt.RelateVar = TempTextBoxRelateVar;
-                    switch(TempTextBoxMBInterface)
+                    switch (TempTextBoxMBInterface)
                     {
                         case 3:
                             txt.MbInterface = ModbusInterface.InputRegister;
                             break;
                         case 4:
                             txt.MbInterface = ModbusInterface.HoldingRegister;
+                            txt.Cursor = Cursors.Hand;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    switch (tempTextBoxMBDataType)
+                    {
+                        //case 1:
+                        //    txt.MbDataType = ModbusDataType.UnsignedShort;
+                        //    break;
+                        case 1:
+                            txt.MbDataType = ModbusDataType.SignedInt;
+                            break;
+                        case 2:
+                            txt.MbDataType = ModbusDataType.Float;
                             break;
                         default:
                             break;
                     }
                    
-                    txt.Click += new EventHandler(txt_Click);
-                    txt.DoubleClick += new EventHandler(txt_DoubleClick);
-                    txt.MouseDown += new MouseEventHandler(txt_MouseDown);
-                    txt.MouseMove += new MouseEventHandler(txt_MouseMove);
+                    txt.Click += new EventHandler(Text_Click);
+                    txt.DoubleClick += new EventHandler(Text_DoubleClick);
+                    txt.MouseDown += new MouseEventHandler(Text_MouseDown);
+                    txt.MouseMove += new MouseEventHandler(Text_MouseMove);
                     this.tabControl.TabPages[TempAdscription - 1].Controls.Add(txt);
                     indexTxt++;
                 }
@@ -777,6 +878,7 @@ namespace WifiMonitor
                     int tempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
                     int tempLampVar = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "NoItem"));
                     int tempSlaveAddress = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "SlaveAddress", "NoItem"));
+                    int tempInterface = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Interface", "NoItem"));
                     int tempAdscription = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Adscription", "NoItem"));
 
                     Lamp lamp = new Lamp();
@@ -784,11 +886,20 @@ namespace WifiMonitor
                     lamp.Name = tempLampID;
                     lamp.RelateVar = tempLampVar;
                     lamp.SlaveAddress = tempSlaveAddress;
+                    if (tempInterface == 1)
+                    {
+                        lamp.ReadOnly = true;
+                    }
+                    else
+                    {
+                        lamp.ReadOnly = false;
+                        lamp.Cursor = Cursors.Hand;
+                    }
                     
-                    //lamp.Click += new EventHandler(lamp_Click);
-                    lamp.DoubleClick += new EventHandler(lamp_DoubleClick);
-                    lamp.MouseDown += new MouseEventHandler(lamp_MouseDown);
-                    lamp.MouseMove += new MouseEventHandler(lamp_MouseMove);
+                    lamp.Click += new EventHandler(Lamp_Click);
+                    lamp.DoubleClick += new EventHandler(Lamp_DoubleClick);
+                    lamp.MouseDown += new MouseEventHandler(Lamp_MouseDown);
+                    lamp.MouseMove += new MouseEventHandler(Lamp_MouseMove);
                     this.tabControl.TabPages[tempAdscription - 1].Controls.Add(lamp);
                     indexLamp++;
                 }

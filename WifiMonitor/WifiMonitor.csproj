@@ -12,7 +12,8 @@
     <AssemblyName>WifiMonitor</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ApplicationIcon>2015.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -202,7 +203,8 @@
     <None Include="Resources\lampoff.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="2015.ico" />
+    <None Include="Resources\buttonUp.png" />
+    <None Include="Resources\buttonDown.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

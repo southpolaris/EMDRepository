@@ -40,7 +40,7 @@ namespace WifiMonitor
                 lbl.Name = "lbl" + tabIndex + "_" + index;
                 lbl.Text = "标签" + index;
                 lbl.TextAlign = ContentAlignment.MiddleRight;//标签文本位置靠右
-                lbl.Click += new EventHandler(mMainForm.lbl_Click);
+                //lbl.Click += new EventHandler(mMainForm.lbl_Click);
                 lbl.DoubleClick += new EventHandler(mMainForm.lbl_DoubleClick);
                 lbl.MouseDown += new MouseEventHandler(mMainForm.lbl_MouseDown);
                 lbl.MouseMove += new MouseEventHandler(mMainForm.lbl_MouseMove);
@@ -62,11 +62,11 @@ namespace WifiMonitor
                 txt.ReadOnly = true;
                 txt.Cursor = Cursors.Hand;
                 txt.BackColor = Color.White;
-                txt.GotFocus += new EventHandler(mMainForm.txt_GotFocus);
-                txt.Click += new EventHandler(mMainForm.txt_Click);
-                txt.DoubleClick += new EventHandler(mMainForm.txt_DoubleClick);
-                txt.MouseDown += new MouseEventHandler(mMainForm.txt_MouseDown);
-                txt.MouseMove += new MouseEventHandler(mMainForm.txt_MouseMove);
+                txt.GotFocus += new EventHandler(mMainForm.Text_GotFocus);
+                txt.Click += new EventHandler(mMainForm.Text_Click);
+                txt.DoubleClick += new EventHandler(mMainForm.Text_DoubleClick);
+                txt.MouseDown += new MouseEventHandler(mMainForm.Text_MouseDown);
+                txt.MouseMove += new MouseEventHandler(mMainForm.Text_MouseMove);
                 mMainForm.tabControl.SelectedTab.Controls.Add(txt);
             }
         }
@@ -108,9 +108,9 @@ namespace WifiMonitor
                 lamp.Location = new Point(10, 20 * index * 2);
                 lamp.Name = "lamp" + tabIndex + "_" + index;
                 lamp.onFlag = false;
-                lamp.MouseDoubleClick += new MouseEventHandler(mMainForm.lamp_DoubleClick);
-                lamp.MouseDown += new MouseEventHandler(mMainForm.lamp_MouseDown);
-                lamp.MouseMove +=new MouseEventHandler(mMainForm.lamp_MouseMove);
+                lamp.MouseDoubleClick += new MouseEventHandler(mMainForm.Lamp_DoubleClick);
+                lamp.MouseDown += new MouseEventHandler(mMainForm.Lamp_MouseDown);
+                lamp.MouseMove +=new MouseEventHandler(mMainForm.Lamp_MouseMove);
                 mMainForm.tabControl.SelectedTab.Controls.Add(lamp);
             }
         }

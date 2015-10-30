@@ -22,6 +22,13 @@ namespace WifiMonitor
         HoldingRegister = 4     //16 bit read-write     
     }
 
+    public enum ModbusDataType
+    {
+        UnsignedShort = 0,
+        SignedInt = 1,
+        Float = 2
+    }
+
     public partial class TextBoxEx : TextBox
     {
         public TextBoxEx()
@@ -29,27 +36,25 @@ namespace WifiMonitor
             InitializeComponent();
         }
 
-        #region 属性
         private int mPosition = 0;
         private int mSlave = 0;
+        private ModbusDataType mbDataType;
         private ModbusInterface mbInterface;
-        [Description("获取或设置该文本框的关联变量编号")]
-        /// <summary>
-        /// 获取或设置该文本框的关联变量编号
-        /// </summary>
-        public int RelateVar
+
+        #region 属性
+        public int RelateVar //数据所在位置
         {
             get { return mPosition; }
             set { mPosition = value; }
         }
 
-        public int SlaveAddress
+        public int SlaveAddress //子节点地址（IP末位）
         {
             get { return mSlave; }
             set { mSlave = value; }
         }
 
-        public ModbusInterface MbInterface
+        public ModbusInterface MbInterface //数据通道
         {
             get { return mbInterface; }
             set
@@ -71,7 +76,11 @@ namespace WifiMonitor
             }
         }
 
-        
+        public ModbusDataType MbDataType //数据类型
+        {
+            get { return mbDataType; }
+            set { mbDataType = value; }
+        }
         #endregion
     }
 }
