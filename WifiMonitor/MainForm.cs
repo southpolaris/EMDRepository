@@ -7,8 +7,8 @@ namespace WifiMonitor
 {
     public partial class MainForm : Form
     {
-        [DllImport("user32", EntryPoint = "HideCaret")]
-        private static extern bool HideCaret(IntPtr hWnd);//用于隐藏TextBox的光标
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("user32", EntryPoint = "HideCaret")]
+        static extern bool HideCaret(IntPtr hWnd);//用于隐藏TextBox的光标
 
         #region 参数定义
         //鼠标拖动标签时标签位置
@@ -497,10 +497,10 @@ namespace WifiMonitor
                 this.btnEdit.Visible = false;
                 this.btnSavEdit.Visible = false;
                 this.btnConnectionList.Visible = true;
+                timerRefresh.Start();
                 try
                 {
                     mConnectionForm = new ConnectionForm(this);
-                    communicate.refreshDisplay += new RefreshUserInterfaceEventHandler(DisplayRefresh);
                     communicate.StartServer();
                 }
                 catch (Exception ex)
@@ -515,6 +515,7 @@ namespace WifiMonitor
             {
                 this.btnEdit.Visible = true;
                 this.btnConnectionList.Visible = false;
+                timerRefresh.Stop();
                 try
                 {
                     communicate.Dispose();
@@ -665,80 +666,6 @@ namespace WifiMonitor
             mConnectionForm.Location = new Point(GlobalVar.nMainFormPosX, GlobalVar.nMainFormPosY + GlobalVar.nMainFormHeight + 12);
             mConnectionForm.Show();
         }
-
-        #region Refresh data display
-        public delegate void RefreshDisplayHandler(object sender, EventArgs e);
-        private void DisplayRefresh(object sender, EventArgs e)
-        {
-            for (int index = 0; index < tabControl.TabPages.Count; index++)
-            {
-                foreach (Control ctrl in tabControl.TabPages[index].Controls)
-                {
-                    if (ctrl.InvokeRequired)
-                    {
-                        RefreshDisplayHandler delegateMethod = new RefreshDisplayHandler(DisplayRefresh);
-                        this.Invoke(delegateMethod, new object[] { sender, e });
-                    }
-                    else
-                    {
-                        ModbusSlave module = sender as ModbusSlave;
-                        if (ctrl is TextBoxEx) //Update text box data (number)
-                        {
-                            TextBoxEx textBox = ctrl as TextBoxEx;
-                            if (textBox.SlaveAddress == module.slaveIndex)
-                            {
-                                module._mutex.WaitOne(1000);
-                                if (textBox.MbInterface == ModbusInterface.HoldingRegister)
-                                {
-                                    switch (textBox.MbDataType)
-                                    {
-                                        case ModbusDataType.SignedInt:
-                                            textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
-                                            break;
-                                        case ModbusDataType.Float:
-                                            textBox.Text = module.DataReadWriteDF[textBox.RelateVar].ToString();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                if (textBox.MbInterface == ModbusInterface.InputRegister)
-                                {
-                                    switch (textBox.MbDataType)
-                                    {
-                                        case ModbusDataType.SignedInt:
-                                            textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
-                                            break;
-                                        case ModbusDataType.Float:
-                                            textBox.Text = module.DataReadOnlyDF[textBox.RelateVar].ToString();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                module._mutex.ReleaseMutex();
-                            }
-                        }
-
-                        if (ctrl is Lamp) //Update lamp data (switch)
-                        {
-                            Lamp lamp = ctrl as Lamp;
-                            if (lamp.SlaveAddress == module.slaveIndex)
-                            {
-                                module._mutex.WaitOne(1000);
-                                if (!lamp.ReadOnly)
-                                    lamp.onFlag = module.DataCoil[lamp.RelateVar];
-                                else
-                                    lamp.onFlag = module.DataDiscreteInput[lamp.RelateVar];
-                                module._mutex.ReleaseMutex();
-                            }
-                        }   
-                    }                     
-                }
-            }  
-        }
-
-        #endregion
 
         /// <summary>
         /// 主界面初始化
@@ -920,6 +847,72 @@ namespace WifiMonitor
             btnSavEdit.Visible = false; //隐藏保存按钮
             btnEditStop.Visible = false;
             mToolForm.Close();
+        }
+
+        /// <summary>
+        /// Refersh user interface display
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timerRefresh_Tick(object sender, EventArgs e)
+        {
+            foreach (TabPage tabPage in tabControl.TabPages)
+            {
+                foreach (Control ctrl in tabPage.Controls)
+                {
+                    for (int i = 0; i < communicate.moduleList.Count; i++ )
+                    {
+                        ModbusSlave module = communicate.moduleList[i];
+                        if (ctrl is TextBoxEx) //Update text box data (number)
+                        {
+                            TextBoxEx textBox = ctrl as TextBoxEx;
+                            if (textBox.SlaveAddress == module.slaveIndex)
+                            {
+                                if (textBox.MbInterface == ModbusInterface.HoldingRegister)
+                                {
+                                    switch (textBox.MbDataType)
+                                    {
+                                        case ModbusDataType.SignedInt:
+                                            textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
+                                            break;
+                                        case ModbusDataType.Float:
+                                            textBox.Text = module.DataReadWriteDF[textBox.RelateVar].ToString();
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                if (textBox.MbInterface == ModbusInterface.InputRegister)
+                                {
+                                    switch (textBox.MbDataType)
+                                    {
+                                        case ModbusDataType.SignedInt:
+                                            textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
+                                            break;
+                                        case ModbusDataType.Float:
+                                            textBox.Text = module.DataReadOnlyDF[textBox.RelateVar].ToString();
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (ctrl is Lamp) //Update lamp data (switch)
+                        {
+                            Lamp lamp = ctrl as Lamp;
+                            if (lamp.SlaveAddress == module.slaveIndex)
+                            {
+                                if (!lamp.ReadOnly)
+                                    lamp.onFlag = module.DataCoil[lamp.RelateVar];
+                                else
+                                    lamp.onFlag = module.DataDiscreteInput[lamp.RelateVar];
+                            }
+                        }
+                    }
+                }
+            }  
         }
     }
 }

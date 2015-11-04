@@ -47,7 +47,12 @@ Problems
 thread syncronazition, need optimize in efficiency.
 not test fc2 and write coil because of not finish mcgs problem.
 
-
+2015.11.04 ver0.8
+Complie with Visual Sutdio 2013, update .Net framework to 4.0;
+Using taskfactory replace threadpool, and some other efficient improvements.
+Bug fixes in modbusslave.cs;
+Maybe still some problem in data read and write with different tasks.
+Main function is totally implement.
 
 Things need to do：
 界面优化，是否可以标签透明或自动更改长度

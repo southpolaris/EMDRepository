@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Configuration;
+using System.Threading.Tasks;
+
 
 namespace WifiMonitor
 {
@@ -17,6 +20,7 @@ namespace WifiMonitor
         public event RefreshUserInterfaceEventHandler refreshDisplay;
 
         public List<ModbusSlave> moduleList;   //moudle client list
+        TaskFactory communicateTask = new TaskFactory();   //Communicate tasks
         public bool fWaiting = true;            //running flag
 
         public Communicate()
@@ -45,9 +49,9 @@ namespace WifiMonitor
                 updateStatus("启动检测服务，等待模块连接...");
                 listenThread.Start();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -69,69 +73,51 @@ namespace WifiMonitor
                 ModbusSlave module = new ModbusSlave(tcpClient);
                 moduleList.Add(module);
                 OnConnectionChange();
-                ThreadPool.SetMaxThreads(100, 100);
-                ThreadPool.QueueUserWorkItem(new WaitCallback(GetModbusData), module);   
-                //Thread communicateThread = new Thread(GetModbusData);
-                //communicateThread.Start(module);
+                Task newCommunication = communicateTask.StartNew(() =>
+                    {
+                        GetModbusData(module);
+                    },
+                    TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent);
+                //for .Net 3.5 or ealer;
+                //ThreadPool.QueueUserWorkItem(new WaitCallback(GetModbusData), module);   
             }
         }
 
         /// <summary>
         /// Sending modbus message to all connected client
         /// </summary>
-        /// <param name="obj">
-        /// Modbus slave module
-        /// </param>
+        /// <param name="module"> Modbus slave module </param>
         protected void GetModbusData(object obj)
         {
             bool successFlag = false;
-            ModbusSlave module = (ModbusSlave)obj;
+            ModbusSlave module = obj as ModbusSlave;
             TcpClient client = module.client;
             while (fWaiting)
             {
+                successFlag = false;
                 try
                 {
-                    module._mutex.WaitOne();
+                    module._mutex.WaitOne(10000);
                     successFlag = module.SendFc1((byte)1, (ushort)0, (ushort)0x10);
-                    module._mutex.ReleaseMutex();
                     Thread.Sleep(80); //3.5 times interval to start next modbus message (4.00910405ms for baud rate 9600)
-                    module._mutex.WaitOne();
-                    successFlag = module.SendFc2((byte)1, (ushort)0, (ushort)0x10);
-                    module._mutex.ReleaseMutex();
+                    successFlag |= module.SendFc2((byte)1, (ushort)0, (ushort)0x10);
                     Thread.Sleep(80);
 
-                    module._mutex.WaitOne();
-                    successFlag = module.SendFc4((byte)1, (ushort)0x00, (ushort)0x14, ref module.DataReadOnly);
-                    module._mutex.ReleaseMutex();
+                    successFlag |= module.SendFc4DB((byte)1, (ushort)0x00, (ushort)0x14);
                     Thread.Sleep(80);
-                    module._mutex.WaitOne();
-                    successFlag = module.SendFc4((byte)1, (ushort)0x28, (ushort)0x14, ref module.DataReadOnlyDF);
-                    module._mutex.ReleaseMutex();
+                    successFlag |= module.SendFc4DF((byte)1, (ushort)0x28, (ushort)0x14);
                     Thread.Sleep(80);
 
-                    module._mutex.WaitOne();
-                    successFlag = module.SendFc3((byte)1, (ushort)0x00, (ushort)0x14, ref module.DataReadWrite);
-                    module._mutex.ReleaseMutex();
+                    successFlag |= module.SendFc3DB((byte)1, (ushort)0x00, (ushort)0x14);
                     Thread.Sleep(80);
-                    module._mutex.WaitOne();
-                    successFlag = module.SendFc3((byte)1, (ushort)0x28, (ushort)0x14, ref module.DataReadWriteDF);
+                    successFlag |= module.SendFc3DF((byte)1, (ushort)0x28, (ushort)0x14);
                     module._mutex.ReleaseMutex();
-                    Thread.Sleep(80);
-                    if (refreshDisplay != null)
+                    Thread.Sleep(80);                  
+
+                    if (!successFlag)
                     {
-                        refreshDisplay(module, new EventArgs());
-                    }
-
-                    
-
-                    if (string.Compare(module.modbusStatus, "Connection lost") == 0)
-                    {
-                        module._mutex.WaitOne();
-                        RemoveModule(module);
-                        module._mutex.ReleaseMutex();
-                        break;
-                    }
-                    
+                        throw new Exception("Communicate error");
+                    }                    
                 }
                 catch (Exception ex)
                 {
@@ -140,13 +126,13 @@ namespace WifiMonitor
                         module._mutex.WaitOne();
                         RemoveModule(module);
                         module._mutex.ReleaseMutex();
-                        throw ex;
-
                         break;
                     }
                 }                
             }
         }
+
+        
 
         //Write single register (ushort)
         public void SendModbusData(int slaveIndex, ushort registerAddress, ushort dataValue)
@@ -157,20 +143,18 @@ namespace WifiMonitor
                 {
                     bool successFlag = false;
                     short maxWiteTimes = 5; //超过5次未成功则写入失败
-                    while (!successFlag && maxWiteTimes > 0)
+
+                    communicateTask.StartNew(() =>
                     {
-                        module._mutex.WaitOne();
-                        successFlag = module.SendFc6((byte)1, registerAddress, dataValue);
-                        module._mutex.ReleaseMutex();
-                        maxWiteTimes--;
-                    }
-                    if (!successFlag) //5次写入未成功，断开连接
-                    {
-                        module._mutex.WaitOne();
-                        RemoveModule(module);
-                        module._mutex.ReleaseMutex();
-                        return;
-                    }
+                        while (!successFlag && maxWiteTimes > 0)
+                        {
+                            module._mutex.WaitOne();
+                            successFlag = module.SendFc6((byte)1, registerAddress, dataValue);
+                            module._mutex.ReleaseMutex();
+                            maxWiteTimes--;
+                        }
+                    });                        
+                    
                     return;
                 }
             }                       
@@ -187,22 +171,21 @@ namespace WifiMonitor
                     short maxWriteTimes = 5;
                     short[] tempValue = new short[2];
                     byte[] tempByte = BitConverter.GetBytes(dataValue);
-                    //4321 to Little endian 3412
+                    //System default 4321 to standard modbus Little endian 3412
                     tempValue[0] = (short)((tempByte[1] << 8) + tempByte[0]);
                     tempValue[1] = (short)((tempByte[3] << 8) + tempByte[2]);
+
+                    Task writeTask = communicateTask.StartNew(() =>
+                    {
+                        while (!successFlag && maxWriteTimes > 0)
+                        {
+                            module._mutex.WaitOne();
+                            successFlag = module.SendFc16((byte)1, registerAddress, (ushort)2, tempValue);
+                            module._mutex.ReleaseMutex();
+                            maxWriteTimes--;
+                        }
+                    });
                     
-                    while (!successFlag && maxWriteTimes > 0)
-                    {
-                        module._mutex.WaitOne();
-                        successFlag = module.SendFc16((byte)1, registerAddress, (ushort)2, tempValue);
-                        module._mutex.ReleaseMutex();
-                        maxWriteTimes--;
-                    }
-                    if (!successFlag) //5次写入未成功，断开连接
-                    {
-                        RemoveModule(module);
-                        return;
-                    }
                     return;
                 }
             }
@@ -222,18 +205,17 @@ namespace WifiMonitor
                     tempShort[0] = (short)((tempByte[1] << 8) + tempByte[0]);
                     tempShort[1] = (short)((tempByte[3] << 8) + tempByte[2]);
 
-                    while (!successFlag && maxWriteTimes > 0)
+                    Task writeTask = communicateTask.StartNew(() =>
                     {
-                        module._mutex.WaitOne();
-                        successFlag = module.SendFc16((byte)1, registerAddress, (ushort)2, tempShort);
-                        module._mutex.ReleaseMutex();
-                        maxWriteTimes--;
-                    }
-                    if (!successFlag) //5次写入未成功，断开连接
-                    {
-                        RemoveModule(module);
-                        return;
-                    }
+                        while (!successFlag && maxWriteTimes > 0)
+                        {
+                            module._mutex.WaitOne();
+                            successFlag = module.SendFc16((byte)1, registerAddress, (ushort)2, tempShort);
+                            module._mutex.ReleaseMutex();
+                            maxWriteTimes--;
+                        }
+                    });
+
                     return;
                 }
             }
@@ -248,18 +230,17 @@ namespace WifiMonitor
                 {
                     bool successFlag = false;
                     short maxWiteTimes = 5; //超过5次未成功则写入失败
-                    while (!successFlag && maxWiteTimes > 0)
+                    communicateTask.StartNew(() =>
                     {
-                        module._mutex.WaitOne();
-                        successFlag = module.SendFc5((byte)1, coilAddress, dataValue);
-                        module._mutex.ReleaseMutex();
-                        maxWiteTimes--;
-                    }
-                    if (!successFlag) //5次写入未成功，断开连接
-                    {
-                        RemoveModule(module);
-                        return;
-                    }
+                        while (!successFlag && maxWiteTimes > 0)
+                        {
+                            module._mutex.WaitOne();
+                            successFlag = module.SendFc5((byte)1, coilAddress, dataValue);
+                            module._mutex.ReleaseMutex();
+                            maxWiteTimes--;
+                        }
+                    });
+                    
                     return;
                 }
             }
@@ -268,7 +249,7 @@ namespace WifiMonitor
         private void RemoveModule(ModbusSlave module)
         {
             moduleList.Remove(module);
-            module.Close();
+            module.Dispose();
             
             OnConnectionChange();
         }

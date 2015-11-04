@@ -47,7 +47,7 @@
             // 
             // btnAddLbl
             // 
-            this.btnAddLbl.Location = new System.Drawing.Point(10, 35);
+            this.btnAddLbl.Location = new System.Drawing.Point(6, 35);
             this.btnAddLbl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddLbl.Name = "btnAddLbl";
             this.btnAddLbl.Size = new System.Drawing.Size(131, 29);
@@ -59,7 +59,7 @@
             // lblAddLbl
             // 
             this.lblAddLbl.AutoSize = true;
-            this.lblAddLbl.Location = new System.Drawing.Point(8, 9);
+            this.lblAddLbl.Location = new System.Drawing.Point(4, 9);
             this.lblAddLbl.Name = "lblAddLbl";
             this.lblAddLbl.Size = new System.Drawing.Size(68, 17);
             this.lblAddLbl.TabIndex = 1;
@@ -68,7 +68,7 @@
             // lblAddText
             // 
             this.lblAddText.AutoSize = true;
-            this.lblAddText.Location = new System.Drawing.Point(5, 94);
+            this.lblAddText.Location = new System.Drawing.Point(1, 94);
             this.lblAddText.Name = "lblAddText";
             this.lblAddText.Size = new System.Drawing.Size(68, 17);
             this.lblAddText.TabIndex = 4;
@@ -76,7 +76,7 @@
             // 
             // btnAddText
             // 
-            this.btnAddText.Location = new System.Drawing.Point(8, 123);
+            this.btnAddText.Location = new System.Drawing.Point(4, 123);
             this.btnAddText.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddText.Name = "btnAddText";
             this.btnAddText.Size = new System.Drawing.Size(133, 30);
@@ -87,7 +87,7 @@
             // 
             // btnCreateTab
             // 
-            this.btnCreateTab.Location = new System.Drawing.Point(10, 327);
+            this.btnCreateTab.Location = new System.Drawing.Point(6, 327);
             this.btnCreateTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCreateTab.Name = "btnCreateTab";
             this.btnCreateTab.Size = new System.Drawing.Size(131, 32);
@@ -98,7 +98,7 @@
             // 
             // numLabel
             // 
-            this.numLabel.Location = new System.Drawing.Point(91, 7);
+            this.numLabel.Location = new System.Drawing.Point(87, 7);
             this.numLabel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numLabel.Maximum = new decimal(new int[] {
             80,
@@ -121,7 +121,7 @@
             // 
             // numText
             // 
-            this.numText.Location = new System.Drawing.Point(91, 92);
+            this.numText.Location = new System.Drawing.Point(87, 92);
             this.numText.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numText.Maximum = new decimal(new int[] {
             30,
@@ -144,7 +144,7 @@
             // 
             // btnRemoveTab
             // 
-            this.btnRemoveTab.Location = new System.Drawing.Point(10, 367);
+            this.btnRemoveTab.Location = new System.Drawing.Point(6, 367);
             this.btnRemoveTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRemoveTab.Name = "btnRemoveTab";
             this.btnRemoveTab.Size = new System.Drawing.Size(131, 33);
@@ -155,7 +155,7 @@
             // 
             // btnChangeTabName
             // 
-            this.btnChangeTabName.Location = new System.Drawing.Point(8, 286);
+            this.btnChangeTabName.Location = new System.Drawing.Point(4, 286);
             this.btnChangeTabName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnChangeTabName.Name = "btnChangeTabName";
             this.btnChangeTabName.Size = new System.Drawing.Size(133, 33);
@@ -166,7 +166,7 @@
             // 
             // numLamp
             // 
-            this.numLamp.Location = new System.Drawing.Point(91, 188);
+            this.numLamp.Location = new System.Drawing.Point(87, 188);
             this.numLamp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numLamp.Maximum = new decimal(new int[] {
             32,
@@ -190,7 +190,7 @@
             // lblAddLamp
             // 
             this.lblAddLamp.AutoSize = true;
-            this.lblAddLamp.Location = new System.Drawing.Point(8, 190);
+            this.lblAddLamp.Location = new System.Drawing.Point(4, 190);
             this.lblAddLamp.Name = "lblAddLamp";
             this.lblAddLamp.Size = new System.Drawing.Size(68, 17);
             this.lblAddLamp.TabIndex = 21;
@@ -198,7 +198,7 @@
             // 
             // btnAddLamp
             // 
-            this.btnAddLamp.Location = new System.Drawing.Point(8, 219);
+            this.btnAddLamp.Location = new System.Drawing.Point(4, 219);
             this.btnAddLamp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddLamp.Name = "btnAddLamp";
             this.btnAddLamp.Size = new System.Drawing.Size(133, 31);

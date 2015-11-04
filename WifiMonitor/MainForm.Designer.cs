@@ -17,6 +17,7 @@
             {
                 components.Dispose();
             }
+            communicate.Dispose();
             base.Dispose(disposing);
         }
 
@@ -43,6 +44,7 @@
             this.labelInfo = new System.Windows.Forms.Label();
             this.btnConnectionList = new System.Windows.Forms.Button();
             this.btnEditStop = new System.Windows.Forms.Button();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripLbl.SuspendLayout();
             this.contextMenuStripTxt.SuspendLayout();
             this.contextMenuStripLamp.SuspendLayout();
@@ -63,7 +65,7 @@
             // btnSavEdit
             // 
             this.btnSavEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSavEdit.Location = new System.Drawing.Point(161, 328);
+            this.btnSavEdit.Location = new System.Drawing.Point(153, 328);
             this.btnSavEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSavEdit.Name = "btnSavEdit";
             this.btnSavEdit.Size = new System.Drawing.Size(65, 27);
@@ -117,9 +119,9 @@
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Location = new System.Drawing.Point(3, 2);
             this.tabControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabControl.Name = "tabControl";
@@ -169,12 +171,17 @@
             this.btnEditStop.Location = new System.Drawing.Point(82, 328);
             this.btnEditStop.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnEditStop.Name = "btnEditStop";
-            this.btnEditStop.Size = new System.Drawing.Size(73, 27);
+            this.btnEditStop.Size = new System.Drawing.Size(65, 27);
             this.btnEditStop.TabIndex = 7;
-            this.btnEditStop.Text = "停止编辑";
+            this.btnEditStop.Text = "退出编辑";
             this.btnEditStop.UseVisualStyleBackColor = true;
             this.btnEditStop.Visible = false;
             this.btnEditStop.Click += new System.EventHandler(this.btnEditStop_Click);
+            // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Interval = 800;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
             // MainForm
             // 
@@ -197,10 +204,10 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "主界面";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             this.Move += new System.EventHandler(this.MainForm_Move);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.contextMenuStripLbl.ResumeLayout(false);
             this.contextMenuStripTxt.ResumeLayout(false);
             this.contextMenuStripLamp.ResumeLayout(false);
@@ -224,6 +231,7 @@
         private System.Windows.Forms.Button btnConnectionList;
         public System.Windows.Forms.Button btnStart;
         protected System.Windows.Forms.Button btnEditStop;
+        private System.Windows.Forms.Timer timerRefresh;
 
     }
 }
