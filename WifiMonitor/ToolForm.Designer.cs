@@ -205,6 +205,7 @@
             this.btnAddLamp.TabIndex = 20;
             this.btnAddLamp.Text = "添加开关量显示";
             this.btnAddLamp.UseVisualStyleBackColor = false;
+            this.btnAddLamp.Click += new System.EventHandler(this.btnAddLamp_Click);
             // 
             // ToolForm
             // 

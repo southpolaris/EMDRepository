@@ -54,5 +54,14 @@ Bug fixes in modbusslave.cs;
 Maybe still some problem in data read and write with different tasks.
 Main function is totally implement.
 
+2015.11.13 ver0.81
+Bug fix and performance improvement.
+Fix the add lamp button not connect with event handler.
+Timer refersh will only change the controls in selected tab page.
+Remove float data in registers.
+Last version use ini configure file, from now on it will change into xml format.
+
 Things need to do：
-界面优化，是否可以标签透明或自动更改长度
+界面优化:
+是否可以标签透明或自动更改长度;
+Set the limitation of the control move area and prevent controls overlap.(Important)

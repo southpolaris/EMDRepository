@@ -8,7 +8,9 @@ namespace WifiMonitor
         public Lamp()
         {
             InitializeComponent();
+            this.Image = Properties.Resources.lampoff;
             onFlag = false;
+            ReadOnly = true;
         }
 
         private bool powerOn;

@@ -44,8 +44,6 @@
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.cbDataType = new System.Windows.Forms.ComboBox();
             this.txtSlaveAddress = new System.Windows.Forms.TextBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
@@ -56,7 +54,7 @@
             // lblTxtVar
             // 
             this.lblTxtVar.AutoSize = true;
-            this.lblTxtVar.Location = new System.Drawing.Point(284, 62);
+            this.lblTxtVar.Location = new System.Drawing.Point(303, 28);
             this.lblTxtVar.Name = "lblTxtVar";
             this.lblTxtVar.Size = new System.Drawing.Size(68, 17);
             this.lblTxtVar.TabIndex = 1;
@@ -149,7 +147,7 @@
             this.cbbTxtVar.DisplayMember = "Key";
             this.cbbTxtVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbTxtVar.FormattingEnabled = true;
-            this.cbbTxtVar.Location = new System.Drawing.Point(396, 57);
+            this.cbbTxtVar.Location = new System.Drawing.Point(395, 25);
             this.cbbTxtVar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbbTxtVar.Name = "cbbTxtVar";
             this.cbbTxtVar.Size = new System.Drawing.Size(139, 25);
@@ -196,8 +194,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.cbDataType);
             this.groupBox2.Controls.Add(this.txtSlaveAddress);
             this.groupBox2.Controls.Add(this.radioButton4);
             this.groupBox2.Controls.Add(this.radioButton3);
@@ -211,28 +207,6 @@
             this.groupBox2.TabIndex = 15;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "关联变量";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(284, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 17);
-            this.label3.TabIndex = 18;
-            this.label3.Text = "数据类型：";
-            // 
-            // cbDataType
-            // 
-            this.cbDataType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbDataType.FormattingEnabled = true;
-            this.cbDataType.Items.AddRange(new object[] {
-            "32位 有符号二进制",
-            "32位 单精度浮点数"});
-            this.cbDataType.Location = new System.Drawing.Point(396, 25);
-            this.cbDataType.Name = "cbDataType";
-            this.cbDataType.Size = new System.Drawing.Size(138, 25);
-            this.cbDataType.TabIndex = 17;
-            this.cbDataType.SelectedIndexChanged += new System.EventHandler(this.cbDataType_SelectedIndexChanged);
             // 
             // txtSlaveAddress
             // 
@@ -311,7 +285,5 @@
         public System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.Label label2;
         public System.Windows.Forms.TextBox txtSlaveAddress;
-        private System.Windows.Forms.Label label3;
-        public System.Windows.Forms.ComboBox cbDataType;
     }
 }

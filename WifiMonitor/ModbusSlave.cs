@@ -16,20 +16,21 @@ namespace WifiMonitor
         public TcpClient client { get; private set; }
         public NetworkStream ns;
         public string modbusStatus;
-        public ushort slaveIndex;
+        public ushort slaveIP;
+        public string slaveName;
 
-        public Mutex _mutex;
+        private object lockthis = new object();
 
         // [0区] 输出继电器 读取01 写入05、15
-        private bool[] dataCoil = new bool[16];
+        private bool[] dataCoil;
         public bool[] DataCoil                //16路开关量输出
-        {            
-            set  { dataCoil = value; }
-            get  { return dataCoil; }
+        {
+            set { dataCoil = value; }
+            get { return dataCoil; }
         }
 
         // [1区] 输入继电器 读取02
-        private bool[] dataDiscreateInput = new bool[16];
+        private bool[] dataDiscreateInput;
         public bool[] DataDiscreteInput     //16路开关量输入
         {
             set { dataDiscreateInput = value; }
@@ -37,45 +38,39 @@ namespace WifiMonitor
         }
 
         // [4区] 输出寄存器 读取03 写入06、16
-        private int[] dataReadWrite = new int[20];
+        private int[] dataReadWrite;
         public int[] DataReadWrite         //有符号32位二进制
         {
             set { dataReadWrite = value; }
             get { return dataReadWrite; }
         }
-        private float[] dataReadWriteDF = new float[20];
-        public float[] DataReadWriteDF     //32位浮点数
-        {
-            set { dataReadWriteDF = value; }
-            get { return dataReadWriteDF; }
-        }
 
         // [3区] 输入寄存器 读取04
-        private int[] dataReadOnly = new int[20];
+        private int[] dataReadOnly;
         internal int[] DataReadOnly            //有符号32位二进制
         {
             set { dataReadOnly = value; }
             get { return dataReadOnly; }
         }
-        private float[] dataReadOnlyDF = new float[20];
-        internal float[] DataReadOnlyDF      //32位浮点数
-        {
-            set { dataReadOnlyDF = value; }
-            get { return dataReadOnlyDF; }
-        }
- 
+
         public ModbusSlave(TcpClient tcpClient)
         {
             client = tcpClient;
             ns = client.GetStream();
             ns.ReadTimeout = 10000;
             ns.WriteTimeout = 10000;
-            slaveIndex = ushort.Parse(client.Client.RemoteEndPoint.ToString().Split('.')[3].Split(':')[0]);
-
-            _mutex = new Mutex(false);
+            slaveIP = ushort.Parse(client.Client.RemoteEndPoint.ToString().Split('.')[3].Split(':')[0]);
         }
 
-        public bool IsOnline(TcpClient tcpClient)
+        public void SetDataLength(ModbusData dataLength)
+        {
+            dataDiscreateInput = new bool[dataLength.discreteInput];
+            dataCoil = new bool[dataLength.coil];
+            dataReadOnly = new int[dataLength.inputRegister];
+            dataReadWrite = new int[dataLength.holdingRegiter];
+        }
+
+        private bool IsOnline(TcpClient tcpClient)
         {
             return !((tcpClient.Client.Poll(10000, SelectMode.SelectRead) && tcpClient.Client.Available == 0) || !tcpClient.Client.Connected);
         }
@@ -83,7 +78,6 @@ namespace WifiMonitor
         public void Close()
         {
             ns.Close();
-            _mutex.Close();
             client.Close();
             modbusStatus = "Client closed";
         }
@@ -91,7 +85,6 @@ namespace WifiMonitor
         public void Dispose()
         {
             Close();
-            _mutex.Dispose();
         }
 
         #region CRC Computation
@@ -198,8 +191,11 @@ namespace WifiMonitor
                 //Send modbus message to slaves
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }                    
                 }
                 catch (Exception err)
                 {
@@ -272,8 +268,11 @@ namespace WifiMonitor
                 //Send modbus message to slaves
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }
                 }
                 catch (Exception err)
                 {
@@ -401,8 +400,11 @@ namespace WifiMonitor
                 //Send modbus message to Slaves
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }
                 }
                 catch (Exception err)
                 {
@@ -472,7 +474,7 @@ namespace WifiMonitor
                         tempByte[1] = response[4 * i + 3];
                         tempByte[2] = response[4 * i + 6];
                         tempByte[3] = response[4 * i + 5];
-                        DataReadWriteDF[i] = BitConverter.ToSingle(tempByte, 0);  
+                        //DataReadWriteDF[i] = BitConverter.ToSingle(tempByte, 0);  
                     }
                     modbusStatus = "Read successful";
                     return true;
@@ -554,8 +556,11 @@ namespace WifiMonitor
                 //Send modbus message to Slaves
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }
                 }
                 catch (Exception err)
                 {
@@ -626,7 +631,7 @@ namespace WifiMonitor
                         tempByte[1] = response[4 * i + 3];
                         tempByte[2] = response[4 * i + 6];
                         tempByte[3] = response[4 * i + 5];
-                        DataReadOnlyDF[i] = BitConverter.ToSingle(tempByte, 0);
+                        //DataReadOnlyDF[i] = BitConverter.ToSingle(tempByte, 0);
                     }
                     modbusStatus = "Read successful";
                     return true;
@@ -661,8 +666,11 @@ namespace WifiMonitor
                 //Send modbus frame
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }
                 }
                 catch (Exception err)
                 {
@@ -705,8 +713,11 @@ namespace WifiMonitor
                 //Send Modbus frame through TCP
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }
                 }
                 catch (Exception err)
                 {
@@ -758,8 +769,11 @@ namespace WifiMonitor
                 //Send Modbus message to Serial Port:
                 try
                 {
-                    ns.Write(message, 0, message.Length);
-                    GetResponse(ref response);
+                    lock(lockthis)
+                    {
+                        ns.Write(message, 0, message.Length);
+                        GetResponse(ref response);
+                    }                    
                 }
                 catch (Exception err)
                 {

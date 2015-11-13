@@ -17,7 +17,8 @@
             {
                 components.Dispose();
             }
-            communicate.Dispose();
+            if (GlobalVar.runningFlag)
+                 communicate.Dispose();
             base.Dispose(disposing);
         }
 
@@ -45,6 +46,9 @@
             this.btnConnectionList = new System.Windows.Forms.Button();
             this.btnEditStop = new System.Windows.Forms.Button();
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
+            this.隐藏标签ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.隐藏文本框ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.隐藏指示灯ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripLbl.SuspendLayout();
             this.contextMenuStripTxt.SuspendLayout();
             this.contextMenuStripLamp.SuspendLayout();
@@ -53,10 +57,11 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnEdit.Location = new System.Drawing.Point(3, 328);
-            this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnEdit.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnEdit.Location = new System.Drawing.Point(3, 385);
+            this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(73, 27);
+            this.btnEdit.Size = new System.Drawing.Size(84, 26);
             this.btnEdit.TabIndex = 0;
             this.btnEdit.Text = "开始编辑...";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -65,10 +70,11 @@
             // btnSavEdit
             // 
             this.btnSavEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSavEdit.Location = new System.Drawing.Point(153, 328);
-            this.btnSavEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnSavEdit.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnSavEdit.Location = new System.Drawing.Point(96, 385);
+            this.btnSavEdit.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnSavEdit.Name = "btnSavEdit";
-            this.btnSavEdit.Size = new System.Drawing.Size(65, 27);
+            this.btnSavEdit.Size = new System.Drawing.Size(65, 26);
             this.btnSavEdit.TabIndex = 1;
             this.btnSavEdit.Text = "保存编辑";
             this.btnSavEdit.UseVisualStyleBackColor = true;
@@ -78,9 +84,10 @@
             // contextMenuStripLbl
             // 
             this.contextMenuStripLbl.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ItemDelLbl});
+            this.ItemDelLbl,
+            this.隐藏标签ToolStripMenuItem});
             this.contextMenuStripLbl.Name = "contextMenuStripLbl";
-            this.contextMenuStripLbl.Size = new System.Drawing.Size(125, 26);
+            this.contextMenuStripLbl.Size = new System.Drawing.Size(125, 48);
             // 
             // ItemDelLbl
             // 
@@ -92,9 +99,10 @@
             // contextMenuStripTxt
             // 
             this.contextMenuStripTxt.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ItemDelTxt});
+            this.ItemDelTxt,
+            this.隐藏文本框ToolStripMenuItem});
             this.contextMenuStripTxt.Name = "contextMenuStripLbl";
-            this.contextMenuStripTxt.Size = new System.Drawing.Size(137, 26);
+            this.contextMenuStripTxt.Size = new System.Drawing.Size(137, 48);
             // 
             // ItemDelTxt
             // 
@@ -108,10 +116,11 @@
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnStart.BackColor = System.Drawing.Color.LightGreen;
             this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnStart.Location = new System.Drawing.Point(476, 328);
-            this.btnStart.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnStart.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnStart.Location = new System.Drawing.Point(544, 385);
+            this.btnStart.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(87, 27);
+            this.btnStart.Size = new System.Drawing.Size(99, 26);
             this.btnStart.TabIndex = 2;
             this.btnStart.Text = "开始(&S)";
             this.btnStart.UseVisualStyleBackColor = false;
@@ -123,18 +132,20 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Location = new System.Drawing.Point(3, 2);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.tabControl.Multiline = true;
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(560, 321);
+            this.tabControl.Size = new System.Drawing.Size(640, 378);
             this.tabControl.TabIndex = 3;
             // 
             // contextMenuStripLamp
             // 
             this.contextMenuStripLamp.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.DelLampToolStripMenuItem});
+            this.DelLampToolStripMenuItem,
+            this.隐藏指示灯ToolStripMenuItem});
             this.contextMenuStripLamp.Name = "contextMenuStripLamp";
-            this.contextMenuStripLamp.Size = new System.Drawing.Size(137, 26);
+            this.contextMenuStripLamp.Size = new System.Drawing.Size(137, 48);
             // 
             // DelLampToolStripMenuItem
             // 
@@ -147,7 +158,8 @@
             // 
             this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelInfo.AutoSize = true;
-            this.labelInfo.Location = new System.Drawing.Point(0, 333);
+            this.labelInfo.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelInfo.Location = new System.Drawing.Point(1, 390);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(43, 17);
             this.labelInfo.TabIndex = 4;
@@ -156,9 +168,11 @@
             // btnConnectionList
             // 
             this.btnConnectionList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnectionList.Location = new System.Drawing.Point(369, 328);
+            this.btnConnectionList.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnConnectionList.Location = new System.Drawing.Point(422, 385);
+            this.btnConnectionList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnConnectionList.Name = "btnConnectionList";
-            this.btnConnectionList.Size = new System.Drawing.Size(101, 27);
+            this.btnConnectionList.Size = new System.Drawing.Size(115, 26);
             this.btnConnectionList.TabIndex = 6;
             this.btnConnectionList.Text = "查看连接信息...";
             this.btnConnectionList.UseVisualStyleBackColor = true;
@@ -168,10 +182,11 @@
             // btnEditStop
             // 
             this.btnEditStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnEditStop.Location = new System.Drawing.Point(82, 328);
-            this.btnEditStop.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnEditStop.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnEditStop.Location = new System.Drawing.Point(167, 385);
+            this.btnEditStop.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnEditStop.Name = "btnEditStop";
-            this.btnEditStop.Size = new System.Drawing.Size(65, 27);
+            this.btnEditStop.Size = new System.Drawing.Size(78, 26);
             this.btnEditStop.TabIndex = 7;
             this.btnEditStop.Text = "退出编辑";
             this.btnEditStop.UseVisualStyleBackColor = true;
@@ -183,12 +198,30 @@
             this.timerRefresh.Interval = 800;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
+            // 隐藏标签ToolStripMenuItem
+            // 
+            this.隐藏标签ToolStripMenuItem.Name = "隐藏标签ToolStripMenuItem";
+            this.隐藏标签ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.隐藏标签ToolStripMenuItem.Text = "隐藏标签";
+            // 
+            // 隐藏文本框ToolStripMenuItem
+            // 
+            this.隐藏文本框ToolStripMenuItem.Name = "隐藏文本框ToolStripMenuItem";
+            this.隐藏文本框ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.隐藏文本框ToolStripMenuItem.Text = "隐藏文本框";
+            // 
+            // 隐藏指示灯ToolStripMenuItem
+            // 
+            this.隐藏指示灯ToolStripMenuItem.Name = "隐藏指示灯ToolStripMenuItem";
+            this.隐藏指示灯ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.隐藏指示灯ToolStripMenuItem.Text = "隐藏指示灯";
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(566, 359);
+            this.ClientSize = new System.Drawing.Size(647, 415);
             this.Controls.Add(this.btnEditStop);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnConnectionList);
@@ -196,9 +229,9 @@
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.labelInfo);
             this.Controls.Add(this.btnSavEdit);
-            this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.ShowIcon = false;
@@ -232,6 +265,9 @@
         public System.Windows.Forms.Button btnStart;
         protected System.Windows.Forms.Button btnEditStop;
         private System.Windows.Forms.Timer timerRefresh;
+        private System.Windows.Forms.ToolStripMenuItem 隐藏标签ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 隐藏文本框ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 隐藏指示灯ToolStripMenuItem;
 
     }
 }

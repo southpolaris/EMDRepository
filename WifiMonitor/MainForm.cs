@@ -293,21 +293,7 @@ namespace WifiMonitor
                         default:
                             break;
                     }
-                    switch (currTxt.MbDataType)
-                    {
-                        //case ModbusDataType.UnsignedShort:
-                        //    mCurrTxtEditForm.cbDataType.SelectedIndex = 0;
-                        //    break;
-                        case ModbusDataType.SignedInt:
-                            mCurrTxtEditForm.cbDataType.SelectedIndex = 0;
-                            break;
-                        case ModbusDataType.Float:
-                            mCurrTxtEditForm.cbDataType.SelectedIndex = 1;
-                            break;
-                        default:
-                            mCurrTxtEditForm.cbDataType.SelectedIndex = 0;
-                            break;
-                    }
+                    
                     mCurrTxtEditForm.cbbTxtVar.SelectedIndex = currTxt.RelateVar;
 
                     mCurrTxtEditForm.Show();
@@ -321,12 +307,12 @@ namespace WifiMonitor
         {
             currTxt.Width = int.Parse(mCurrTxtEditForm.txtWidth.Text);
             currTxt.Height = int.Parse(mCurrTxtEditForm.txtHeight.Text);
+            currTxt.Text = mCurrTxtEditForm.txtSlaveAddress.Text + "_";
 
             try
             {               
                 currTxt.RelateVar = int.Parse(mCurrTxtEditForm.cbbTxtVar.SelectedIndex.ToString());//将该文本框关联的变量标号赋给该文本框属性
                 currTxt.MbInterface = mCurrTxtEditForm.modbusInterface;  //变量通道
-                currTxt.MbDataType = mCurrTxtEditForm.modbusDataType;  //变量类型
                 currTxt.SlaveAddress = int.Parse(mCurrTxtEditForm.txtSlaveAddress.Text); //modbus slave 对应 id
             }
             catch (System.Exception)
@@ -485,7 +471,7 @@ namespace WifiMonitor
                 btnSavEdit.Visible = true;
                 btnEditStop.Visible = true;
                 GlobalVar.editFlag = true;
-                mToolForm.Location = new Point(GlobalVar.nMainFormPosX + GlobalVar.nMainFormWidth + 12,GlobalVar.nMainFormPosY);
+                mToolForm.Location = new Point(GlobalVar.nMainFormPosX + GlobalVar.nMainFormWidth + 2, GlobalVar.nMainFormPosY);
                 mToolForm.Show();
             }
         }
@@ -856,63 +842,39 @@ namespace WifiMonitor
         /// <param name="e"></param>
         private void timerRefresh_Tick(object sender, EventArgs e)
         {
-            foreach (TabPage tabPage in tabControl.TabPages)
+            foreach (Control ctrl in tabControl.SelectedTab.Controls)
             {
-                foreach (Control ctrl in tabPage.Controls)
+                for (int i = 0; i < communicate.moduleList.Count; i++)
                 {
-                    for (int i = 0; i < communicate.moduleList.Count; i++ )
+                    ModbusSlave module = communicate.moduleList[i];
+                    if (ctrl is TextBoxEx)
                     {
-                        ModbusSlave module = communicate.moduleList[i];
-                        if (ctrl is TextBoxEx) //Update text box data (number)
+                        TextBoxEx textBox = ctrl as TextBoxEx;
+                        if (textBox.SlaveAddress == module.slaveIP)
                         {
-                            TextBoxEx textBox = ctrl as TextBoxEx;
-                            if (textBox.SlaveAddress == module.slaveIndex)
+                            if (textBox.MbInterface == ModbusInterface.HoldingRegister)
                             {
-                                if (textBox.MbInterface == ModbusInterface.HoldingRegister)
-                                {
-                                    switch (textBox.MbDataType)
-                                    {
-                                        case ModbusDataType.SignedInt:
-                                            textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
-                                            break;
-                                        case ModbusDataType.Float:
-                                            textBox.Text = module.DataReadWriteDF[textBox.RelateVar].ToString();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                if (textBox.MbInterface == ModbusInterface.InputRegister)
-                                {
-                                    switch (textBox.MbDataType)
-                                    {
-                                        case ModbusDataType.SignedInt:
-                                            textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
-                                            break;
-                                        case ModbusDataType.Float:
-                                            textBox.Text = module.DataReadOnlyDF[textBox.RelateVar].ToString();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
+                                textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
                             }
-                        }
-
-                        if (ctrl is Lamp) //Update lamp data (switch)
-                        {
-                            Lamp lamp = ctrl as Lamp;
-                            if (lamp.SlaveAddress == module.slaveIndex)
+                            if (textBox.MbInterface == ModbusInterface.InputRegister)
                             {
-                                if (!lamp.ReadOnly)
-                                    lamp.onFlag = module.DataCoil[lamp.RelateVar];
-                                else
-                                    lamp.onFlag = module.DataDiscreteInput[lamp.RelateVar];
+                                textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
                             }
                         }
                     }
+                    else if (ctrl is Lamp)
+                    {
+                        Lamp lamp = ctrl as Lamp;
+                        if (lamp.SlaveAddress == module.slaveIP)
+                        {
+                            if (!lamp.ReadOnly)
+                                lamp.onFlag = module.DataCoil[lamp.RelateVar];
+                            else
+                                lamp.onFlag = module.DataDiscreteInput[lamp.RelateVar];
+                        }
+                    }
                 }
-            }  
+            }
         }
     }
 }

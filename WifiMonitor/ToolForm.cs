@@ -71,6 +71,23 @@ namespace WifiMonitor
             }
         }
         #endregion 添加文本框部分
+
+
+        //添加指示灯
+        private void btnAddLamp_Click(object sender, EventArgs e)
+        {
+            int tabIndex = mMainForm.tabControl.SelectedIndex + 1; //获取控件所在标签页，从1开始
+            for (int index = 1; index <= numLamp.Value; index++)
+            {
+                Lamp lamp = new Lamp();
+                lamp.Location = new Point(10, 20 * index * 2);
+                lamp.Name = "lamp" + tabIndex + "_" + index;
+                lamp.MouseDoubleClick += new MouseEventHandler(mMainForm.Lamp_DoubleClick);
+                lamp.MouseDown += new MouseEventHandler(mMainForm.Lamp_MouseDown);
+                lamp.MouseMove += new MouseEventHandler(mMainForm.Lamp_MouseMove);
+                mMainForm.tabControl.SelectedTab.Controls.Add(lamp);
+            }
+        }
         
         private void btnCreateTab_Click(object sender, EventArgs e)
         {
@@ -96,23 +113,6 @@ namespace WifiMonitor
         {
             mMainForm.tabControl.SelectedTab.Text = tabTitleChange.txtTitle.Text;
             tabTitleChange.Dispose();
-        }
-
-        //添加指示灯
-        private void btnAddLamp_Click(object sender, EventArgs e)
-        {
-            int tabIndex = mMainForm.tabControl.SelectedIndex + 1; //获取控件所在标签页，从1开始
-            for (int index = 1; index <= numLamp.Value; index++)
-            {
-                Lamp lamp = new Lamp();
-                lamp.Location = new Point(10, 20 * index * 2);
-                lamp.Name = "lamp" + tabIndex + "_" + index;
-                lamp.onFlag = false;
-                lamp.MouseDoubleClick += new MouseEventHandler(mMainForm.Lamp_DoubleClick);
-                lamp.MouseDown += new MouseEventHandler(mMainForm.Lamp_MouseDown);
-                lamp.MouseMove +=new MouseEventHandler(mMainForm.Lamp_MouseMove);
-                mMainForm.tabControl.SelectedTab.Controls.Add(lamp);
-            }
         }
 
         //删除选中标签页及其上所有控件(界面)

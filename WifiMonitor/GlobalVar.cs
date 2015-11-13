@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
 
 using System.Collections;//ArrayList
 
@@ -17,13 +18,20 @@ namespace WifiMonitor
         public static int nMainFormPosX = 0 ;
         public static int nMainFormPosY = 0;
         public static string sMainFormTitle = "主界面";
-
-        //串口读入的参数的个数
-        public static int RcvCmdNum = 0;    
-  
+          
         //运行 标志位
         public static bool runningFlag = false;
         //编辑 标志位
         public static bool editFlag = false;
     }
+
+
+    //各个模块对应的参数的个数
+    public struct ModbusData
+    {
+        public ushort discreteInput;
+        public ushort coil;
+        public ushort inputRegister;
+        public ushort holdingRegiter;
+    } 
 }
