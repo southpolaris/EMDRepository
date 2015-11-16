@@ -3,26 +3,13 @@ using System.Windows.Forms;
 
 namespace WifiMonitor
 {
-    public enum ModbusInterface
-    {
-        DiscretesInputs = 1,    //Single bit read-only
-        Coils = 2,              //Single bit read-write
-        InputRegister = 3,      //16 bit read-only
-        HoldingRegister = 4     //16 bit read-write     
-    }
-
-    public enum ModbusDataType
-    {
-        UnsignedShort = 0,
-        SignedInt = 1,
-        Float = 2
-    }
-
     public partial class TextBoxEx : TextBox
     {
         public TextBoxEx()
         {
             InitializeComponent();
+            MbInterface = ModbusInterface.HoldingRegister;
+            RelateVar = 0;
         }
 
         private int mPosition = 0;

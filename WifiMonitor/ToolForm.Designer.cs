@@ -212,7 +212,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(151, 443);
+            this.ClientSize = new System.Drawing.Size(146, 443);
             this.ControlBox = false;
             this.Controls.Add(this.numLamp);
             this.Controls.Add(this.lblAddLamp);

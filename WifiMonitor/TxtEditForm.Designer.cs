@@ -147,6 +147,23 @@
             this.cbbTxtVar.DisplayMember = "Key";
             this.cbbTxtVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbTxtVar.FormattingEnabled = true;
+            this.cbbTxtVar.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16"});
             this.cbbTxtVar.Location = new System.Drawing.Point(395, 25);
             this.cbbTxtVar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbbTxtVar.Name = "cbbTxtVar";

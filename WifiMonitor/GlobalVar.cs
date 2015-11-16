@@ -8,13 +8,14 @@ using System.Collections;//ArrayList
 
 namespace WifiMonitor
 {
-    class GlobalVar
+    static class GlobalVar
     {
         ////给定INI文件路径  默认为应用启动的路径
         public static string sIniPath = Environment.CurrentDirectory + "\\WifiMonitor.ini";
+        public static string xmlPath = Environment.CurrentDirectory + "\\Manifest.xml";
         //主窗体宽 高
-        public static int nMainFormWidth = 300;
-        public static int nMainFormHeight = 300;
+        public static int nMainFormWidth = 600;
+        public static int nMainFormHeight = 400;
         public static int nMainFormPosX = 0 ;
         public static int nMainFormPosY = 0;
         public static string sMainFormTitle = "主界面";
@@ -33,5 +34,20 @@ namespace WifiMonitor
         public ushort coil;
         public ushort inputRegister;
         public ushort holdingRegiter;
-    } 
+    }
+
+    public enum ModbusInterface
+    {
+        DiscretesInputs = 1,    //Single bit read-only
+        Coils = 2,              //Single bit read-write
+        InputRegister = 3,      //16 bit read-only
+        HoldingRegister = 4     //16 bit read-write     
+    }
+
+    public enum ModbusDataType
+    {
+        UnsignedShort = 0,
+        SignedInt = 1,
+        Float = 2
+    }
 }

@@ -36,19 +36,19 @@
             this.btnSavEdit = new System.Windows.Forms.Button();
             this.contextMenuStripLbl = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ItemDelLbl = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideLabelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripTxt = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ItemDelTxt = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideTextboxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.contextMenuStripLamp = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.DelLampToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideLampToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelInfo = new System.Windows.Forms.Label();
             this.btnConnectionList = new System.Windows.Forms.Button();
             this.btnEditStop = new System.Windows.Forms.Button();
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
-            this.隐藏标签ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.隐藏文本框ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.隐藏指示灯ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripLbl.SuspendLayout();
             this.contextMenuStripTxt.SuspendLayout();
             this.contextMenuStripLamp.SuspendLayout();
@@ -85,7 +85,7 @@
             // 
             this.contextMenuStripLbl.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ItemDelLbl,
-            this.隐藏标签ToolStripMenuItem});
+            this.hideLabelToolStripMenuItem});
             this.contextMenuStripLbl.Name = "contextMenuStripLbl";
             this.contextMenuStripLbl.Size = new System.Drawing.Size(125, 48);
             // 
@@ -96,11 +96,17 @@
             this.ItemDelLbl.Text = "删除标签";
             this.ItemDelLbl.Click += new System.EventHandler(this.ItemDelLbl_Click);
             // 
+            // hideLabelToolStripMenuItem
+            // 
+            this.hideLabelToolStripMenuItem.Name = "hideLabelToolStripMenuItem";
+            this.hideLabelToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.hideLabelToolStripMenuItem.Text = "隐藏标签";
+            // 
             // contextMenuStripTxt
             // 
             this.contextMenuStripTxt.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ItemDelTxt,
-            this.隐藏文本框ToolStripMenuItem});
+            this.hideTextboxToolStripMenuItem});
             this.contextMenuStripTxt.Name = "contextMenuStripLbl";
             this.contextMenuStripTxt.Size = new System.Drawing.Size(137, 48);
             // 
@@ -110,6 +116,12 @@
             this.ItemDelTxt.Size = new System.Drawing.Size(136, 22);
             this.ItemDelTxt.Text = "删除文本框";
             this.ItemDelTxt.Click += new System.EventHandler(this.ItemDelTxt_Click);
+            // 
+            // hideTextboxToolStripMenuItem
+            // 
+            this.hideTextboxToolStripMenuItem.Name = "hideTextboxToolStripMenuItem";
+            this.hideTextboxToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.hideTextboxToolStripMenuItem.Text = "隐藏文本框";
             // 
             // btnStart
             // 
@@ -143,7 +155,7 @@
             // 
             this.contextMenuStripLamp.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DelLampToolStripMenuItem,
-            this.隐藏指示灯ToolStripMenuItem});
+            this.hideLampToolStripMenuItem});
             this.contextMenuStripLamp.Name = "contextMenuStripLamp";
             this.contextMenuStripLamp.Size = new System.Drawing.Size(137, 48);
             // 
@@ -153,6 +165,12 @@
             this.DelLampToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.DelLampToolStripMenuItem.Text = "删除指示灯";
             this.DelLampToolStripMenuItem.Click += new System.EventHandler(this.DelLampToolStripMenuItem_Click);
+            // 
+            // hideLampToolStripMenuItem
+            // 
+            this.hideLampToolStripMenuItem.Name = "hideLampToolStripMenuItem";
+            this.hideLampToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.hideLampToolStripMenuItem.Text = "隐藏指示灯";
             // 
             // labelInfo
             // 
@@ -197,24 +215,6 @@
             // 
             this.timerRefresh.Interval = 800;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
-            // 
-            // 隐藏标签ToolStripMenuItem
-            // 
-            this.隐藏标签ToolStripMenuItem.Name = "隐藏标签ToolStripMenuItem";
-            this.隐藏标签ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.隐藏标签ToolStripMenuItem.Text = "隐藏标签";
-            // 
-            // 隐藏文本框ToolStripMenuItem
-            // 
-            this.隐藏文本框ToolStripMenuItem.Name = "隐藏文本框ToolStripMenuItem";
-            this.隐藏文本框ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.隐藏文本框ToolStripMenuItem.Text = "隐藏文本框";
-            // 
-            // 隐藏指示灯ToolStripMenuItem
-            // 
-            this.隐藏指示灯ToolStripMenuItem.Name = "隐藏指示灯ToolStripMenuItem";
-            this.隐藏指示灯ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.隐藏指示灯ToolStripMenuItem.Text = "隐藏指示灯";
             // 
             // MainForm
             // 
@@ -265,9 +265,9 @@
         public System.Windows.Forms.Button btnStart;
         protected System.Windows.Forms.Button btnEditStop;
         private System.Windows.Forms.Timer timerRefresh;
-        private System.Windows.Forms.ToolStripMenuItem 隐藏标签ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 隐藏文本框ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 隐藏指示灯ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideLabelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideTextboxToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideLampToolStripMenuItem;
 
     }
 }

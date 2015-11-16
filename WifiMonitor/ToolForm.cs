@@ -44,7 +44,15 @@ namespace WifiMonitor
                 lbl.DoubleClick += new EventHandler(mMainForm.lbl_DoubleClick);
                 lbl.MouseDown += new MouseEventHandler(mMainForm.lbl_MouseDown);
                 lbl.MouseMove += new MouseEventHandler(mMainForm.lbl_MouseMove);
-                mMainForm.tabControl.SelectedTab.Controls.Add(lbl);
+                try
+                {
+                    mMainForm.tabControl.SelectedTab.Controls.Add(lbl);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("请至少添加一个选项卡页面！");
+                }
+
             }
         }
         #endregion 添加标签部分

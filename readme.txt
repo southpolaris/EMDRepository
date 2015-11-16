@@ -61,6 +61,9 @@ Timer refersh will only change the controls in selected tab page.
 Remove float data in registers.
 Last version use ini configure file, from now on it will change into xml format.
 
+2015.11.16 ver0.82
+Update the config file format from .ini to .xml, for futher develpment.
+
 Things need to do：
 界面优化:
 是否可以标签透明或自动更改长度;

@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using System.IO;
 
 namespace WifiMonitor
 {
@@ -176,16 +178,8 @@ namespace WifiMonitor
                         mTitleChange = new TitleChange();
                         mTitleChange.Text = "保持寄存器——数值量写入";
                         mTitleChange.txtTitle.Text = currTxt.Text;
-                        if (currTxt.MbDataType == ModbusDataType.SignedInt)
-                        {
-                            mTitleChange.btnSave.Click += new EventHandler(WriteInt);
+                        mTitleChange.btnSave.Click += new EventHandler(WriteInt);
                             mTitleChange.lblTitle.Text = "写入32位整形：";
-                        }
-                        else if (currTxt.MbDataType == ModbusDataType.Float)
-                        {
-                            mTitleChange.btnSave.Click += new EventHandler(WriteFloat);
-                            mTitleChange.lblTitle.Text = "写入浮点数：";
-                        }
                         mTitleChange.ShowDialog();
                     }                    
                 }                
@@ -260,8 +254,11 @@ namespace WifiMonitor
                 if (e.Button == MouseButtons.Left)
                 {
                     Point temp = Control.MousePosition;
-
-                    txt.Location = new Point(txtLocat.X + temp.X - txtStart.X, txtLocat.Y + temp.Y - txtStart.Y);
+                    Point destiny = new Point(txtLocat.X + temp.X - txtStart.X, txtLocat.Y + temp.Y - txtStart.Y);
+                    if (destiny.X >= 0 && destiny.X <= tabControl.Width && destiny.Y >= 0 && destiny.Y <= tabControl.Height)
+                    {
+                        txt.Location = destiny;
+                    }                    
                 }
             }           
         }
@@ -437,32 +434,25 @@ namespace WifiMonitor
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
-            //主窗体尺寸改变后  记入INI
-            IniFile.WriteIniData("MainForm", "Width", this.Width.ToString(), GlobalVar.sIniPath);
-            IniFile.WriteIniData("MainForm", "Height", this.Height.ToString(), GlobalVar.sIniPath);
+            GlobalVar.nMainFormHeight = this.Height;
+            GlobalVar.nMainFormWidth = this.Width;
         }
 
         private void MainForm_Move(object sender, EventArgs e)
         {
-            //主窗体坐标改变后  记入INI
-            IniFile.WriteIniData("MainForm", "PosX", this.Location.X.ToString(), GlobalVar.sIniPath);
-            IniFile.WriteIniData("MainForm", "PosY", this.Location.Y.ToString(), GlobalVar.sIniPath);
+            GlobalVar.nMainFormPosX = this.Location.X;
+            GlobalVar.nMainFormPosY = this.Location.Y;
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
             mToolForm = new ToolForm(this);
 
-            if ((IniFile.ReadIniData("MainForm", "Width", null, GlobalVar.sIniPath) != "") && (IniFile.ReadIniData("MainForm", "Height", null, GlobalVar.sIniPath) != "")
-                &&(int.Parse(IniFile.ReadIniData("MainForm", "PosX", null, GlobalVar.sIniPath))!= 0)&&(int.Parse(IniFile.ReadIniData("MainForm", "PosY", null, GlobalVar.sIniPath))!=0))
-            {
-                //读取改变后的主窗体坐标和大小
-                GlobalVar.nMainFormWidth = int.Parse(IniFile.ReadIniData("MainForm", "Width", null, GlobalVar.sIniPath));
-                GlobalVar.nMainFormHeight = int.Parse(IniFile.ReadIniData("MainForm", "Height", null, GlobalVar.sIniPath));
-
-                GlobalVar.nMainFormPosX = int.Parse(IniFile.ReadIniData("MainForm", "PosX", null, GlobalVar.sIniPath));
-                GlobalVar.nMainFormPosY = int.Parse(IniFile.ReadIniData("MainForm", "PosY", null, GlobalVar.sIniPath));
-            }
+            //读取改变后的主窗体坐标和大小
+            GlobalVar.nMainFormWidth = this.Width;
+            GlobalVar.nMainFormHeight = this.Height;
+            GlobalVar.nMainFormPosX = this.Location.X;
+            GlobalVar.nMainFormPosY = this.Location.Y;
 
             if (false == GlobalVar.editFlag)
             {
@@ -495,7 +485,7 @@ namespace WifiMonitor
                 }
                 GlobalVar.runningFlag = true;
                 btnStart.BackColor = Color.Tomato;
-                btnStart.Text = "停止";
+                btnStart.Text = "■ 停止";
             }
             else
             {
@@ -513,7 +503,7 @@ namespace WifiMonitor
                 }
                 GlobalVar.runningFlag = false;
                 btnStart.BackColor = Color.LightGreen;
-                btnStart.Text = "启动";
+                btnStart.Text = " 启动";
             }
         }
 
@@ -556,16 +546,14 @@ namespace WifiMonitor
         }
 
         /// <summary>
-        /// 保存当前窗体控件信息到ini文件
+        /// 保存当前窗体控件信息到xml文件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnSavEdit_Click(object sender, EventArgs e)
         {
             int tabIndex = 1;
-            int labelIndex = 1;
-            int txtIndex = 1;
-            int lampIndex = 1;
+
 
             //遍历INI文件中所有lbl节名
             string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
@@ -576,46 +564,60 @@ namespace WifiMonitor
                     IniFile.INIDeleteSection(GlobalVar.sIniPath, str);
                 }
             }
+            //清除原有信息
+            XDocument xDoc = XDocument.Load(GlobalVar.xmlPath);
+            XElement controlElement = xDoc.Root.Element("Tabpages");
+            xDoc.Root.Element("MainForm").RemoveAll();
+            controlElement.RemoveAll();
 
             //重新写入控件信息
             foreach (TabPage page in tabControl.TabPages)
             {
+                controlElement.Add(new XElement("Tabpage" + tabIndex.ToString(), new XAttribute("Text", page.Text),
+                    new XElement("Labels"),
+                    new XElement("TextBoxes"), 
+                    new XElement("Lamps")));
+
+                XElement labelElement = controlElement.Element("Tabpage" + tabIndex.ToString()).Element("Labels");
+                XElement textElement = controlElement.Element("Tabpage" + tabIndex.ToString()).Element("TextBoxes");
+                XElement lampElement = controlElement.Element("Tabpage" + tabIndex.ToString()).Element("Lamps");
+
+                int labelIndex = 1;
+                int txtIndex = 1;
+                int lampIndex = 1;
+
                 foreach (Control ctrl in page.Controls)
                 {
                     if (ctrl is Label)
                     {
                         string lblKnot = "";
-                        lblKnot = "Label" + labelIndex.ToString();//节名 
+                        lblKnot = "Label" + tabIndex.ToString() + "_" + labelIndex.ToString();//节名 
                         ctrl.Name = lblKnot;//重新分配标签标识  以节名命名
-
-                        IniFile.WriteIniData(lblKnot, "LabelID", ctrl.Name, GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "LabelText", ctrl.Text, GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "PosX", ctrl.Location.X.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "Width", ctrl.Width.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "Height", ctrl.Height.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lblKnot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath); //所在标签页索引
+                        labelElement.Add(new XElement(lblKnot, 
+                            new XAttribute("ID", ctrl.Name),
+                            new XAttribute("Text", ctrl.Text),
+                            new XAttribute("PosX", ctrl.Location.X.ToString()),
+                            new XAttribute("PosY", ctrl.Location.Y.ToString()),
+                            new XAttribute("Width", ctrl.Width.ToString()),
+                            new XAttribute("Height", ctrl.Height.ToString()) ));
 
                         labelIndex++;
                     }
                     if (ctrl is TextBoxEx)
                     {
                         string TxtKnot = "";
-                        currTxt = new TextBoxEx();
-
-                        TxtKnot = "TextBox" + txtIndex.ToString();//节名 
+                        TxtKnot = "TextBox" + tabIndex.ToString() + "_" + txtIndex.ToString();//节名 
                         ctrl.Name = TxtKnot;//重新分配标识  以节名命名
-
-                        IniFile.WriteIniData(TxtKnot, "PosX", ctrl.Location.X.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "Width", ctrl.Width.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "Height", ctrl.Height.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "TextBoxID", ctrl.Name, GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "RelateVar", ((TextBoxEx)ctrl).RelateVar.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "SlaveAddress", ((TextBoxEx)ctrl).SlaveAddress.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "Interface", ((int)(ctrl as TextBoxEx).MbInterface).ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "DataType", ((int)(ctrl as TextBoxEx).MbDataType).ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(TxtKnot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath); //所在标签页索引
+                        textElement.Add(new XElement(TxtKnot,
+                            new XAttribute("ID", ctrl.Name),
+                            new XElement("RelateVar", (ctrl as TextBoxEx).RelateVar.ToString()),
+                            new XElement("SlaveAddress", (ctrl as TextBoxEx).SlaveAddress.ToString()),
+                            new XElement("Interface", ((int)((ctrl as TextBoxEx).MbInterface)).ToString()),
+                            new XAttribute("PosX", ctrl.Location.X.ToString()),
+                            new XAttribute("PosY", ctrl.Location.Y.ToString()),
+                            new XAttribute("Width", ctrl.Width.ToString()),
+                            new XAttribute("Height", ctrl.Height.ToString())
+                           ));
 
                         txtIndex++;
                     }
@@ -624,26 +626,35 @@ namespace WifiMonitor
                         string lampNot = "";
                         currLamp = new Lamp();
 
-                        lampNot = "Lamp" + lampIndex.ToString();
-                        ctrl.Name = lampNot;                        
+                        lampNot = "Lamp" + tabIndex.ToString() + "_" + lampIndex.ToString();
+                        ctrl.Name = lampNot;
 
-                        IniFile.WriteIniData(lampNot, "PosX", ctrl.Location.X.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "PosY", ctrl.Location.Y.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "LampID", ctrl.Name, GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "SlaveAddress", ((Lamp)ctrl).SlaveAddress.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "Interface", ((Lamp)ctrl).ReadOnly == true ? "1" : "0", GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "RelateVar", ((Lamp)ctrl).RelateVar.ToString(), GlobalVar.sIniPath);
-                        IniFile.WriteIniData(lampNot, "Adscription", tabIndex.ToString(), GlobalVar.sIniPath);
-
+                        lampElement.Add(new XElement(lampNot,
+                            new XAttribute("ID", ctrl.Name),
+                            new XElement("RelateVar", (ctrl as Lamp).RelateVar.ToString()),
+                            new XElement("SlaveAddress", (ctrl as Lamp).SlaveAddress.ToString()),
+                            new XElement("Interface", ((Lamp)ctrl).ReadOnly == true ? "1" : "0"),
+                            new XAttribute("PosX", ctrl.Location.X.ToString()),
+                            new XAttribute("PosY", ctrl.Location.Y.ToString())
+                            ));
+                        
                         lampIndex++;
                     }
                 }
-                IniFile.WriteIniData("TabPage" + tabIndex.ToString(), "Text", tabControl.TabPages[tabIndex - 1].Text, GlobalVar.sIniPath);
+                labelElement.Add(new XAttribute("Count", labelIndex - 1));
+                textElement.Add(new XAttribute("Count", txtIndex - 1));
+                lampElement.Add(new XAttribute("Count", lampIndex - 1));
 
                 tabIndex++;//标签页索引
             }
+            controlElement.Add(new XAttribute("Count", tabControl.TabPages.Count));
 
-            IniFile.WriteIniData("TabProperty", "TabPageCount", this.tabControl.TabCount.ToString(), GlobalVar.sIniPath); //标签页总数
+            xDoc.Root.Element("MainForm").Add(new XAttribute("Text", this.Text),
+                new XAttribute("PosX", this.Location.X.ToString()),
+                new XAttribute("PosY", this.Location.Y.ToString()),
+                new XAttribute("Width", this.Width.ToString()),
+                new XAttribute("Height", this.Height.ToString()));
+            xDoc.Root.Save(GlobalVar.xmlPath);
         }
 
         //Monitor connection
@@ -662,162 +673,157 @@ namespace WifiMonitor
         {
             communicate.updateStatus += new UpdateStatus(SetStatusLable);
 
-            #region 加载主窗体参数
-            //判断返回值，避免第一次运行时为空出错  
-            if ((IniFile.ReadIniData("MainForm", "Width", null, GlobalVar.sIniPath) != "") && (IniFile.ReadIniData("MainForm", "Height", null, GlobalVar.sIniPath) != ""))
+            FileInfo fileInfo = new FileInfo(GlobalVar.xmlPath);
+            if (!fileInfo.Exists)
             {
-                //读取主窗体大小、标题
-                GlobalVar.nMainFormWidth = int.Parse(IniFile.ReadIniData("MainForm", "Width", null, GlobalVar.sIniPath));
-                GlobalVar.nMainFormHeight = int.Parse(IniFile.ReadIniData("MainForm", "Height", null, GlobalVar.sIniPath));
-                GlobalVar.sMainFormTitle = IniFile.ReadIniData("MainForm", "Title", null, GlobalVar.sIniPath);
+                XDocument xDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Root", 
+                    new XElement("Tabpages"), new XElement("MainForm")));
+                xDoc.Save(GlobalVar.xmlPath);
             }
-            #endregion
 
             //遍历所有节名  用于加载控件
             string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
-            int indexLbl = 1;
-            int indexTxt = 1;
-            int indexTab = 1;
-            int indexLamp = 1;
+            XElement tabElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("Tabpages");
+            XElement formElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("MainForm");
 
-            foreach (string str in sSectionName)
+            #region Load controls
+            try
             {
-                //加载tab控件
-                if ("TabPage" + indexTab.ToString() == str)
+                for (int tabIndex = 1; tabIndex <= int.Parse(tabElement.Attribute("Count").Value); tabIndex++)
                 {
-                    string tabText = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Text", "New Tab");
+                    XElement tempTabElement = tabElement.Element("Tabpage" + tabIndex.ToString());
+                    string tabText = tempTabElement.Attribute("Text").Value;
                     TabPage tabPage = new TabPage(tabText);
                     tabPage.UseVisualStyleBackColor = true;
                     tabControl.TabPages.Add(tabPage);
-                    indexTab++;
-                }
-            }
+                    try
+                    {
+                        for (int labelIndex = 1; labelIndex <= int.Parse(tempTabElement.Element("Labels").Attribute("Count").Value); labelIndex++)
+                        {
+                            XElement tempLabelElement = tempTabElement.Element("Labels").Element("Label" + tabIndex.ToString() + "_" + labelIndex.ToString());
+                            string TempLabelID = tempLabelElement.Attribute("ID").Value;
+                            string TempLabelText = tempLabelElement.Attribute("Text").Value;
+                            int TempPosX = int.Parse(tempLabelElement.Attribute("PosX").Value);
+                            int TempPosY = int.Parse(tempLabelElement.Attribute("PosY").Value);
+                            int TempWidth = int.Parse(tempLabelElement.Attribute("Width").Value);
+                            int TempHeight = int.Parse(tempLabelElement.Attribute("Height").Value);
 
-            foreach (string str in sSectionName)
+                            Label lbl = new Label();
+                            lbl.Location = new Point(TempPosX, TempPosY);
+                            lbl.Name = TempLabelID;
+                            lbl.Text = TempLabelText;
+                            lbl.Width = TempWidth;
+                            lbl.Height = TempHeight;
+                            lbl.BackColor = Color.Transparent;
+                            lbl.TextAlign = ContentAlignment.MiddleRight;
+                            lbl.DoubleClick += new EventHandler(lbl_DoubleClick);
+                            lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
+                            lbl.MouseMove += new MouseEventHandler(lbl_MouseMove);
+                            this.tabControl.TabPages[tabIndex - 1].Controls.Add(lbl);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        ;
+                    }
+                    try
+                    {
+                        for (int textIndex = 1; textIndex <= int.Parse(tempTabElement.Element("TextBoxes").Attribute("Count").Value); textIndex++)
+                        {
+                            XElement tempTextElement = tempTabElement.Element("TextBoxes").Element("TextBox" + tabIndex.ToString() + "_" + textIndex.ToString());
+                            string TempTextBoxID = tempTextElement.Attribute("ID").Value;
+                            int TempPosX = int.Parse(tempTextElement.Attribute("PosX").Value);
+                            int TempPosY = int.Parse(tempTextElement.Attribute("PosY").Value);
+                            int TempWidth = int.Parse(tempTextElement.Attribute("Width").Value);
+                            int TempHeight = int.Parse(tempTextElement.Attribute("Height").Value);
+                            int tempTextBoxSlaveAddress = int.Parse(tempTextElement.Element("SlaveAddress").Value);  //从站地址
+                            int TempTextBoxRelateVar = int.Parse(tempTextElement.Element("RelateVar").Value);        //变量地址
+                            int TempTextBoxMBInterface = int.Parse(tempTextElement.Element("Interface").Value);      //变量通道
+
+                            TextBoxEx txt = new TextBoxEx();
+                            txt.Location = new Point(TempPosX, TempPosY);
+                            txt.Name = TempTextBoxID;
+                            txt.Width = TempWidth;
+                            txt.Height = TempHeight;
+                            txt.TextAlign = HorizontalAlignment.Right;//文本内容位置靠右
+                            txt.ReadOnly = true;
+                            txt.BackColor = Color.White;
+                            txt.SlaveAddress = tempTextBoxSlaveAddress;
+                            txt.RelateVar = TempTextBoxRelateVar;
+                            switch (TempTextBoxMBInterface)
+                            {
+                                case 3:
+                                    txt.MbInterface = ModbusInterface.InputRegister;
+                                    break;
+                                case 4:
+                                    txt.MbInterface = ModbusInterface.HoldingRegister;
+                                    txt.Cursor = Cursors.Hand;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            txt.Click += new EventHandler(Text_Click);
+                            txt.DoubleClick += new EventHandler(Text_DoubleClick);
+                            txt.MouseDown += new MouseEventHandler(Text_MouseDown);
+                            txt.MouseMove += new MouseEventHandler(Text_MouseMove);
+                            this.tabControl.TabPages[tabIndex - 1].Controls.Add(txt);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        ;
+                    }
+                    try
+                    {
+                        for (int lampIndex = 1; lampIndex <= int.Parse(tempTabElement.Element("Lamps").Attribute("Count").Value); lampIndex++)
+                        {
+                            XElement tempLampElement = tempTabElement.Element("Lamps").Element("Lamp" + tabIndex.ToString() + "_" + lampIndex.ToString());
+                            string tempLampID = tempLampElement.Attribute("ID").Value;
+                            int tempPosX = int.Parse(tempLampElement.Attribute("PosX").Value);
+                            int tempPosY = int.Parse(tempLampElement.Attribute("PosY").Value);
+                            int tempLampVar = int.Parse(tempLampElement.Element("RelateVar").Value);
+                            int tempSlaveAddress = int.Parse(tempLampElement.Element("SlaveAddress").Value);
+                            int tempInterface = int.Parse(tempLampElement.Element("Interface").Value);
+
+                            Lamp lamp = new Lamp();
+                            lamp.Location = new Point(tempPosX, tempPosY);
+                            lamp.Name = tempLampID;
+                            lamp.RelateVar = tempLampVar;
+                            lamp.SlaveAddress = tempSlaveAddress;
+                            if (tempInterface == 1)
+                            {
+                                lamp.ReadOnly = true;
+                            }
+                            else
+                            {
+                                lamp.ReadOnly = false;
+                                lamp.Cursor = Cursors.Hand;
+                            }
+
+                            lamp.Click += new EventHandler(Lamp_Click);
+                            lamp.DoubleClick += new EventHandler(Lamp_DoubleClick);
+                            lamp.MouseDown += new MouseEventHandler(Lamp_MouseDown);
+                            lamp.MouseMove += new MouseEventHandler(Lamp_MouseMove);
+                            this.tabControl.TabPages[tabIndex - 1].Controls.Add(lamp);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        ;
+                    }
+                }
+
+                //读取主窗体大小、标题
+                GlobalVar.nMainFormWidth = int.Parse(formElement.Attribute("Width").Value);
+                GlobalVar.nMainFormHeight = int.Parse(formElement.Attribute("Height").Value);
+                GlobalVar.sMainFormTitle = formElement.Attribute("Text").Value;
+            }
+            catch (Exception)
             {
-                #region 根据读取的Label个数加载Label控件
-                if ("Label"+indexLbl.ToString() == str)
-                {       
-                    string TempLabelID = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "LabelID", "NoItem");
-                    string TempLabelText = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "LabelText", "NoItem");
-                    int TempPosX = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosX", "NoItem"));
-                    int TempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
-                    int TempWidth = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Width", "NoItem"));
-                    int TempHeight = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Height", "NoItem"));
-                    int TempAdscription = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Adscription", "NoItem"));
-
-                    Label lbl = new Label();
-                    lbl.Location = new Point(TempPosX, TempPosY);
-                    lbl.Name = TempLabelID;
-                    lbl.Text = TempLabelText;
-                    lbl.Width = TempWidth;
-                    lbl.Height = TempHeight;
-                    lbl.BackColor = Color.Transparent;
-                    lbl.TextAlign = ContentAlignment.MiddleRight;
-                    lbl.DoubleClick += new EventHandler(lbl_DoubleClick);
-                    lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                    lbl.MouseMove += new MouseEventHandler(lbl_MouseMove);
-                    this.tabControl.TabPages[TempAdscription - 1].Controls.Add(lbl);
-                    indexLbl++;
-                }
-                #endregion
-
-                #region 根据读取加载TextBox控件
-                if ("TextBox" + indexTxt.ToString() == str)
-                {
-                    string TempTextBoxID = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "TextBoxID", "NoItem");
-                    int tempTextBoxSlaveAddress = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "SlaveAddress", "NoItem"));  //从站地址
-                    int TempTextBoxRelateVar = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "NoItem"));        //变量地址
-                    int TempTextBoxMBInterface = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Interface", "NoItem"));      //变量通道
-                    int tempTextBoxMBDataType = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "DataType", "NoItem"));
-                    int TempPosX = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosX", "NoItem"));
-                    int TempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
-                    int TempWidth = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Width", "NoItem"));
-                    int TempHeight = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Height", "NoItem"));
-                    int TempAdscription = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Adscription", "NoItem"));//所属标签页
-
-                    TextBoxEx txt = new TextBoxEx();
-                    txt.Location = new Point(TempPosX, TempPosY);
-                    txt.Name = TempTextBoxID;
-                    txt.Width = TempWidth;
-                    txt.Height = TempHeight;
-                    txt.TextAlign = HorizontalAlignment.Right;//文本内容位置靠右
-                    txt.ReadOnly = true;
-                    txt.BackColor = Color.White;
-                    txt.SlaveAddress = tempTextBoxSlaveAddress;
-                    txt.RelateVar = TempTextBoxRelateVar;
-                    switch (TempTextBoxMBInterface)
-                    {
-                        case 3:
-                            txt.MbInterface = ModbusInterface.InputRegister;
-                            break;
-                        case 4:
-                            txt.MbInterface = ModbusInterface.HoldingRegister;
-                            txt.Cursor = Cursors.Hand;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    switch (tempTextBoxMBDataType)
-                    {
-                        //case 1:
-                        //    txt.MbDataType = ModbusDataType.UnsignedShort;
-                        //    break;
-                        case 1:
-                            txt.MbDataType = ModbusDataType.SignedInt;
-                            break;
-                        case 2:
-                            txt.MbDataType = ModbusDataType.Float;
-                            break;
-                        default:
-                            break;
-                    }
-                   
-                    txt.Click += new EventHandler(Text_Click);
-                    txt.DoubleClick += new EventHandler(Text_DoubleClick);
-                    txt.MouseDown += new MouseEventHandler(Text_MouseDown);
-                    txt.MouseMove += new MouseEventHandler(Text_MouseMove);
-                    this.tabControl.TabPages[TempAdscription - 1].Controls.Add(txt);
-                    indexTxt++;
-                }
-                #endregion
-
-                #region 根据配置加载指示灯控件
-                if ("Lamp" + indexLamp.ToString() == str)
-                {
-                    string tempLampID = IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "LampID", "NoItem");
-                    int tempPosX = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosX", "NoItem"));
-                    int tempPosY = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "PosY", "NoItem"));
-                    int tempLampVar = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "RelateVar", "NoItem"));
-                    int tempSlaveAddress = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "SlaveAddress", "NoItem"));
-                    int tempInterface = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Interface", "NoItem"));
-                    int tempAdscription = int.Parse(IniFile.INIGetStringValue(GlobalVar.sIniPath, str, "Adscription", "NoItem"));
-
-                    Lamp lamp = new Lamp();
-                    lamp.Location = new Point(tempPosX, tempPosY);
-                    lamp.Name = tempLampID;
-                    lamp.RelateVar = tempLampVar;
-                    lamp.SlaveAddress = tempSlaveAddress;
-                    if (tempInterface == 1)
-                    {
-                        lamp.ReadOnly = true;
-                    }
-                    else
-                    {
-                        lamp.ReadOnly = false;
-                        lamp.Cursor = Cursors.Hand;
-                    }
-                    
-                    lamp.Click += new EventHandler(Lamp_Click);
-                    lamp.DoubleClick += new EventHandler(Lamp_DoubleClick);
-                    lamp.MouseDown += new MouseEventHandler(Lamp_MouseDown);
-                    lamp.MouseMove += new MouseEventHandler(Lamp_MouseMove);
-                    this.tabControl.TabPages[tempAdscription - 1].Controls.Add(lamp);
-                    indexLamp++;
-                }
-                #endregion
+                ;
             }
+            #endregion
 
             //显示配置文件中设定的主窗体大小、标题
             this.Width = GlobalVar.nMainFormWidth;

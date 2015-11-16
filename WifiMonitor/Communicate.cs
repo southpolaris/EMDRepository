@@ -70,11 +70,12 @@ namespace WifiMonitor
 
                 //For every client, create a new receive data thread
                 ModbusSlave module = new ModbusSlave(tcpClient);
+                module.SetDataLength(new ModbusData { coil = 16, discreteInput = 16, holdingRegiter = 32, inputRegister = 32 });
                 moduleList.Add(module);
                 OnConnectionChange();
                 Task newCommunication = communicateTask.StartNew(() =>
                     {
-                        GetModbusData(module, 20);
+                        GetModbusData(module);
                     },
                     TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent);
             }
@@ -85,7 +86,7 @@ namespace WifiMonitor
         /// </summary>
         /// <param name="module"> Modbus slave module </param>
         /// <param name="length"> Data read length</param>
-        protected void GetModbusData(ModbusSlave module, ushort dataCount)
+        protected void GetModbusData(ModbusSlave module)
         {
             bool successFlag = false;
             TcpClient client = module.client;
@@ -98,9 +99,9 @@ namespace WifiMonitor
                     Thread.Sleep(80); //3.5 times interval to start next modbus message (4.00910405ms for baud rate 9600)
                     successFlag |= module.SendFc2((byte)1, (ushort)0, (ushort)0x10);
                     Thread.Sleep(80);
-                    successFlag |= module.SendFc4DB((byte)1, (ushort)0x00, dataCount);
+                    successFlag |= module.SendFc4DB((byte)1, (ushort)0x00, (ushort)0x20);
                     Thread.Sleep(80);
-                    successFlag |= module.SendFc3DB((byte)1, (ushort)0x00, dataCount);
+                    successFlag |= module.SendFc3DB((byte)1, (ushort)0x00, (ushort)0x20);
                     Thread.Sleep(80);                  
 
                     if (!successFlag)
