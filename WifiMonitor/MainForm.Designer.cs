@@ -79,7 +79,7 @@
             this.btnSavEdit.Text = "保存编辑";
             this.btnSavEdit.UseVisualStyleBackColor = true;
             this.btnSavEdit.Visible = false;
-            this.btnSavEdit.Click += new System.EventHandler(this.btnSavEdit_Click);
+            this.btnSavEdit.Click += new System.EventHandler(this.btnSaveEdit_Click);
             // 
             // contextMenuStripLbl
             // 
@@ -129,7 +129,7 @@
             this.btnStart.BackColor = System.Drawing.Color.LightGreen;
             this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnStart.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnStart.Location = new System.Drawing.Point(544, 385);
+            this.btnStart.Location = new System.Drawing.Point(542, 385);
             this.btnStart.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(99, 26);
@@ -148,7 +148,7 @@
             this.tabControl.Multiline = true;
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(640, 378);
+            this.tabControl.Size = new System.Drawing.Size(638, 378);
             this.tabControl.TabIndex = 3;
             // 
             // contextMenuStripLamp
@@ -187,7 +187,7 @@
             // 
             this.btnConnectionList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnectionList.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnConnectionList.Location = new System.Drawing.Point(422, 385);
+            this.btnConnectionList.Location = new System.Drawing.Point(420, 385);
             this.btnConnectionList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnConnectionList.Name = "btnConnectionList";
             this.btnConnectionList.Size = new System.Drawing.Size(115, 26);
@@ -213,7 +213,7 @@
             // 
             // timerRefresh
             // 
-            this.timerRefresh.Interval = 800;
+            this.timerRefresh.Interval = 80;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
             // MainForm
@@ -221,7 +221,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(647, 415);
+            this.ClientSize = new System.Drawing.Size(645, 415);
             this.Controls.Add(this.btnEditStop);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnConnectionList);

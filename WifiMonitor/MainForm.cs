@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.IO;
+using System.Net;
 
 namespace WifiMonitor
 {
@@ -43,9 +44,10 @@ namespace WifiMonitor
 
         //通信类
         internal Communicate communicate = new Communicate();
-        public delegate void UpdateStatus(string str);//更改界面状态显示
-
         #endregion
+
+        public delegate void UpdateStatus(string str);//更改界面状态显示
+        public delegate void LostConnectionEventHandler(int slaveIndex);
 
         public MainForm()
         {          
@@ -76,8 +78,7 @@ namespace WifiMonitor
         }
 
         private void mTitleChange_btnSave_Click(object sender, EventArgs e)
-        {
-            IniFile.WriteIniData("MainForm", "Title", mTitleChange.txtTitle.Text, GlobalVar.sIniPath);
+        {           
             GlobalVar.sMainFormTitle = mTitleChange.txtTitle.Text;
             this.Text = mTitleChange.txtTitle.Text;
             mTitleChange.Close();
@@ -193,7 +194,7 @@ namespace WifiMonitor
             if (Single.TryParse(mTitleChange.txtTitle.Text, out pendingWrite))
             {
                 mTitleChange.Close();
-                communicate.SendModbusData(currTxt.SlaveAddress, (ushort)(currTxt.RelateVar * 2 + 40), pendingWrite);
+                //communicate.SendModbusData(currTxt.SlaveAddress, (ushort)(currTxt.RelateVar * 2 + 40), pendingWrite);
             }
             else
             {
@@ -204,12 +205,12 @@ namespace WifiMonitor
 
         public void WriteInt(object sender, EventArgs e)
         {
-            int slaveIndex = currTxt.SlaveAddress;
+            ushort slaveIndex = (ushort)currTxt.SlaveAddress;
             int pendingWrite;
             if (Int32.TryParse(mTitleChange.txtTitle.Text, out pendingWrite))
             {
                 mTitleChange.Close();
-                communicate.SendModbusData(currTxt.SlaveAddress, (ushort)(currTxt.RelateVar * 2), pendingWrite);
+                communicate.SendSingleValue(slaveIndex, (ushort)currTxt.RelateVar, pendingWrite);
             }
             else
             {
@@ -281,10 +282,10 @@ namespace WifiMonitor
                     mCurrTxtEditForm.txtSlaveAddress.Text = currTxt.SlaveAddress.ToString();
                     switch (currTxt.MbInterface)
                     {
-                        case ModbusInterface.InputRegister:
+                        case DataInterface.InputRegister:
                             mCurrTxtEditForm.radioButton3.Checked = true;
                             break;
-                        case ModbusInterface.HoldingRegister:
+                        case DataInterface.HoldingRegister:
                             mCurrTxtEditForm.radioButton4.Checked = true;
                             break;
                         default:
@@ -349,7 +350,7 @@ namespace WifiMonitor
                         currLamp.onFlag = !currLamp.onFlag;
                         int slaveIndex = currLamp.SlaveAddress;
                         UseWaitCursor = true;
-                        communicate.SendModbusData(slaveIndex, (ushort)currLamp.RelateVar, currLamp.onFlag);
+                        //communicate.SendModbusData(slaveIndex, (ushort)currLamp.RelateVar, currLamp.onFlag);
                         UseWaitCursor = false;
                     }
                 }
@@ -473,6 +474,7 @@ namespace WifiMonitor
                 this.btnEdit.Visible = false;
                 this.btnSavEdit.Visible = false;
                 this.btnConnectionList.Visible = true;
+                LoadConfig(GlobalVar.xmlPath);
                 timerRefresh.Start();
                 try
                 {
@@ -550,20 +552,10 @@ namespace WifiMonitor
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnSavEdit_Click(object sender, EventArgs e)
+        private void btnSaveEdit_Click(object sender, EventArgs e)
         {
             int tabIndex = 1;
 
-
-            //遍历INI文件中所有lbl节名
-            string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
-            foreach (string str in sSectionName) //删除所有空间信息
-            {
-                if (str.Contains("Label") || str.Contains("TextBox") || str.Contains("Lamp") || str.Contains("TabPage"))
-                {
-                    IniFile.INIDeleteSection(GlobalVar.sIniPath, str);
-                }
-            }
             //清除原有信息
             XDocument xDoc = XDocument.Load(GlobalVar.xmlPath);
             XElement controlElement = xDoc.Root.Element("Tabpages");
@@ -672,17 +664,33 @@ namespace WifiMonitor
         private void MainForm_Load(object sender, EventArgs e)
         {
             communicate.updateStatus += new UpdateStatus(SetStatusLable);
+            communicate.lostConnection += new LostConnectionEventHandler(OnOffline);
 
-            FileInfo fileInfo = new FileInfo(GlobalVar.xmlPath);
+            LoadControls(GlobalVar.xmlPath);
+
+            //显示配置文件中设定的主窗体大小、标题
+            this.Width = GlobalVar.nMainFormWidth;
+            this.Height = GlobalVar.nMainFormHeight;
+            this.Text = GlobalVar.sMainFormTitle;
+        }
+
+        private void LoadConfig(string xmlPath)
+        {
+            //Add load ip mapping config file here.
+            GlobalVar.ipPortocolMapping.Add(IPAddress.Parse("192.168.0.36"), "ModbusRTU");
+            GlobalVar.ipPortocolMapping.Add(IPAddress.Parse("192.168.0.41"), "KEYENCE");
+        }
+        private void LoadControls(string xmlPath)
+        {
+            FileInfo fileInfo = new FileInfo(xmlPath);
             if (!fileInfo.Exists)
             {
-                XDocument xDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Root", 
+                XDocument xDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Root",
                     new XElement("Tabpages"), new XElement("MainForm")));
                 xDoc.Save(GlobalVar.xmlPath);
             }
 
             //遍历所有节名  用于加载控件
-            string[] sSectionName = IniFile.INIGetAllSectionNames(GlobalVar.sIniPath);
             XElement tabElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("Tabpages");
             XElement formElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("MainForm");
 
@@ -724,7 +732,7 @@ namespace WifiMonitor
                     }
                     catch (Exception)
                     {
-                        ;
+                        return;
                     }
                     try
                     {
@@ -753,10 +761,10 @@ namespace WifiMonitor
                             switch (TempTextBoxMBInterface)
                             {
                                 case 3:
-                                    txt.MbInterface = ModbusInterface.InputRegister;
+                                    txt.MbInterface = DataInterface.InputRegister;
                                     break;
                                 case 4:
-                                    txt.MbInterface = ModbusInterface.HoldingRegister;
+                                    txt.MbInterface = DataInterface.HoldingRegister;
                                     txt.Cursor = Cursors.Hand;
                                     break;
                                 default:
@@ -772,7 +780,7 @@ namespace WifiMonitor
                     }
                     catch (Exception)
                     {
-                        ;
+                        return;
                     }
                     try
                     {
@@ -810,7 +818,7 @@ namespace WifiMonitor
                     }
                     catch (Exception)
                     {
-                        ;
+                        return;
                     }
                 }
 
@@ -821,14 +829,9 @@ namespace WifiMonitor
             }
             catch (Exception)
             {
-                ;
+                return;
             }
             #endregion
-
-            //显示配置文件中设定的主窗体大小、标题
-            this.Width = GlobalVar.nMainFormWidth;
-            this.Height = GlobalVar.nMainFormHeight;
-            this.Text = GlobalVar.sMainFormTitle;
         }
 
         private void btnEditStop_Click(object sender, EventArgs e)
@@ -850,33 +853,58 @@ namespace WifiMonitor
         {
             foreach (Control ctrl in tabControl.SelectedTab.Controls)
             {
-                for (int i = 0; i < communicate.moduleList.Count; i++)
+                if (ctrl is TextBoxEx)
                 {
-                    ModbusSlave module = communicate.moduleList[i];
+                    TextBoxEx textBox = ctrl as TextBoxEx;
+                    for (int i = 0; i < communicate.slaveList.Count; i++)
+                    {
+                        Slave slave = communicate.slaveList[i];
+                        if (textBox.SlaveAddress == slave.slaveIndex)
+                        {
+                            if (textBox.MbInterface == DataInterface.HoldingRegister)
+                            {
+                                textBox.Text = slave.DataReadWrite[textBox.RelateVar].ToString();
+                            }
+                            if (textBox.MbInterface == DataInterface.InputRegister)
+                            {
+                                textBox.Text = slave.DataReadOnly[textBox.RelateVar].ToString();
+                            }
+                            break;
+                        }
+                    }
+                    
+                }
+                else if (ctrl is Lamp)
+                {
+                    Lamp lamp = ctrl as Lamp;
+                    for (int i = 0; i < communicate.slaveList.Count; i++)
+                    {
+                        Slave slave = communicate.slaveList[i];
+                        if (lamp.SlaveAddress == slave.slaveIndex) 
+                        {
+                            if (!lamp.ReadOnly)
+                                lamp.onFlag = slave.DataDiscreteOutput[lamp.RelateVar];
+                            else
+                                lamp.onFlag = slave.DataDiscreteInput[lamp.RelateVar];
+                            break;
+                        }
+                    }                   
+                }                
+            }
+        }
+
+        public void OnOffline(int slaveIndex)
+        {
+            foreach (TabPage page in tabControl.TabPages)
+            {
+                foreach (Control ctrl in page.Controls)
+                {
                     if (ctrl is TextBoxEx)
                     {
                         TextBoxEx textBox = ctrl as TextBoxEx;
-                        if (textBox.SlaveAddress == module.slaveIP)
+                        if (textBox.SlaveAddress == slaveIndex)
                         {
-                            if (textBox.MbInterface == ModbusInterface.HoldingRegister)
-                            {
-                                textBox.Text = module.DataReadWrite[textBox.RelateVar].ToString();
-                            }
-                            if (textBox.MbInterface == ModbusInterface.InputRegister)
-                            {
-                                textBox.Text = module.DataReadOnly[textBox.RelateVar].ToString();
-                            }
-                        }
-                    }
-                    else if (ctrl is Lamp)
-                    {
-                        Lamp lamp = ctrl as Lamp;
-                        if (lamp.SlaveAddress == module.slaveIP)
-                        {
-                            if (!lamp.ReadOnly)
-                                lamp.onFlag = module.DataCoil[lamp.RelateVar];
-                            else
-                                lamp.onFlag = module.DataDiscreteInput[lamp.RelateVar];
+                            textBox.Text = "离线";
                         }
                     }
                 }

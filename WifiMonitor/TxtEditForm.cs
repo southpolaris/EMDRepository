@@ -17,14 +17,14 @@ namespace WifiMonitor
             InitializeComponent();
         }
 
-        public ModbusInterface modbusInterface;
-        public ModbusDataType modbusDataType;
+        public DataInterface modbusInterface;
+        public DataType modbusDataType;
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButton3.Checked)
             {
-                this.modbusInterface = ModbusInterface.InputRegister;
+                this.modbusInterface = DataInterface.InputRegister;
             }
         }
 
@@ -32,7 +32,7 @@ namespace WifiMonitor
         {
             if (radioButton4.Checked)
             {
-                this.modbusInterface = ModbusInterface.HoldingRegister;
+                this.modbusInterface = DataInterface.HoldingRegister;
             }
         }
     }        

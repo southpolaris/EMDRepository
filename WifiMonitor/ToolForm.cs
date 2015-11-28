@@ -99,6 +99,10 @@ namespace WifiMonitor
         
         private void btnCreateTab_Click(object sender, EventArgs e)
         {
+            NewMachine newMachine = new NewMachine(mMainForm);
+            //Not finished
+            newMachine.Show();
+
             int index = mMainForm.tabControl.TabCount + 1;
             string pageText = "新标签页" + index;
             string pageName = "TabPage" + index;

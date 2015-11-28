@@ -8,14 +8,14 @@ namespace WifiMonitor
         public TextBoxEx()
         {
             InitializeComponent();
-            MbInterface = ModbusInterface.HoldingRegister;
+            MbInterface = DataInterface.HoldingRegister;
             RelateVar = 0;
         }
 
         private int mPosition = 0;
         private int mSlave = 0;
-        private ModbusDataType mbDataType;
-        private ModbusInterface mbInterface;
+        private DataType mbDataType;
+        private DataInterface mbInterface;
 
         #region 属性
         public int RelateVar //数据所在位置
@@ -30,18 +30,18 @@ namespace WifiMonitor
             set { mSlave = value; }
         }
 
-        public ModbusInterface MbInterface //数据通道
+        public DataInterface MbInterface //数据通道
         {
             get { return mbInterface; }
             set
             {
                 switch (value)
                 {
-                    case ModbusInterface.InputRegister:
+                    case DataInterface.InputRegister:
                         this.ReadOnly = true;
                         this.BackColor = Color.Gainsboro;
                         break;
-                    case ModbusInterface.HoldingRegister:
+                    case DataInterface.HoldingRegister:
                         this.ReadOnly = false;
                         this.BackColor = Color.White;
                         break;
@@ -52,7 +52,7 @@ namespace WifiMonitor
             }
         }
 
-        public ModbusDataType MbDataType //数据类型
+        public DataType MbDataType //数据类型
         {
             get { return mbDataType; }
             set { mbDataType = value; }

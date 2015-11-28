@@ -87,12 +87,12 @@
             // 
             // btnCreateTab
             // 
-            this.btnCreateTab.Location = new System.Drawing.Point(6, 327);
+            this.btnCreateTab.Location = new System.Drawing.Point(4, 286);
             this.btnCreateTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCreateTab.Name = "btnCreateTab";
-            this.btnCreateTab.Size = new System.Drawing.Size(131, 32);
+            this.btnCreateTab.Size = new System.Drawing.Size(133, 32);
             this.btnCreateTab.TabIndex = 12;
-            this.btnCreateTab.Text = "新建标签页";
+            this.btnCreateTab.Text = "添加监控页面";
             this.btnCreateTab.UseVisualStyleBackColor = false;
             this.btnCreateTab.Click += new System.EventHandler(this.btnCreateTab_Click);
             // 
@@ -144,23 +144,23 @@
             // 
             // btnRemoveTab
             // 
-            this.btnRemoveTab.Location = new System.Drawing.Point(6, 367);
+            this.btnRemoveTab.Location = new System.Drawing.Point(4, 367);
             this.btnRemoveTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRemoveTab.Name = "btnRemoveTab";
-            this.btnRemoveTab.Size = new System.Drawing.Size(131, 33);
+            this.btnRemoveTab.Size = new System.Drawing.Size(133, 33);
             this.btnRemoveTab.TabIndex = 17;
-            this.btnRemoveTab.Text = "删除当前标签页";
+            this.btnRemoveTab.Text = "删除当前页面";
             this.btnRemoveTab.UseVisualStyleBackColor = false;
             this.btnRemoveTab.Click += new System.EventHandler(this.btnRemoveTab_Click);
             // 
             // btnChangeTabName
             // 
-            this.btnChangeTabName.Location = new System.Drawing.Point(4, 286);
+            this.btnChangeTabName.Location = new System.Drawing.Point(4, 326);
             this.btnChangeTabName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnChangeTabName.Name = "btnChangeTabName";
             this.btnChangeTabName.Size = new System.Drawing.Size(133, 33);
             this.btnChangeTabName.TabIndex = 18;
-            this.btnChangeTabName.Text = "更改当前标签名称";
+            this.btnChangeTabName.Text = "编辑当前页面标题";
             this.btnChangeTabName.UseVisualStyleBackColor = false;
             this.btnChangeTabName.Click += new System.EventHandler(this.btnChangeTabName_Click);
             // 
@@ -212,7 +212,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(146, 443);
+            this.ClientSize = new System.Drawing.Size(156, 439);
             this.ControlBox = false;
             this.Controls.Add(this.numLamp);
             this.Controls.Add(this.lblAddLamp);
@@ -227,7 +227,7 @@
             this.Controls.Add(this.lblAddLbl);
             this.Controls.Add(this.btnAddLbl);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

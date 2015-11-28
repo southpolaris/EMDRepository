@@ -64,6 +64,9 @@ Last version use ini configure file, from now on it will change into xml format.
 2015.11.16 ver0.82
 Update the config file format from .ini to .xml, for futher develpment.
 
+2015.11.27 ver0.9
+Encapsule protocol in dll file, tested Modbus and Keyence integer read write function.
+
 Things need to do：
 界面优化:
 是否可以标签透明或自动更改长度;

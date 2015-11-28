@@ -16,21 +16,24 @@ namespace WifiMonitor
         protected TcpListener tcpListener = null;
         protected NetworkStream ns = null;
         public MainForm.UpdateStatus updateStatus;
+        public event MainForm.LostConnectionEventHandler lostConnection;
         public event ConnectionEventHandler connectionChange;
 
-        public List<ModbusSlave> moduleList;   //moudle client list
+        public List<Slave> slaveList;
+        public List<Slave> lowPriortyList;
         TaskFactory communicateTask = new TaskFactory();   //Communicate tasks
-        public bool fWaiting = true;            //running flag
+
 
         public Communicate()
         {
-            moduleList = new List<ModbusSlave>();
+            slaveList = new List<Slave>();
+            lowPriortyList = new List<Slave>();
         }
 
         //连接状态改变时刷新界面显示
         private void OnConnectionChange()
         {
-            updateStatus(string.Format("当前 {0} 台设备已经连接", moduleList.Count));
+            updateStatus(string.Format("当前 {0} 台设备已经连接", slaveList.Count));
             if (this.connectionChange != null)
             {
                 this.connectionChange(this, new EventArgs()); //更改连接列表
@@ -39,7 +42,6 @@ namespace WifiMonitor
 
         public void StartServer()
         {
-            fWaiting = true;
             try
             {
                 tcpListener = new TcpListener(IPAddress.Any, 8899);
@@ -57,7 +59,7 @@ namespace WifiMonitor
         private void ListenClinetConnect()
         {
             TcpClient tcpClient;
-            while (fWaiting)
+            while (GlobalVar.runningFlag)
             {
                 try
                 {
@@ -69,177 +71,104 @@ namespace WifiMonitor
                 }
 
                 //For every client, create a new receive data thread
-                ModbusSlave module = new ModbusSlave(tcpClient);
-                module.SetDataLength(new ModbusData { coil = 16, discreteInput = 16, holdingRegiter = 32, inputRegister = 32 });
-                moduleList.Add(module);
+                Slave slave = new Slave(tcpClient);
+                slave.SetDataLength(new ModbusData { coil = 0, discreteInput = 0, holdingRegiter = 32, inputRegister = 32 });
+                slaveList.Add(slave);
                 OnConnectionChange();
-                Task newCommunication = communicateTask.StartNew(() =>
-                    {
-                        GetModbusData(module);
-                    },
+
+                Action<object> readAction;
+                readAction = ReadTask;
+
+                Task readTask = communicateTask.StartNew(
+                    readAction, slave,
                     TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent);
             }
         }
 
-        /// <summary>
-        /// Sending modbus message to all connected client
-        /// </summary>
-        /// <param name="module"> Modbus slave module </param>
-        /// <param name="length"> Data read length</param>
-        protected void GetModbusData(ModbusSlave module)
+        private void ReadTask(object obj)
         {
-            bool successFlag = false;
-            TcpClient client = module.client;
-            while (fWaiting)
+            Slave slave = obj as Slave;
+            short maxTimes = 10;
+            slave.LoadLibrary(GlobalVar.ipPortocolMapping[slave.slaveIP]);
+            while (GlobalVar.runningFlag)
             {
-                successFlag = false;
                 try
                 {
-                    successFlag = module.SendFc1((byte)1, (ushort)0, (ushort)0x10);
-                    Thread.Sleep(80); //3.5 times interval to start next modbus message (4.00910405ms for baud rate 9600)
-                    successFlag |= module.SendFc2((byte)1, (ushort)0, (ushort)0x10);
-                    Thread.Sleep(80);
-                    successFlag |= module.SendFc4DB((byte)1, (ushort)0x00, (ushort)0x20);
-                    Thread.Sleep(80);
-                    successFlag |= module.SendFc3DB((byte)1, (ushort)0x00, (ushort)0x20);
-                    Thread.Sleep(80);                  
-
-                    if (!successFlag)
+                    if (!slave.ReadData((ushort)0, (ushort)(33)))
                     {
-                        throw new Exception("Communicate error");
-                    }                    
+                        throw new Exception("Read data error");
+                    }                   
                 }
                 catch (Exception)
                 {
-                    if (fWaiting)
+                    maxTimes--;
+                    if (maxTimes == 0)
                     {
-                        RemoveModule(module);
+                        RemoveSlave(slave);
                         break;
                     }
-                }                
+                }
+                Thread.Sleep(60);
             }
         }
 
-        
 
-        //Write single register (ushort)
-        public void SendModbusData(int slaveIndex, ushort registerAddress, ushort dataValue)
+        public void SendSingleValue(ushort slaveNumber, ushort address, int dataValue)
         {
-            foreach (ModbusSlave module in moduleList)
+            foreach (Slave slave in slaveList)
             {
-                if (module.slaveIP == slaveIndex)
+                if (slave.slaveIndex == slaveNumber)
                 {
                     bool successFlag = false;
-                    short maxWiteTimes = 5; //超过5次未成功则写入失败
-
+                    short maxWriteTimes = 5;  //超过5次未成功则写入失败
                     communicateTask.StartNew(() =>
-                    {
-                        while (!successFlag && maxWiteTimes > 0)
                         {
-                            successFlag = module.SendFc6((byte)1, registerAddress, dataValue);
-                            maxWiteTimes--;
-                        }
-                    });                        
-                    
-                    return;
+                            while (!successFlag && maxWriteTimes > 0)
+                            {
+                                successFlag = slave.WriteData((ushort)(address * 2), dataValue);
+                                maxWriteTimes--;
+                            }
+                        });
                 }
-            }                       
+            }
         }
 
-        //Write multiple register - 32 bits signed integer
-        public void SendModbusData(int slaveIndex, ushort registerAddress, int dataValue)
+        public void SendSingleValue(ushort slaveNumber, ushort address, bool dataValue)
         {
-            foreach (ModbusSlave module in moduleList)
+            foreach (Slave slave in slaveList)
             {
-                if (module.slaveIP == slaveIndex)
+                if (slave.slaveIndex == slaveNumber)
                 {
                     bool successFlag = false;
-                    short maxWriteTimes = 5;
-                    short[] tempValue = new short[2];
-                    byte[] tempByte = BitConverter.GetBytes(dataValue);
-                    //System default 4321 to standard modbus Little endian 3412
-                    tempValue[0] = (short)((tempByte[1] << 8) + tempByte[0]);
-                    tempValue[1] = (short)((tempByte[3] << 8) + tempByte[2]);
-
-                    Task writeTask = communicateTask.StartNew(() =>
+                    short maxWriteTimes = 5;  //超过5次未成功则写入失败
+                    communicateTask.StartNew(() =>
                     {
                         while (!successFlag && maxWriteTimes > 0)
                         {
-                            successFlag = module.SendFc16((byte)1, registerAddress, (ushort)2, tempValue);
+                            slave.WriteData(address, dataValue);
                             maxWriteTimes--;
                         }
                     });
-                    
-                    return;
                 }
             }
         }
 
-        //Write multiple registers 32-bit floating-point values
-        public void SendModbusData(int slaveIndex, ushort registerAddress, float dataValue)
+        private void RemoveSlave(Slave slave)
         {
-            foreach (ModbusSlave module in moduleList)
+            slaveList.Remove(slave);
+            if (lostConnection != null)
             {
-                if (module.slaveIP == slaveIndex)
-                {
-                    bool successFlag = false;
-                    short maxWriteTimes = 5;
-                    byte[] tempByte = BitConverter.GetBytes(dataValue);
-                    short[] tempShort = new short[2];
-                    tempShort[0] = (short)((tempByte[1] << 8) + tempByte[0]);
-                    tempShort[1] = (short)((tempByte[3] << 8) + tempByte[2]);
-
-                    Task writeTask = communicateTask.StartNew(() =>
-                    {
-                        while (!successFlag && maxWriteTimes > 0)
-                        {
-                            successFlag = module.SendFc16((byte)1, registerAddress, (ushort)2, tempShort);
-                            maxWriteTimes--;
-                        }
-                    });
-
-                    return;
-                }
+                this.lostConnection(slave.slaveIndex);
             }
-        }
-
-        //Set single coil
-        public void SendModbusData(int slaveIndex, ushort coilAddress, bool dataValue)
-        {
-            foreach (ModbusSlave module in moduleList)
-            {
-                if (module.slaveIP == slaveIndex)
-                {
-                    bool successFlag = false;
-                    short maxWiteTimes = 5; //超过5次未成功则写入失败
-                    communicateTask.StartNew(() =>
-                    {
-                        while (!successFlag && maxWiteTimes > 0)
-                        {
-                            successFlag = module.SendFc5((byte)1, coilAddress, dataValue);
-                            maxWiteTimes--;
-                        }
-                    });
-                    
-                    return;
-                }
-            }
-        }
-
-        private void RemoveModule(ModbusSlave module)
-        {
-            moduleList.Remove(module);
-            module.Dispose();
-            
+            slave.Dispose();
             OnConnectionChange();
         }
 
         private void StopCommunication()
         {
-            fWaiting = false;
-            for (int i = moduleList.Count - 1; i >= 0; i--)
+            for (int i = slaveList.Count - 1; i >= 0; i--)
             {
-                RemoveModule(moduleList[i]);
+                RemoveSlave(slaveList[i]);
             }
             tcpListener.Stop();
             updateStatus("已停止");
@@ -250,5 +179,6 @@ namespace WifiMonitor
             StopCommunication();
             connectionChange = null;
         }
+
     }
 }

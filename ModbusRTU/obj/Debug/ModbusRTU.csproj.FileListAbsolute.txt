@@ -1,0 +1,7 @@
+F:\Project\emd\WifiMonitor2013\ModbusRTU\bin\Debug\ModbusRTU.dll
+F:\Project\emd\WifiMonitor2013\ModbusRTU\bin\Debug\ModbusRTU.pdb
+F:\Project\emd\WifiMonitor2013\ModbusRTU\bin\Debug\ICommunicate.dll
+F:\Project\emd\WifiMonitor2013\ModbusRTU\bin\Debug\ICommunicate.pdb
+F:\Project\emd\WifiMonitor2013\ModbusRTU\obj\Debug\ModbusRTU.csprojResolveAssemblyReference.cache
+F:\Project\emd\WifiMonitor2013\ModbusRTU\obj\Debug\ModbusRTU.dll
+F:\Project\emd\WifiMonitor2013\ModbusRTU\obj\Debug\ModbusRTU.pdb

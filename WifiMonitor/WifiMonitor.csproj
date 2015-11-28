@@ -85,7 +85,6 @@
       <DependentUpon>Lamp.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalVar.cs" />
-    <Compile Include="Ini.cs" />
     <Compile Include="LampEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +104,12 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ModbusSlave.cs" />
+    <Compile Include="NewMachine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewMachine.Designer.cs">
+      <DependentUpon>NewMachine.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ConnectionForm.resx">
@@ -121,6 +126,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewMachine.resx">
+      <DependentUpon>NewMachine.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -151,6 +159,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Slave.cs" />
     <Compile Include="TextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -221,6 +230,12 @@
   <ItemGroup>
     <None Include="Resources\buttonUp.png" />
     <None Include="Resources\buttonDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICommunicate\ICommunicate.csproj">
+      <Project>{133af3fe-0d5e-41a0-9e7c-1d0dc662fe0b}</Project>
+      <Name>ICommunicate</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,6 +5,14 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WifiMonitor", "WifiMonitor\WifiMonitor.csproj", "{4C420EC2-6AF5-43CB-9164-0C23C0D542FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMRON", "OMRON\OMRON.csproj", "{646488C6-52C6-4858-A47A-965FC78FBF57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModbusRTU", "ModbusRTU\ModbusRTU.csproj", "{B2BA13CA-F48F-4021-8828-EED91EA7F430}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICommunicate", "ICommunicate\ICommunicate.csproj", "{133AF3FE-0D5E-41A0-9E7C-1D0DC662FE0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KEYENCE", "KEYENCE\KEYENCE.csproj", "{F4AEBBE7-D046-4E4D-9E87-A0A083197A8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +23,22 @@ Global
 		{4C420EC2-6AF5-43CB-9164-0C23C0D542FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C420EC2-6AF5-43CB-9164-0C23C0D542FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C420EC2-6AF5-43CB-9164-0C23C0D542FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{646488C6-52C6-4858-A47A-965FC78FBF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{646488C6-52C6-4858-A47A-965FC78FBF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{646488C6-52C6-4858-A47A-965FC78FBF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{646488C6-52C6-4858-A47A-965FC78FBF57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2BA13CA-F48F-4021-8828-EED91EA7F430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2BA13CA-F48F-4021-8828-EED91EA7F430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2BA13CA-F48F-4021-8828-EED91EA7F430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2BA13CA-F48F-4021-8828-EED91EA7F430}.Release|Any CPU.Build.0 = Release|Any CPU
+		{133AF3FE-0D5E-41A0-9E7C-1D0DC662FE0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133AF3FE-0D5E-41A0-9E7C-1D0DC662FE0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133AF3FE-0D5E-41A0-9E7C-1D0DC662FE0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133AF3FE-0D5E-41A0-9E7C-1D0DC662FE0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4AEBBE7-D046-4E4D-9E87-A0A083197A8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4AEBBE7-D046-4E4D-9E87-A0A083197A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4AEBBE7-D046-4E4D-9E87-A0A083197A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4AEBBE7-D046-4E4D-9E87-A0A083197A8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

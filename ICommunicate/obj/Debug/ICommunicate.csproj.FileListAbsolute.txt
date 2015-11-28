@@ -1,0 +1,4 @@
+F:\Project\emd\WifiMonitor2013\ICommunicate\bin\Debug\ICommunicate.dll
+F:\Project\emd\WifiMonitor2013\ICommunicate\bin\Debug\ICommunicate.pdb
+F:\Project\emd\WifiMonitor2013\ICommunicate\obj\Debug\ICommunicate.dll
+F:\Project\emd\WifiMonitor2013\ICommunicate\obj\Debug\ICommunicate.pdb

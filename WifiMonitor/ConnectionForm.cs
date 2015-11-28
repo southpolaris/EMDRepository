@@ -67,17 +67,24 @@ namespace WifiMonitor
             {
                 InitialDataGridView();
 
-                if (communicate.moduleList.Count != 0)
+                if (communicate.slaveList.Count != 0)
                 {
                     try
                     {
-                        foreach (var slave in communicate.moduleList)
+                        foreach (var slave in communicate.slaveList)
                         {
                             index = dataGridView.Rows.Add();
                             dataGridView.Rows[index].Cells[0].Value = System.DateTime.Now;
                             dataGridView.Rows[index].Cells[1].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[0];
                             dataGridView.Rows[index].Cells[2].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[1];
-                            dataGridView.Rows[index].Cells[3].Value = slave.modbusStatus;
+                            if (slave.onlineFlag)
+                            {
+                                dataGridView.Rows[index].Cells[3].Value = "连接正常";
+                            }
+                            else
+                            {
+                                dataGridView.Rows[index].Cells[3].Value = "连接异常";
+                            }
                         }
                     }
                     catch (Exception)
