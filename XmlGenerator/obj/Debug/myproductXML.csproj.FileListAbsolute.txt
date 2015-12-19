@@ -1,0 +1,35 @@
+C:\Users\WL\AppData\Local\Temporary Projects\myproductXML\bin\Debug\myproductXML.exe.config
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\bin\Debug\myproductXML.exe.config
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\bin\Debug\myproductXML.exe
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\bin\Debug\myproductXML.pdb
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.csprojResolveAssemblyReference.cache
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.editvariable.resources
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.Form1.resources
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.Properties.Resources.resources
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.csproj.GenerateResource.Cache
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.exe
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.pdb
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.TollForm.resources
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.lampeditform.resources
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.lbleditform.resources
+C:\Users\WL\Documents\Visual Studio 2012\Projects\myproductXML\myproductXML\obj\Debug\myproductXML.texteditform.resources
+C:\Users\WL\Desktop\myproductXML\myproductXML\bin\Debug\myproductXML.exe.config
+C:\Users\WL\Desktop\myproductXML\myproductXML\obj\Debug\myproductXML.exe
+C:\Users\WL\Desktop\myproductXML\myproductXML\obj\Debug\myproductXML.pdb
+F:\Project\emd\myproductXML\myproductXML\bin\Debug\myproductXML.exe.config
+F:\Project\emd\myproductXML\myproductXML\obj\Debug\myproductXML.exe
+F:\Project\emd\myproductXML\myproductXML\obj\Debug\myproductXML.pdb
+F:\Project\emd\XMLGenerator\myproductXML\bin\Debug\myproductXML.exe.config
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.exe
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.pdb
+F:\Project\emd\XMLGenerator\myproductXML\bin\Debug\myproductXML.exe
+F:\Project\emd\XMLGenerator\myproductXML\bin\Debug\myproductXML.pdb
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.csprojResolveAssemblyReference.cache
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.editvariable.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.Form1.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.lampeditform.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.lbleditform.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.Properties.Resources.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.texteditform.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.ToolForm.resources
+F:\Project\emd\XMLGenerator\myproductXML\obj\Debug\myproductXML.csproj.GenerateResource.Cache

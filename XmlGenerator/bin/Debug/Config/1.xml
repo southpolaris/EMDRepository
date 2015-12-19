@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Root>
+  <Parameter Name="没有名字" Model="WTF" Protocol="ModbusRTU" BoolReadOnly="1" BoolReadWrite="1" IntReadOnly="0" IntReadWrite="3">
+    <Variable0 Interface="1" Name="emergancystop" Address="1" InDataBase="false" />
+    <Variable1 Interface="2" Name="start" Address="1" InDataBase="false" />
+    <Variable2 Interface="4" Name="position" Address="1" InDataBase="false" />
+    <Variable3 Interface="4" Name="velocity" Address="2" InDataBase="false" />
+    <Variable4 Interface="4" Name="accelerate" Address="3" InDataBase="false" />
+  </Parameter>
+  <UI>
+    <Labels Count="2">
+      <Label_0 ID="Label_0" Text="标签1" PosX="8" PosY="112" Width="100" Height="23" />
+      <Label_1 ID="Label_1" Text="标签1" PosX="10" PosY="40" Width="100" Height="23" />
+    </Labels>
+    <TextBoxes Count="3">
+      <TextBox_0 ID="TextBox_0" RelateVar="0" SlaveAddress="12" Interface="4" PosX="134" PosY="164" Width="100" Height="26" />
+      <TextBox_1 ID="TextBox_1" RelateVar="1" SlaveAddress="16" Interface="4" PosX="137" PosY="111" Width="100" Height="26" />
+      <TextBox_2 ID="TextBox_2" RelateVar="2" SlaveAddress="16" Interface="4" PosX="137" PosY="43" Width="100" Height="26" />
+    </TextBoxes>
+    <Lamps Count="2">
+      <Lamp_0 ID="Lamp_0" RelateVar="-1" SlaveAddress="16" Interface="0" PosX="279" PosY="109" />
+      <Lamp_1 ID="Lamp_1" RelateVar="0" SlaveAddress="16" Interface="1" PosX="278" PosY="42" />
+    </Lamps>
+  </UI>
+</Root>

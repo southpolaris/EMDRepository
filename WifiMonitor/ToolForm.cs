@@ -99,32 +99,22 @@ namespace WifiMonitor
         
         private void btnCreateTab_Click(object sender, EventArgs e)
         {
-            NewMachine newMachine = new NewMachine(mMainForm);
-            //Not finished
-            newMachine.Show();
-
-            int index = mMainForm.tabControl.TabCount + 1;
-            string pageText = "新标签页" + index;
-            string pageName = "TabPage" + index;
-            TabPage tabPage = new TabPage(pageText);
+            TabPage tabPage = new TabPage("新标签页");
             tabPage.UseVisualStyleBackColor = true;
             mMainForm.tabControl.TabPages.Add(tabPage);
+            mMainForm.tabControl.SelectedIndex = mMainForm.tabControl.TabPages.Count - 1;
+            TabEditForm tabEditForm = new TabEditForm(mMainForm);
+            tabEditForm.textBoxTitle.Text = tabPage.Text;
+            tabEditForm.ShowDialog();
         }
 
-        TitleChange tabTitleChange;
         private void btnChangeTabName_Click(object sender, EventArgs e)
         {
-            tabTitleChange = new TitleChange();
-            tabTitleChange.Text = "更改标签页名称";
-            tabTitleChange.txtTitle.Text = mMainForm.tabControl.SelectedTab.Text;
-            tabTitleChange.btnSave.Click += new EventHandler(tabTitleChangebtnSave_Click);
-            tabTitleChange.Show();
-        }
+            //Read from xml file
+            TabEditForm tabEditForm = new TabEditForm(mMainForm);
+            tabEditForm.textBoxTitle.Text = mMainForm.tabControl.SelectedTab.Text;
 
-        private void tabTitleChangebtnSave_Click(object o, EventArgs e)
-        {
-            mMainForm.tabControl.SelectedTab.Text = tabTitleChange.txtTitle.Text;
-            tabTitleChange.Dispose();
+            tabEditForm.ShowDialog();
         }
 
         //删除选中标签页及其上所有控件(界面)
@@ -132,6 +122,15 @@ namespace WifiMonitor
         {
             int currentIndex = mMainForm.tabControl.SelectedIndex;
             mMainForm.tabControl.TabPages.RemoveAt(currentIndex);
+            try
+            {
+                //GlobalVar.ipPortocolMapping.Remove()
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
         }
     }
 }

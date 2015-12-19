@@ -72,7 +72,7 @@ namespace WifiMonitor
 
                 //For every client, create a new receive data thread
                 Slave slave = new Slave(tcpClient);
-                slave.SetDataLength(new ModbusData { coil = 0, discreteInput = 0, holdingRegiter = 32, inputRegister = 32 });
+                slave.SetDataLength(GlobalVar.ipNodeMapping[slave.slaveIP].dataCount);
                 slaveList.Add(slave);
                 OnConnectionChange();
 
@@ -88,13 +88,16 @@ namespace WifiMonitor
         private void ReadTask(object obj)
         {
             Slave slave = obj as Slave;
-            short maxTimes = 10;
-            slave.LoadLibrary(GlobalVar.ipPortocolMapping[slave.slaveIP]);
+            short maxTimes = 10;    
+            RemoteNode node = GlobalVar.ipNodeMapping[slave.slaveIP];
+            slave.LoadLibrary(node.protocolType);
+            slave.SetDataLength(node.dataCount);
+
             while (GlobalVar.runningFlag)
             {
                 try
                 {
-                    if (!slave.ReadData((ushort)0, (ushort)(33)))
+                    if (!slave.ReadData((ushort)0))
                     {
                         throw new Exception("Read data error");
                     }                   
@@ -145,7 +148,7 @@ namespace WifiMonitor
                     {
                         while (!successFlag && maxWriteTimes > 0)
                         {
-                            slave.WriteData(address, dataValue);
+                            successFlag = slave.WriteData(address, dataValue);
                             maxWriteTimes--;
                         }
                     });

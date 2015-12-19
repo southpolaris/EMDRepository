@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace WifiMonitor
 {
@@ -13,6 +14,9 @@ namespace WifiMonitor
         private NetworkStream ns { get; set; }
         private object lockthis { get; set; }
 
+        private string modbusStatus;
+
+        //一般指令地址（0-6535）和设备地址（1-65536）存在差异
         public ModbusRTU(NetworkStream stream, object lockObj)
         {
             ns = stream;
@@ -147,6 +151,7 @@ namespace WifiMonitor
                         dataReadWrite[index] += tempResponse[4 * tempIndex + 4];
                     }
                     length = (ushort)(length - 120);
+                    Thread.Sleep(60);
                 }
                 else
                 {
@@ -213,7 +218,322 @@ namespace WifiMonitor
 
         public bool WriteBoolData(ushort address, bool data)
         {
-            return true;
+            bool successFlag = false;
+            //读取数据，目前只使用4区
+            //Read 32 bits long data pending write
+            ushort offset = (ushort)(address % 32);
+            ushort startAddress = 0;
+            startAddress = (ushort)(address / 32);
+ 
+            int[] originalValue = new int[1];
+            if (!SendFc3(1, startAddress, 2, ref originalValue))
+            {
+                return false;
+            }
+
+            int pendingWrite = originalValue[0];
+            if (data)
+            {
+                pendingWrite = pendingWrite | 0x01 << offset;
+            }
+            else
+            {
+                int mask = 0x01 << offset;
+                mask = ~mask;
+                pendingWrite = pendingWrite & mask;
+            }
+
+            Thread.Sleep(200);
+
+            //Write data
+            successFlag = WriteIntData(startAddress, pendingWrite);
+
+            return successFlag;
+        }
+        #endregion
+
+        #region Function 3 - Read Holding Registers
+        /// <summary>
+        /// Read 16 bit unsigned binary values
+        /// </summary>
+        /// <param name="address">Slave address</param>
+        /// <param name="start">Start</param>
+        /// <param name="registers">Number of registers</param>
+        /// <returns>True is success</returns>
+        public bool SendFc3(byte address, ushort start, ushort registers, ref ushort[] dataValue)
+        {
+            //Function 3 request is always 8 bytes:
+            byte[] message = new byte[8];
+            //Function 3 response buffer:
+            byte[] response = new byte[5 + 2 * registers];
+            //Build outgoing modbus message:
+            BuildMessage(address, (byte)3, start, registers, ref message);
+            //Send modbus message to Serial Port:
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception err)
+            {
+                modbusStatus = "Error in read event: " + err.Message;
+                return false;
+            }
+            //Evaluate message:
+            if (CheckResponse(response))
+            {
+                //Return requested register values:
+                for (int i = 0; i < (response.Length - 5) / 2; i++)
+                {
+                    dataValue[i] = response[2 * i + 3];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[2 * i + 4];
+                }
+                modbusStatus = "Read successful";
+                return true;
+            }
+            else
+            {
+                modbusStatus = "CRC error";
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Read 32 bits signed 
+        /// </summary>
+        /// <param name="address">Slave address</param>
+        /// <param name="start">Start</param>
+        /// <param name="registers">Number of registers</param>
+        /// <returns>True means success</returns>
+        public bool SendFc3(byte address, ushort start, ushort registers, ref int[] dataValue)
+        {
+            //Function 3 request is always 8 bits
+            byte[] message = new byte[8];
+            //Function 3 response buffer
+            byte[] response = new byte[5 + 2 * registers];
+            //Buile outgoing modbus message
+            BuildMessage(address, (byte)3, start, registers, ref message);
+            //Send modbus message to Slaves
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception err)
+            {
+                modbusStatus = "Error in read event: " + err.Message;
+                return false;
+            }
+            //Evaluate message:
+            if (CheckResponse(response))
+            {
+                //Return request register values:
+                for (int i = 0; i < (response.Length - 5) / 4; i++)
+                {
+                    dataValue[i] = response[4 * i + 5];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[4 * i + 6];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[4 * i + 3];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[4 * i + 4];
+                }
+                modbusStatus = "Read successful";
+                return true;
+            }
+            else
+            {
+                modbusStatus = "CRC error";
+                return false;
+            }  
+        }
+
+        public bool SendFc3(byte address, ushort start, ushort registers, ref float[] dataValue)
+        {
+            //Function 3 request is always 8 bits
+            byte[] message = new byte[8];
+            //Function 3 response buffer
+            byte[] response = new byte[5 + 2 * registers];
+            //Buile outgoing modbus message
+            BuildMessage(address, (byte)3, start, registers, ref message);
+            //Send modbus message to Slaves
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception err)
+            {
+                modbusStatus = "Error in read event: " + err.Message;
+                return false;
+            }
+            //Evaluate message:
+            if (CheckResponse(response))
+            {
+                //Return request register values:
+                byte[] tempByte = new byte[4];
+                for (int i = 0; i < (response.Length - 5) / 4; i++)
+                {
+                    tempByte[0] = response[4 * i + 4];
+                    tempByte[1] = response[4 * i + 3];
+                    tempByte[2] = response[4 * i + 6];
+                    tempByte[3] = response[4 * i + 5];
+                    dataValue[i] = BitConverter.ToSingle(tempByte, 0);  
+                }
+                modbusStatus = "Read successful";
+                return true;
+            }
+            else
+            {
+                modbusStatus = "CRC error";
+                return false;
+            }
+        }
+        #endregion
+
+        #region Function 4 - Read Input Registers
+        public bool SendFc4(byte address, ushort start, ushort registers, ref ushort[] dataValue)
+        {
+            //Function 4 request is always 8 bits
+            byte[] message = new byte[8];
+            //Function 4 response buffer
+            byte[] response = new byte[5 + 2 * registers];
+            //Build outgoing modbus message
+            BuildMessage(address, (byte)4, start, registers, ref message);
+            //Send modbus message to serial port through tcp
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception err)
+            {
+                modbusStatus = "Error in read event: " + err.Message;
+                return false;
+            }
+            //Evaluate message
+            if (CheckResponse(response))
+            {
+                //Return requested register values:
+                for (int i = 0; i < (response.Length - 5) / 2; i++)
+                {
+                    dataValue[i] = response[2 * i + 3];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[2 * i + 4];
+                }
+                modbusStatus = "Read successful";
+                return true;
+            }
+            else
+            {
+                modbusStatus = "CRC error";
+                return false;
+            }
+        }
+
+        public bool SendFc4(byte address, ushort start, ushort registers, ref int[] dataValue)
+        {
+            //Function 3 request is always 8 bits
+            byte[] message = new byte[8];
+            //Function 3 response buffer
+            byte[] response = new byte[5 + 2 * registers];
+            //Buile outgoing modbus message
+            BuildMessage(address, (byte)4, start, registers, ref message);
+            //Send modbus message to Slaves
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception err)
+            {
+                modbusStatus = "Error in read event: " + err.Message;
+                return false;
+            }
+            //Evaluate message:
+            if (CheckResponse(response))
+            {
+                //Return request register values:(sort: 3412)
+                for (int i = 0; i < (response.Length - 5) / 4; i++)
+                {
+                    dataValue[i] = response[4 * i + 5];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[4 * i + 6];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[4 * i + 3];
+                    dataValue[i] <<= 8;
+                    dataValue[i] += response[4 * i + 4];
+                }
+                modbusStatus = "Read successful";
+                return true;
+            }
+            else
+            {
+                modbusStatus = "CRC error";
+                return false;
+            }
+        }
+
+
+        public bool SendFc4(byte address, ushort start, ushort registers, ref float[] dataValue)
+        {
+            //Function 3 request is always 8 bits
+            byte[] message = new byte[8];
+            //Function 3 response buffer
+            byte[] response = new byte[5 + 2 * registers];
+            //Buile outgoing modbus message
+            BuildMessage(address, (byte)4, start, registers, ref message);
+            //Send modbus message to Slaves
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception err)
+            {
+                modbusStatus = "Error in read event: " + err.Message;
+                return false;
+            }
+            //Evaluate message:
+            if (CheckResponse(response))
+            {
+                //Return request register values:
+                byte[] tempByte = new byte[4];
+                for (int i = 0; i < (response.Length - 5) / 4; i++)
+                {
+                    tempByte[0] = response[4 * i + 4];
+                    tempByte[1] = response[4 * i + 3];
+                    tempByte[2] = response[4 * i + 6];
+                    tempByte[3] = response[4 * i + 5];
+                    dataValue[i] = BitConverter.ToSingle(tempByte, 0);
+                }
+                modbusStatus = "Read successful";
+                return true;
+            }
+            else
+            {
+                modbusStatus = "CRC error";
+                return false;
+            }
         }
         #endregion
 

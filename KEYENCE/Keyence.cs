@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
-using System.IO;
+using System.Text;
+using System.Threading;
 
 namespace WifiMonitor
 {
@@ -20,16 +17,8 @@ namespace WifiMonitor
             lockthis = lockObj;
         }
 
-        /// <summary>
-        /// Read data from Keyence PLC DM using KV mode
-        /// </summary>
-        /// <param name="startAddress">start address must be even number</param>
-        /// <param name="length">soft element number(for here equal to data length *2)</param>
-        /// <param name="data">get int32 data</param>
-        /// <returns></returns>
-        public bool ReadData(ushort startAddress, ushort length, ref int[] data)
+        private bool StartCommunicate()
         {
-            int dataLength = length / 2;
             while (startFlag == false) //For the first time send start message
             {
                 byte[] startByte = Encoding.ASCII.GetBytes("CR" + "\r");
@@ -41,14 +30,28 @@ namespace WifiMonitor
                 }
                 catch (Exception)
                 {
-                    return false;
+                    startFlag = false;
                 }
 
-                if (ByteEquals(startResponse, new byte[] {0x43, 0x43, 0x0D, 0x0A}))
+                if (ByteEquals(startResponse, new byte[] { 0x43, 0x43, 0x0D, 0x0A }))
                 {
                     startFlag = true;
                 }
             }
+            return startFlag;
+        }
+
+        /// <summary>
+        /// Read data from Keyence PLC DM using KV mode
+        /// </summary>
+        /// <param name="startAddress">start address must be even number</param>
+        /// <param name="length">soft element number(for here equal to data length *2)</param>
+        /// <param name="data">get int32 data</param>
+        /// <returns></returns>
+        public bool ReadData(ushort startAddress, ushort length, ref int[] data)
+        {
+            int dataLength = length / 2;
+            StartCommunicate();
 
             string messageSend = "RDS DM" + startAddress.ToString() + ".L " + dataLength.ToString() + "\r";
             byte[] message = Encoding.ASCII.GetBytes(messageSend);
@@ -124,9 +127,38 @@ namespace WifiMonitor
             }
         }
 
-        public bool WriteBoolData(ushort startAddress, bool data)
+        public bool WriteBoolData(ushort address, bool data)
         {
-            return true;
+            bool successFlag = false;
+            //读取数据，目前只使用4区
+            //Read 32 bits long data pending write
+            ushort offset = (ushort)(address % 32);
+            ushort startAddress = 0;
+            startAddress = (ushort)(address / 32 * 2); //start address must be even
+
+            int[] originalValue = new int[1];
+            if (!ReadData(startAddress, 2, ref originalValue))
+            {
+                return false;
+            }
+
+            int pendingWrite = originalValue[0];
+            if (data)
+            {
+                pendingWrite = pendingWrite | 0x01 << offset;
+            }
+            else
+            {
+                int mask = 0x01 << offset;
+                mask = ~mask;
+                pendingWrite = pendingWrite & mask;
+            }
+
+            Thread.Sleep(200);
+
+            successFlag = WriteIntData(startAddress, pendingWrite);
+
+            return successFlag;
         }
 
         #region Get Response

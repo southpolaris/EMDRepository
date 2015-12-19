@@ -20,7 +20,7 @@ namespace WifiMonitor
         public static int nMainFormPosY = 0;
         public static string sMainFormTitle = "主界面";
 
-        public static Dictionary<IPAddress, string> ipPortocolMapping = new Dictionary<IPAddress,string>();
+        public static Dictionary<IPAddress, RemoteNode> ipNodeMapping = new Dictionary<IPAddress, RemoteNode>();
           
         //运行 标志位
         public static bool runningFlag = false;
@@ -28,9 +28,14 @@ namespace WifiMonitor
         public static bool editFlag = false;
     }
 
+    public struct RemoteNode
+    {
+        public string protocolType;
+        public DataCount dataCount;
+    }
 
     //各个模块对应的参数的个数
-    public struct ModbusData
+    public struct DataCount
     {
         public ushort discreteInput;
         public ushort coil;
@@ -52,4 +57,5 @@ namespace WifiMonitor
         SignedInt = 1,
         Float = 2
     }
+
 }

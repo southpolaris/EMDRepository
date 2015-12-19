@@ -6,7 +6,7 @@ using System.IO;
 
 namespace WifiMonitor
 {
-    class Slave
+    public class Slave
     {
         public TcpClient client { get; private set; }
         private NetworkStream ns;
@@ -56,13 +56,13 @@ namespace WifiMonitor
         {
             client = tcpClient;
             ns = client.GetStream();
-            ns.ReadTimeout = 10000;
-            ns.WriteTimeout = 10000;
+            ns.ReadTimeout = 8000;
+            ns.WriteTimeout = 8000;
             slaveIndex = ushort.Parse(client.Client.RemoteEndPoint.ToString().Split('.')[3].Split(':')[0]);
             slaveIP = IPAddress.Parse(client.Client.RemoteEndPoint.ToString().Split(':')[0]);
         }
 
-        public void SetDataLength(ModbusData dataLength)
+        public void SetDataLength(DataCount dataLength)
         {
             dataDiscreateInput = new bool[dataLength.discreteInput];
             dataDiscreteOutput = new bool[dataLength.coil];
@@ -99,7 +99,7 @@ namespace WifiMonitor
             return true;
         }
 
-        public bool ReadData(ushort startAddress, ushort length)
+        public bool ReadData(ushort startAddress)
         {        
             int[] response;
             bool successFlag = false;
@@ -130,7 +130,7 @@ namespace WifiMonitor
             for (int i = 0; i < response.Length; i++)
             {
                 //Get bit value
-                if (i < response.Length - dataReadOnly.Length)
+                if (i < response.Length - dataReadWrite.Length)
                 {
                     int mask = 1;
                     for (int offset = 0; offset < 32; offset++)
@@ -138,9 +138,9 @@ namespace WifiMonitor
                         mask <<= offset;
                         int tempData = response[i] & mask;
                         tempData >>= offset;
-                        if ((offset + i * 32) < dataDiscreateInput.Length)
+                        if ((offset + i * 32) < dataDiscreteOutput.Length)
                         {
-                            DataDiscreteInput[offset + i * 32] = (tempData == 0x01 ? true : false);
+                            dataDiscreteOutput[offset + i * 32] = (tempData == 0x01 ? true : false);
                         }
                     }
                 }
@@ -148,7 +148,7 @@ namespace WifiMonitor
                 //Get integer value
                 else
                 {
-                    dataReadWrite[i - (response.Length - dataReadOnly.Length)] = response[i];
+                    dataReadWrite[i - (response.Length - dataReadWrite.Length)] = response[i];
                 } 
             }
             return successFlag;
@@ -170,6 +170,15 @@ namespace WifiMonitor
 
         public bool WriteData(ushort address, bool dataValue)
         {
+            bool successFlag = false;
+            try
+            {
+                successFlag = (bool)(sendBoolData.Invoke(obj, new object[] { address, dataValue }));
+            }
+            catch (Exception)
+            {
+                successFlag = false;
+            }
             return true;
         }
 

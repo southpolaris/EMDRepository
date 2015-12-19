@@ -1,6 +1,6 @@
 ﻿namespace WifiMonitor
 {
-    partial class NewMachine
+    partial class TabEditForm
     {
         /// <summary>
         /// Required designer variable.
@@ -47,8 +47,9 @@
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(87, 33);
             this.buttonOK.TabIndex = 0;
-            this.buttonOK.Text = "加载";
+            this.buttonOK.Text = "确定";
             this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
@@ -59,15 +60,16 @@
             this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "取消";
             this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(17, 34);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(116, 17);
+            this.label1.Size = new System.Drawing.Size(92, 17);
             this.label1.TabIndex = 3;
-            this.label1.Text = "机床型号配置文件：";
+            this.label1.Text = "机床配置文件：";
             // 
             // label2
             // 
@@ -110,6 +112,7 @@
             this.checkBoxBlank.TabIndex = 8;
             this.checkBoxBlank.Text = "空白页（手动配置）";
             this.checkBoxBlank.UseVisualStyleBackColor = true;
+            this.checkBoxBlank.CheckedChanged += new System.EventHandler(this.checkBoxBlank_CheckedChanged);
             // 
             // textBoxXml
             // 
@@ -128,7 +131,7 @@
             this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
             // 
-            // NewMachine
+            // TabEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -144,8 +147,14 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "NewMachine";
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "TabEditForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "监控页面选项";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -154,15 +163,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBoxTitle;
-        private System.Windows.Forms.TextBox textBoxIP;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox checkBoxBlank;
-        private System.Windows.Forms.TextBox textBoxXml;
         private System.Windows.Forms.Button buttonBrowse;
+        public System.Windows.Forms.Button buttonOK;
+        public System.Windows.Forms.TextBox textBoxTitle;
+        public System.Windows.Forms.TextBox textBoxIP;
+        public System.Windows.Forms.TextBox textBoxXml;
     }
 }

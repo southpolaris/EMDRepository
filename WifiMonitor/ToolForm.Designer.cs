@@ -160,7 +160,7 @@
             this.btnChangeTabName.Name = "btnChangeTabName";
             this.btnChangeTabName.Size = new System.Drawing.Size(133, 33);
             this.btnChangeTabName.TabIndex = 18;
-            this.btnChangeTabName.Text = "编辑当前页面标题";
+            this.btnChangeTabName.Text = "编辑当前页面\r\n";
             this.btnChangeTabName.UseVisualStyleBackColor = false;
             this.btnChangeTabName.Click += new System.EventHandler(this.btnChangeTabName_Click);
             // 
@@ -212,7 +212,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(156, 439);
+            this.ClientSize = new System.Drawing.Size(156, 438);
             this.ControlBox = false;
             this.Controls.Add(this.numLamp);
             this.Controls.Add(this.lblAddLamp);

@@ -5,3 +5,8 @@ F:\Project\emd\WifiMonitor2013\KEYENCE\bin\Debug\ICommunicate.pdb
 F:\Project\emd\WifiMonitor2013\KEYENCE\obj\Debug\KEYENCE.csprojResolveAssemblyReference.cache
 F:\Project\emd\WifiMonitor2013\KEYENCE\obj\Debug\KEYENCE.dll
 F:\Project\emd\WifiMonitor2013\KEYENCE\obj\Debug\KEYENCE.pdb
+F:\Project\emd\WifiMonitor\WifiMonitor\bin\Debug\Library\KEYENCE.dll
+F:\Project\emd\WifiMonitor\WifiMonitor\bin\Debug\Library\KEYENCE.pdb
+F:\Project\emd\WifiMonitor\KEYENCE\obj\Debug\KEYENCE.csprojResolveAssemblyReference.cache
+F:\Project\emd\WifiMonitor\KEYENCE\obj\Debug\KEYENCE.dll
+F:\Project\emd\WifiMonitor\KEYENCE\obj\Debug\KEYENCE.pdb

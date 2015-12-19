@@ -3,6 +3,9 @@ using System.Windows.Forms;
 
 namespace WifiMonitor
 {
+    /// <summary>
+    /// 开关量显示和属性
+    /// </summary>
     public partial class Lamp : PictureBox
     {
         public Lamp()
@@ -11,12 +14,16 @@ namespace WifiMonitor
             this.Image = Properties.Resources.lampoff;
             onFlag = false;
             ReadOnly = true;
+            mInDataBase = false;
+            mName = "未关联变量";
         }
 
-        private bool powerOn;
-        private bool readOnly;
-        private int relateVar; //当前关联项
-        private int slaveAddress;
+        private bool mPowerOn;
+        private bool mReadOnly;
+        private int mRelateVar; //当前关联项
+        private int mSlaveAddress;
+        public bool mInDataBase;
+        public string mName;
         
         /// <summary>
         /// 指示灯亮灭属性
@@ -26,41 +33,41 @@ namespace WifiMonitor
         {
             set 
             { 
-                this.powerOn = value;
-                if (powerOn)
+                this.mPowerOn = value;
+                if (mPowerOn)
                 {
-                    if (readOnly)
+                    if (mReadOnly)
                         this.Image = Properties.Resources.lampon;
                     else
                         this.Image = Properties.Resources.buttonDown;
                 }
                 else
                 {
-                    if (readOnly)
+                    if (mReadOnly)
                         this.Image = Properties.Resources.lampoff;
                     else
                         this.Image = Properties.Resources.buttonUp;
                 }
             }
-            get { return this.powerOn; }
+            get { return this.mPowerOn; }
         }
 
         public int SlaveAddress
         {
-            set { this.slaveAddress = value; }
-            get { return this.slaveAddress; }
+            set { this.mSlaveAddress = value; }
+            get { return this.mSlaveAddress; }
         }
         public int RelateVar
         {
-            set { this.relateVar = value; }
-            get { return this.relateVar; }
+            set { this.mRelateVar = value; }
+            get { return this.mRelateVar; }
         }
         public bool ReadOnly
         {
             set
             { 
-                this.readOnly = value;
-                if (readOnly)
+                this.mReadOnly = value;
+                if (mReadOnly)
                 {
                     this.Image = Properties.Resources.lampoff;
                 }
@@ -69,7 +76,7 @@ namespace WifiMonitor
                     this.Image = Properties.Resources.buttonUp;
                 }
             }
-            get { return this.readOnly; }
+            get { return this.mReadOnly; }
         }
     }
 }

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Root>
+  <Parameter Name="没有名字" Model="P2" Protocol="KEYENCE" Count="5">
+    <BoolReadOnly Count="1" Length="1">
+      <Variable1 varInterface="1" varName="stop" varAddress="1" varInDataBase="false" />
+    </BoolReadOnly>
+    <BoolReadWrite Count="0" Length="0" />
+    <IntReadOnly Count="1" Length="1">
+      <Variable1 varInterface="3" varName="recoding" varAddress="1" varInDataBase="true" />
+    </IntReadOnly>
+    <IntReadWrite Count="3" Length="3">
+      <Variable1 varInterface="4" varName="data1" varAddress="1" varInDataBase="false" />
+      <Variable2 varInterface="4" varName="data`" varAddress="2" varInDataBase="false" />
+      <Variable3 varInterface="4" varName="data3`" varAddress="3" varInDataBase="false" />
+    </IntReadWrite>
+  </Parameter>
+  <UI>
+    <Labels Count="3">
+      <Label_1 ID="Label_1" Text="region3" PosX="6" PosY="152" Width="100" Height="23" />
+      <Label_2 ID="Label_2" Text="4Region2" PosX="10" PosY="95" Width="100" Height="23" />
+      <Label_3 ID="Label_3" Text="标签1" PosX="10" PosY="40" Width="100" Height="23" />
+    </Labels>
+    <TextBoxes Count="3">
+      <TextBox_1 ID="TextBox_1" RelateVar="2" SlaveAddress="0" Interface="4" PosX="148" PosY="156" Width="100" Height="26" />
+      <TextBox_2 ID="TextBox_2" RelateVar="1" SlaveAddress="0" Interface="4" PosX="148" PosY="89" Width="100" Height="26" />
+      <TextBox_3 ID="TextBox_3" RelateVar="0" SlaveAddress="0" Interface="4" PosX="142" PosY="36" Width="100" Height="26" />
+    </TextBoxes>
+    <Lamps Count="1">
+      <Lamp_1 ID="Lamp_1" RelateVar="0" SlaveAddress="0" Interface="1" PosX="307" PosY="37" />
+    </Lamps>
+  </UI>
+</Root>

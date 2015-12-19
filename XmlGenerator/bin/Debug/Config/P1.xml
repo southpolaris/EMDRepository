@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Root>
+  <Parameter Name="测试设备" Model="P1" Protocol="ModbusRTU" BoolReadOnly="1" BoolReadWrite="0" IntReadOnly="0" IntReadWrite="2">
+    <Variable0 Interface="4" Name="未命名" Address="1" InDataBase="false" />
+    <Variable1 Interface="4" Name="未命名2" Address="2" InDataBase="true" />
+    <Variable2 Interface="1" Name="急停" Address="1" InDataBase="true" />
+  </Parameter>
+  <UI>
+    <Labels Count="2">
+      <Label_1 ID="Label_1" Text="标签1" PosX="11" PosY="95" Width="100" Height="23" />
+      <Label_2 ID="Label_2" Text="标签1" PosX="10" PosY="40" Width="100" Height="23" />
+    </Labels>
+    <TextBoxes Count="2">
+      <TextBox_1 ID="TextBox_1" RelateVar="1" SlaveAddress="0" Interface="4" PosX="142" PosY="96" Width="100" Height="26" />
+      <TextBox_2 ID="TextBox_2" RelateVar="0" SlaveAddress="0" Interface="4" PosX="139" PosY="47" Width="100" Height="26" />
+    </TextBoxes>
+    <Lamps Count="1">
+      <Lamp_1 ID="Lamp_1" RelateVar="0" SlaveAddress="0" Interface="1" PosX="280" PosY="42" />
+    </Lamps>
+  </UI>
+</Root>

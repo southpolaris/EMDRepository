@@ -67,6 +67,9 @@ Update the config file format from .ini to .xml, for futher develpment.
 2015.11.27 ver0.9
 Encapsule protocol in dll file, tested Modbus and Keyence integer read write function.
 
+2015.12.19 ver0.91
+Complete bit data write and read function. Next will implement data base function.
+
 Things need to do：
 界面优化:
 是否可以标签透明或自动更改长度;

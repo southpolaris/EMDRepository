@@ -58,10 +58,10 @@
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEdit.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEdit.Location = new System.Drawing.Point(3, 385);
+            this.btnEdit.Location = new System.Drawing.Point(3, 383);
             this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(84, 26);
+            this.btnEdit.Size = new System.Drawing.Size(84, 30);
             this.btnEdit.TabIndex = 0;
             this.btnEdit.Text = "开始编辑...";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -71,10 +71,10 @@
             // 
             this.btnSavEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSavEdit.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnSavEdit.Location = new System.Drawing.Point(96, 385);
+            this.btnSavEdit.Location = new System.Drawing.Point(96, 383);
             this.btnSavEdit.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnSavEdit.Name = "btnSavEdit";
-            this.btnSavEdit.Size = new System.Drawing.Size(65, 26);
+            this.btnSavEdit.Size = new System.Drawing.Size(65, 30);
             this.btnSavEdit.TabIndex = 1;
             this.btnSavEdit.Text = "保存编辑";
             this.btnSavEdit.UseVisualStyleBackColor = true;
@@ -129,10 +129,10 @@
             this.btnStart.BackColor = System.Drawing.Color.LightGreen;
             this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnStart.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnStart.Location = new System.Drawing.Point(542, 385);
+            this.btnStart.Location = new System.Drawing.Point(542, 383);
             this.btnStart.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(99, 26);
+            this.btnStart.Size = new System.Drawing.Size(99, 30);
             this.btnStart.TabIndex = 2;
             this.btnStart.Text = "开始(&S)";
             this.btnStart.UseVisualStyleBackColor = false;
@@ -187,10 +187,10 @@
             // 
             this.btnConnectionList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnectionList.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnConnectionList.Location = new System.Drawing.Point(420, 385);
+            this.btnConnectionList.Location = new System.Drawing.Point(421, 383);
             this.btnConnectionList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnConnectionList.Name = "btnConnectionList";
-            this.btnConnectionList.Size = new System.Drawing.Size(115, 26);
+            this.btnConnectionList.Size = new System.Drawing.Size(115, 30);
             this.btnConnectionList.TabIndex = 6;
             this.btnConnectionList.Text = "查看连接信息...";
             this.btnConnectionList.UseVisualStyleBackColor = true;
@@ -201,10 +201,10 @@
             // 
             this.btnEditStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditStop.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEditStop.Location = new System.Drawing.Point(167, 385);
+            this.btnEditStop.Location = new System.Drawing.Point(167, 383);
             this.btnEditStop.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnEditStop.Name = "btnEditStop";
-            this.btnEditStop.Size = new System.Drawing.Size(78, 26);
+            this.btnEditStop.Size = new System.Drawing.Size(78, 30);
             this.btnEditStop.TabIndex = 7;
             this.btnEditStop.Text = "退出编辑";
             this.btnEditStop.UseVisualStyleBackColor = true;

@@ -62,7 +62,7 @@ namespace WifiMonitor
             slaveIP = ushort.Parse(client.Client.RemoteEndPoint.ToString().Split('.')[3].Split(':')[0]);
         }
 
-        public void SetDataLength(ModbusData dataLength)
+        public void SetDataLength(DataCount dataLength)
         {
             dataDiscreateInput = new bool[dataLength.discreteInput];
             dataCoil = new bool[dataLength.coil];
