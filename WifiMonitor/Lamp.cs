@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
+using System.Net;
 
 namespace WifiMonitor
 {
@@ -21,7 +22,7 @@ namespace WifiMonitor
         private bool mPowerOn;
         private bool mReadOnly;
         private int mRelateVar; //当前关联项
-        private int mSlaveAddress;
+        private IPAddress mSlaveAddress = IPAddress.None;
         public bool mInDataBase;
         public string mName;
         
@@ -52,7 +53,7 @@ namespace WifiMonitor
             get { return this.mPowerOn; }
         }
 
-        public int SlaveAddress
+        public IPAddress SlaveAddress
         {
             set { this.mSlaveAddress = value; }
             get { return this.mSlaveAddress; }

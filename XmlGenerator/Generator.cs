@@ -71,10 +71,18 @@ namespace XMLGenerator
         private void buttonEdit_Click(object sender, EventArgs e)
         {
             this.tabControl.SelectedTab = pageVariable;
-            EditVariable edivariable1;
-            edivariable1 = new EditVariable(this);
-            edivariable1.Show();
-            GVL.alterornot = 1;
+            if (dataGridView.SelectedRows.Count > 0)
+            {
+                EditVariable edivariable;
+                edivariable = new EditVariable(this);
+                edivariable.textboxAddress.Text = dataGridView.SelectedRows[0].Cells[2].Value.ToString();
+                edivariable.textboxName.Text = dataGridView.SelectedRows[0].Cells[0].Value.ToString();
+                edivariable.cbDataType.Text = dataGridView.SelectedRows[0].Cells[1].Value.ToString();
+                edivariable.checkBoxDataBase.Checked = Convert.ToBoolean(dataGridView.SelectedRows[0].Cells[3].Value);
+                GVL.alterornot = 1;
+                edivariable.ShowDialog();
+            }      
+         
         }
 
         //删除数据项

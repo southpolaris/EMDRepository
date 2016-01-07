@@ -59,13 +59,11 @@ namespace XMLGenerator
                 allRows = new object[] { coloumn1, coloumn2,coloumn3, coloumn4 };
                 form1.dataGridView.Rows.Add(allRows);
             }
-            else
+            else if (GVL.alterornot == 1 && form1.dataGridView.Rows.Count > 0 && textboxName.Text != "" && cbDataType.Text != "" && textboxAddress.Text != "")
             {
-                MessageBox.Show("请检查数据");
-            }
-
-            if (GVL.alterornot == 1 && form1.dataGridView.Rows.Count > 0 && textboxName.Text != "" && cbDataType.Text != "" && textboxAddress.Text != "")
-            {
+                coloumn1 = this.textboxName.Text;
+                coloumn2 = this.cbDataType.Text;
+                coloumn3 = this.textboxAddress.Text;
                 int rowsindex = form1.dataGridView.CurrentRow.Index;
                 if (rowsindex >= 0)
                 {
@@ -101,7 +99,12 @@ namespace XMLGenerator
                                 GVL.dataLength.holdingRegiter = ushort.Parse(coloumn3);
                             break;
                     }
-                }             
+                }
+                this.Close();
+            }
+            else 
+            {
+                MessageBox.Show("请检查数据");
             }
         }
 
@@ -114,12 +117,6 @@ namespace XMLGenerator
         {
             this.Close();
             form1.buttonAdd.Enabled = true;
-        }
-
-
-      
-
-
-        
+        }        
     }
 }

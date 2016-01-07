@@ -27,3 +27,4 @@ F:\Project\emd\WifiMonitor\WifiMonitor\bin\Debug\XMLGenerator.exe
 F:\Project\emd\WifiMonitor\WifiMonitor\bin\Debug\XMLGenerator.pdb
 F:\Project\emd\WifiMonitor\XmlGenerator\obj\Debug\XMLGenerator.exe
 F:\Project\emd\WifiMonitor\XmlGenerator\obj\Debug\XMLGenerator.pdb
+F:\Project\emd\WifiMonitor\XmlGenerator\obj\Debug\XMLGenerator.csprojResolveAssemblyReference.cache

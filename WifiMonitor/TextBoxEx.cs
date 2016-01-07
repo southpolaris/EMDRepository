@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using System.Net;
 
 namespace WifiMonitor
 {
@@ -18,7 +19,7 @@ namespace WifiMonitor
         }
 
         private int mPosition = 0;
-        private int mSlave = 0;
+        private IPAddress mSlave = IPAddress.None;
         private DataType mbDataType;
         private DataInterface mbInterface;
         public bool mInDataBase;
@@ -32,7 +33,7 @@ namespace WifiMonitor
             set { mPosition = value; }
         }
 
-        public int SlaveAddress //子节点地址（IP末位）
+        public IPAddress SlaveAddress //子节点地址（IP末位）
         {
             get { return mSlave; }
             set { mSlave = value; }

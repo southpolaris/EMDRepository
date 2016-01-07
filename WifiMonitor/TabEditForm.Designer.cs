@@ -123,6 +123,7 @@
             // 
             // buttonBrowse
             // 
+            this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonBrowse.Location = new System.Drawing.Point(256, 31);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(39, 23);

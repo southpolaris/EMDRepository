@@ -15,7 +15,8 @@ namespace WifiMonitor
         /// <param name="length">soft element number (data length * 2)</param>
         /// <param name="data"></param>
         /// <returns>True means success</returns>
-        bool ReadData(ushort startAddress, ushort count, ref int[] data);
+        bool GetReadOnlyData(ushort startAddress, ushort count, ref int[] data);
+        bool GetReadWriteData(ushort startAddress, ushort count, ref int[] data);
         bool WriteIntData(ushort startAddress, int data);
         bool WriteBoolData(ushort startAddress, bool data);
     }

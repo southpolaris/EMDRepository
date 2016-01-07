@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Net;
 
 namespace WifiMonitor
 {
@@ -113,7 +114,7 @@ namespace WifiMonitor
             //Read from xml file
             TabEditForm tabEditForm = new TabEditForm(mMainForm);
             tabEditForm.textBoxTitle.Text = mMainForm.tabControl.SelectedTab.Text;
-
+            tabEditForm.textBoxIP.Text = mMainForm.tabControl.SelectedTab.ToolTipText;
             tabEditForm.ShowDialog();
         }
 
@@ -121,16 +122,14 @@ namespace WifiMonitor
         private void btnRemoveTab_Click(object sender, EventArgs e)
         {
             int currentIndex = mMainForm.tabControl.SelectedIndex;
+            IPAddress slaveIP;
+
+            if (IPAddress.TryParse(mMainForm.tabControl.SelectedTab.ToolTipText, out slaveIP))
+            {
+                GlobalVar.ipNodeMapping.Remove(slaveIP);
+            }
+
             mMainForm.tabControl.TabPages.RemoveAt(currentIndex);
-            try
-            {
-                //GlobalVar.ipPortocolMapping.Remove()
-            }
-            catch (Exception)
-            {
-                
-                throw;
-            }
         }
     }
 }

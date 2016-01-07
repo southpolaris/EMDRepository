@@ -31,6 +31,7 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageVar = new System.Windows.Forms.TabPage();
+            this.cbSlaveAddress = new System.Windows.Forms.ComboBox();
             this.textBoxVarName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxLampVar = new System.Windows.Forms.TextBox();
@@ -38,7 +39,6 @@
             this.radioButton0 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBoxSlaveAddress = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageCtrl = new System.Windows.Forms.TabPage();
@@ -73,6 +73,7 @@
             // 
             // tabPageVar
             // 
+            this.tabPageVar.Controls.Add(this.cbSlaveAddress);
             this.tabPageVar.Controls.Add(this.textBoxVarName);
             this.tabPageVar.Controls.Add(this.label6);
             this.tabPageVar.Controls.Add(this.textBoxLampVar);
@@ -80,7 +81,6 @@
             this.tabPageVar.Controls.Add(this.radioButton0);
             this.tabPageVar.Controls.Add(this.radioButton1);
             this.tabPageVar.Controls.Add(this.label5);
-            this.tabPageVar.Controls.Add(this.textBoxSlaveAddress);
             this.tabPageVar.Controls.Add(this.label4);
             this.tabPageVar.Controls.Add(this.label1);
             this.tabPageVar.Location = new System.Drawing.Point(4, 26);
@@ -90,6 +90,14 @@
             this.tabPageVar.TabIndex = 0;
             this.tabPageVar.Text = "变量属性";
             this.tabPageVar.UseVisualStyleBackColor = true;
+            // 
+            // cbSlaveAddress
+            // 
+            this.cbSlaveAddress.FormattingEnabled = true;
+            this.cbSlaveAddress.Location = new System.Drawing.Point(130, 53);
+            this.cbSlaveAddress.Name = "cbSlaveAddress";
+            this.cbSlaveAddress.Size = new System.Drawing.Size(138, 25);
+            this.cbSlaveAddress.TabIndex = 30;
             // 
             // textBoxVarName
             // 
@@ -134,6 +142,7 @@
             this.radioButton0.TabStop = true;
             this.radioButton0.Text = "0-读写";
             this.radioButton0.UseVisualStyleBackColor = true;
+            this.radioButton0.CheckedChanged += new System.EventHandler(this.radioButton0_CheckedChanged);
             // 
             // radioButton1
             // 
@@ -145,6 +154,7 @@
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "1-只读";
             this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // label5
             // 
@@ -154,13 +164,6 @@
             this.label5.Size = new System.Drawing.Size(68, 17);
             this.label5.TabIndex = 23;
             this.label5.Text = "数据通道：";
-            // 
-            // textBoxSlaveAddress
-            // 
-            this.textBoxSlaveAddress.Location = new System.Drawing.Point(130, 53);
-            this.textBoxSlaveAddress.Name = "textBoxSlaveAddress";
-            this.textBoxSlaveAddress.Size = new System.Drawing.Size(138, 23);
-            this.textBoxSlaveAddress.TabIndex = 22;
             // 
             // label4
             // 
@@ -268,8 +271,8 @@
         private System.Windows.Forms.Label label2;
         internal System.Windows.Forms.TextBox textBoxVarName;
         internal System.Windows.Forms.TextBox textBoxLampVar;
-        internal System.Windows.Forms.TextBox textBoxSlaveAddress;
         internal System.Windows.Forms.TextBox tbLampY;
         internal System.Windows.Forms.TextBox tbLampX;
+        internal System.Windows.Forms.ComboBox cbSlaveAddress;
     }
 }

@@ -13,7 +13,7 @@ namespace WifiMonitor
     //MySQL连接类
     static class MySQLHelper
     {
-        private static string connectionString = "Database='projectmanager';Data Source='localhost';User Id='root';Password='12345';charset='utf8';pooling=true";
+        private static string connectionString = "Database='remotemonitor';Data Source='localhost';User Id='root';Password='12345';charset='utf8';pooling=true";
 
         private static Hashtable paraCache = Hashtable.Synchronized(new Hashtable());//用于缓存参数
 

@@ -70,6 +70,9 @@ Encapsule protocol in dll file, tested Modbus and Keyence integer read write fun
 2015.12.19 ver0.91
 Complete bit data write and read function. Next will implement data base function.
 
+2015.1.4 ver0.92
+Now implement data base insert function. But data base must be create manualy before insert.
+Bug fixs.
 Things need to do：
 界面优化:
 是否可以标签透明或自动更改长度;

@@ -30,8 +30,43 @@ namespace WifiMonitor
 
     public struct RemoteNode
     {
-        public string protocolType;
-        public DataCount dataCount;
+        public string protocolType;                 //协议名称
+        public string name;                         //远程终端名称
+        public DataCount dataCount;                 //数据长度
+        public Variables[] varDiscreteInput;        //开关型只读数据
+        public Variables[] varDiscreteOutput;       //开关型写入数据
+        public Variables[] varInputRegister;        //数值型只读数据
+        public Variables[] varHoldingRegister;      //数值型写入数据
+
+        public RemoteNode(string protocol, DataCount dataLength, string nodeName)
+        {
+            protocolType = protocol;
+            dataCount = dataLength;
+            name = nodeName;
+            varDiscreteInput = new Variables[dataCount.discreteInput];
+            varDiscreteOutput = new Variables[dataCount.coil];
+            varInputRegister = new Variables[dataCount.inputRegister];
+            varHoldingRegister = new Variables[dataCount.holdingRegiter];
+        }
+
+        public RemoteNode(DataCount dataLength, string nodeName)
+        {
+            protocolType = "";
+            dataCount = dataLength;
+            name = nodeName;
+            varDiscreteInput = new Variables[dataCount.discreteInput];
+            varDiscreteOutput = new Variables[dataCount.coil];
+            varInputRegister = new Variables[dataCount.inputRegister];
+            varHoldingRegister = new Variables[dataCount.holdingRegiter];
+        }
+    }
+
+    public struct Variables
+    {
+        public string varName;
+        public int intValue;
+        public bool boolValue;
+        public bool inDataBase;
     }
 
     //各个模块对应的参数的个数
@@ -57,5 +92,4 @@ namespace WifiMonitor
         SignedInt = 1,
         Float = 2
     }
-
 }

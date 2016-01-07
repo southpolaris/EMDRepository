@@ -32,11 +32,11 @@
             this.btnTxtSav = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageVar = new System.Windows.Forms.TabPage();
+            this.cbSlaveAddress = new System.Windows.Forms.ComboBox();
             this.textBoxVarName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxRelateVar = new System.Windows.Forms.TextBox();
             this.checkBoxDB = new System.Windows.Forms.CheckBox();
-            this.txtSlaveAddress = new System.Windows.Forms.TextBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
@@ -78,11 +78,11 @@
             // 
             // tabPageVar
             // 
+            this.tabPageVar.Controls.Add(this.cbSlaveAddress);
             this.tabPageVar.Controls.Add(this.textBoxVarName);
             this.tabPageVar.Controls.Add(this.label3);
             this.tabPageVar.Controls.Add(this.textBoxRelateVar);
             this.tabPageVar.Controls.Add(this.checkBoxDB);
-            this.tabPageVar.Controls.Add(this.txtSlaveAddress);
             this.tabPageVar.Controls.Add(this.radioButton4);
             this.tabPageVar.Controls.Add(this.radioButton3);
             this.tabPageVar.Controls.Add(this.label2);
@@ -96,13 +96,20 @@
             this.tabPageVar.Text = "变量属性";
             this.tabPageVar.UseVisualStyleBackColor = true;
             // 
+            // cbSlaveAddress
+            // 
+            this.cbSlaveAddress.FormattingEnabled = true;
+            this.cbSlaveAddress.Location = new System.Drawing.Point(129, 57);
+            this.cbSlaveAddress.Name = "cbSlaveAddress";
+            this.cbSlaveAddress.Size = new System.Drawing.Size(140, 25);
+            this.cbSlaveAddress.TabIndex = 29;
+            // 
             // textBoxVarName
             // 
             this.textBoxVarName.Location = new System.Drawing.Point(129, 22);
             this.textBoxVarName.Name = "textBoxVarName";
-            this.textBoxVarName.Size = new System.Drawing.Size(139, 23);
+            this.textBoxVarName.Size = new System.Drawing.Size(140, 23);
             this.textBoxVarName.TabIndex = 28;
-            this.textBoxVarName.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label3
             // 
@@ -119,7 +126,6 @@
             this.textBoxRelateVar.Name = "textBoxRelateVar";
             this.textBoxRelateVar.Size = new System.Drawing.Size(140, 23);
             this.textBoxRelateVar.TabIndex = 26;
-            this.textBoxRelateVar.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // checkBoxDB
             // 
@@ -131,14 +137,6 @@
             this.checkBoxDB.Text = "信息存入数据库";
             this.checkBoxDB.UseVisualStyleBackColor = true;
             // 
-            // txtSlaveAddress
-            // 
-            this.txtSlaveAddress.Location = new System.Drawing.Point(129, 57);
-            this.txtSlaveAddress.Name = "txtSlaveAddress";
-            this.txtSlaveAddress.Size = new System.Drawing.Size(140, 23);
-            this.txtSlaveAddress.TabIndex = 24;
-            this.txtSlaveAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
@@ -149,6 +147,7 @@
             this.radioButton4.TabStop = true;
             this.radioButton4.Text = "4-读写";
             this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
             // 
             // radioButton3
             // 
@@ -160,15 +159,16 @@
             this.radioButton3.TabStop = true;
             this.radioButton3.Text = "3-只读";
             this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 60);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 17);
+            this.label2.Size = new System.Drawing.Size(103, 17);
             this.label2.TabIndex = 23;
-            this.label2.Text = "设备通信模块ID：";
+            this.label2.Text = "设备通信模块IP：";
             // 
             // label1
             // 
@@ -325,10 +325,10 @@
         internal System.Windows.Forms.TextBox textBoxVarName;
         internal System.Windows.Forms.TextBox textBoxRelateVar;
         internal System.Windows.Forms.CheckBox checkBoxDB;
-        internal System.Windows.Forms.TextBox txtSlaveAddress;
         internal System.Windows.Forms.TextBox txtPosY;
         internal System.Windows.Forms.TextBox txtPosX;
         internal System.Windows.Forms.TextBox txtHeight;
         internal System.Windows.Forms.TextBox txtWidth;
+        internal System.Windows.Forms.ComboBox cbSlaveAddress;
     }
 }

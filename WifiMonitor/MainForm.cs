@@ -46,6 +46,7 @@ namespace WifiMonitor
 
         //通信类
         internal Communicate communicate = new Communicate();
+        internal DataBase dataBase = new DataBase();
         #endregion
 
         public delegate void UpdateStatus(string str);//更改界面状态显示
@@ -191,7 +192,7 @@ namespace WifiMonitor
 
         void WriteFloat(object sender, EventArgs e)
         {
-            int slaveIndex = currTxt.SlaveAddress;
+            IPAddress slaveIndex = currTxt.SlaveAddress;
             float pendingWrite;
             if (Single.TryParse(mTitleChange.txtTitle.Text, out pendingWrite))
             {
@@ -207,7 +208,7 @@ namespace WifiMonitor
 
         public void WriteInt(object sender, EventArgs e)
         {
-            ushort slaveIndex = (ushort)currTxt.SlaveAddress;
+            IPAddress slaveIndex = currTxt.SlaveAddress;
             int pendingWrite;
             if (Int32.TryParse(mTitleChange.txtTitle.Text, out pendingWrite))
             {
@@ -279,8 +280,12 @@ namespace WifiMonitor
                     mCurrTxtEditForm.txtWidth.Text = currTxt.Width.ToString();
                     mCurrTxtEditForm.txtHeight.Text = currTxt.Height.ToString();
                     mCurrTxtEditForm.txtPosX.Text = currTxt.Location.X.ToString();
-                    mCurrTxtEditForm.txtPosY.Text = currTxt.Location.Y.ToString();
-                    mCurrTxtEditForm.txtSlaveAddress.Text = currTxt.SlaveAddress.ToString();
+                    mCurrTxtEditForm.txtPosY.Text = currTxt.Location.Y.ToString();                    
+                    foreach(IPAddress ip in GlobalVar.ipNodeMapping.Keys)
+                    {
+                        mCurrTxtEditForm.cbSlaveAddress.Items.Add(ip);
+                    }
+                    mCurrTxtEditForm.cbSlaveAddress.Text = currTxt.SlaveAddress.ToString();
                     switch (currTxt.MbInterface)
                     {
                         case DataInterface.InputRegister:
@@ -312,7 +317,7 @@ namespace WifiMonitor
             {
                 currTxt.RelateVar = int.Parse(mCurrTxtEditForm.textBoxRelateVar.Text);//将该文本框关联的变量标号赋给该文本框属性
                 currTxt.MbInterface = mCurrTxtEditForm.modbusInterface;  //变量通道
-                currTxt.SlaveAddress = int.Parse(mCurrTxtEditForm.txtSlaveAddress.Text); //modbus slave 对应 id
+                currTxt.SlaveAddress = IPAddress.Parse(mCurrTxtEditForm.cbSlaveAddress.Text); //modbus slave 对应 id
                 currTxt.mInDataBase = mCurrTxtEditForm.checkBoxDB.Checked;
             }
             catch (System.Exception)
@@ -350,10 +355,10 @@ namespace WifiMonitor
                     if (!currLamp.ReadOnly)
                     {
                         currLamp.onFlag = !currLamp.onFlag;
-                        int slaveIndex = currLamp.SlaveAddress;
+                        IPAddress slaveIP = currLamp.SlaveAddress;
                         UseWaitCursor = true;
                         //write data
-                        communicate.SendSingleValue((ushort)slaveIndex, (ushort)currLamp.RelateVar, currLamp.onFlag);
+                        communicate.SendSingleValue(slaveIP, (ushort)currLamp.RelateVar, currLamp.onFlag);
                         UseWaitCursor = false;
                     }
                 }
@@ -408,10 +413,14 @@ namespace WifiMonitor
                     currLamp = sender as Lamp;
                 }
                 mCurrLampEditForm = new LampEditForm();
-                mCurrLampEditForm.textBoxLampVar.Text = currLamp.mName;
+                mCurrLampEditForm.textBoxVarName.Text = currLamp.mName;
                 mCurrLampEditForm.tbLampX.Text = currLamp.Location.X.ToString();
                 mCurrLampEditForm.tbLampY.Text = currLamp.Location.Y.ToString();
-                mCurrLampEditForm.textBoxSlaveAddress.Text = currLamp.SlaveAddress.ToString();
+                foreach(IPAddress ip in GlobalVar.ipNodeMapping.Keys)
+                {
+                    mCurrLampEditForm.cbSlaveAddress.Items.Add(ip);
+                }
+                mCurrLampEditForm.cbSlaveAddress.Text = currLamp.SlaveAddress.ToString();
                 mCurrLampEditForm.textBoxLampVar.Text = currLamp.RelateVar.ToString();
                 mCurrLampEditForm.ReadOnly = currLamp.ReadOnly;
                 mCurrLampEditForm.checkBoxDB.Checked = currLamp.mInDataBase;
@@ -428,7 +437,7 @@ namespace WifiMonitor
                 int posX = int.Parse(mCurrLampEditForm.tbLampX.Text);
                 int posY = int.Parse(mCurrLampEditForm.tbLampY.Text);
                 currLamp.Location = new Point(posX, posY);
-                currLamp.SlaveAddress = int.Parse(mCurrLampEditForm.textBoxSlaveAddress.Text);
+                currLamp.SlaveAddress = IPAddress.Parse(mCurrLampEditForm.cbSlaveAddress.Text);
                 currLamp.RelateVar = int.Parse(mCurrLampEditForm.textBoxLampVar.Text);
                 currLamp.ReadOnly = mCurrLampEditForm.ReadOnly;
                 currLamp.mInDataBase = mCurrLampEditForm.checkBoxDB.Checked;
@@ -580,16 +589,15 @@ namespace WifiMonitor
 
             //清除原有信息
             XDocument xDoc = XDocument.Load(GlobalVar.xmlPath);
-            XElement controlElement = xDoc.Root.Element("Tabpages");
+            XElement controlElement = xDoc.Root.Element("MainForm");
             xDoc.Root.Element("MainForm").RemoveAll();
-            xDoc.Root.Element("Tabpages").RemoveAll();
             xDoc.Root.Element("IPMapping").RemoveAll();
             controlElement.RemoveAll();
 
             //重新写入控件信息
             foreach (TabPage page in tabControl.TabPages)
             {
-                controlElement.Add(new XElement("Tabpage" + tabIndex.ToString(), new XAttribute("Text", page.Text),
+                controlElement.Add(new XElement("Tabpage" + tabIndex.ToString(), new XAttribute("Text", page.Text), new XAttribute("Tip", page.ToolTipText),
                     new XElement("Labels"),
                     new XElement("TextBoxes"), 
                     new XElement("Lamps")));
@@ -609,7 +617,7 @@ namespace WifiMonitor
                         string lblKnot = "";
                         lblKnot = "Label" + tabIndex.ToString() + "_" + labelIndex.ToString();//节名 
                         ctrl.Name = lblKnot;//重新分配标签标识  以节名命名
-                        labelElement.Add(new XElement(lblKnot, 
+                        labelElement.Add(new XElement("Label", 
                             new XAttribute("ID", ctrl.Name),
                             new XAttribute("Text", ctrl.Text),
                             new XAttribute("PosX", ctrl.Location.X.ToString()),
@@ -624,7 +632,7 @@ namespace WifiMonitor
                         string TxtKnot = "";
                         TxtKnot = "TextBox" + tabIndex.ToString() + "_" + txtIndex.ToString();//节名 
                         ctrl.Name = TxtKnot;//重新分配标识  以节名命名
-                        textElement.Add(new XElement(TxtKnot,
+                        textElement.Add(new XElement("TextBox",
                             new XAttribute("ID", ctrl.Name),
                             new XElement("RelateVar", (ctrl as TextBoxEx).RelateVar.ToString()),
                             new XElement("SlaveAddress", (ctrl as TextBoxEx).SlaveAddress.ToString()),
@@ -647,7 +655,7 @@ namespace WifiMonitor
                         lampNot = "Lamp" + tabIndex.ToString() + "_" + lampIndex.ToString();
                         ctrl.Name = lampNot;
 
-                        lampElement.Add(new XElement(lampNot,
+                        lampElement.Add(new XElement("Lamp",
                             new XAttribute("ID", ctrl.Name),
                             new XElement("RelateVar", (ctrl as Lamp).RelateVar.ToString()),
                             new XElement("SlaveAddress", (ctrl as Lamp).SlaveAddress.ToString()),
@@ -661,9 +669,6 @@ namespace WifiMonitor
                         lampIndex++;
                     }
                 }
-                labelElement.Add(new XAttribute("Count", labelIndex - 1));
-                textElement.Add(new XAttribute("Count", txtIndex - 1));
-                lampElement.Add(new XAttribute("Count", lampIndex - 1));
 
                 tabIndex++;//标签页索引
             }
@@ -676,11 +681,12 @@ namespace WifiMonitor
                 new XAttribute("Height", this.Height.ToString()));
 
             //Save ip slave mapping
-            foreach(var ipMapping in GlobalVar.ipNodeMapping)
+            foreach(KeyValuePair<IPAddress, RemoteNode> ipMapping in GlobalVar.ipNodeMapping)
             {
                 xDoc.Root.Element("IPMapping").Add(new XElement("Node",
                     new XAttribute("IP", ipMapping.Key.ToString()),
                     new XElement("Protocol", ipMapping.Value.protocolType),
+                    new XElement("Name", ipMapping.Value.name),
                     new XElement("DataLength",
                         new XAttribute("DiscreteInput", ipMapping.Value.dataCount.discreteInput.ToString()),
                         new XAttribute("DiscreteOutput", ipMapping.Value.dataCount.coil.ToString()),
@@ -707,9 +713,10 @@ namespace WifiMonitor
         private void MainForm_Load(object sender, EventArgs e)
         {
             communicate.updateStatus += new UpdateStatus(SetStatusLable);
-            //communicate.lostConnection += new LostConnectionEventHandler(OnOffline);
+            communicate.insertDataBase += new DataBaseEventHandler(dataBase.InsertNewRecord);
 
             LoadControls(GlobalVar.xmlPath);
+            LoadVariables(GlobalVar.xmlPath);
 
             //显示配置文件中设定的主窗体大小、标题
             this.Width = GlobalVar.nMainFormWidth;
@@ -724,36 +731,35 @@ namespace WifiMonitor
             if (!fileInfo.Exists)
             {
                 XDocument xDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Root",
-                    new XElement("Tabpages"), new XElement("MainForm"), new XElement("IPMaping")));
-                xDoc.Save(GlobalVar.xmlPath);
+                    new XElement("MainForm", new XAttribute("Count", 0)), new XElement("IPMaping")));
+                xDoc.Save(xmlPath);
             }
 
             //遍历所有节名  用于加载控件
-            XElement tabElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("Tabpages");
-            XElement formElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("MainForm");
-            XElement nodeElement = XDocument.Load(GlobalVar.xmlPath).Root.Element("IPMapping");
+            XElement formElement = XDocument.Load(xmlPath).Root.Element("MainForm");
 
-            #region Load controls
             try
             {
-                for (int tabIndex = 1; tabIndex <= int.Parse(tabElement.Attribute("Count").Value); tabIndex++)
+                for (int tabIndex = 1; tabIndex <= int.Parse(formElement.Attribute("Count").Value); tabIndex++)
                 {
-                    XElement tempTabElement = tabElement.Element("Tabpage" + tabIndex.ToString());
+                    XElement tempTabElement = formElement.Element("Tabpage" + tabIndex.ToString());
                     string tabText = tempTabElement.Attribute("Text").Value;
                     TabPage tabPage = new TabPage(tabText);
                     tabPage.UseVisualStyleBackColor = true;
+                    tabPage.ToolTipText = tempTabElement.Attribute("Tip").Value;
                     tabControl.TabPages.Add(tabPage);
                     try
                     {
-                        for (int labelIndex = 1; labelIndex <= int.Parse(tempTabElement.Element("Labels").Attribute("Count").Value); labelIndex++)
+                        IEnumerable<XElement> labelList = from el in tempTabElement.Element("Labels").Elements() select el;
+                        
+                        foreach (XElement labelElement in labelList)
                         {
-                            XElement tempLabelElement = tempTabElement.Element("Labels").Element("Label" + tabIndex.ToString() + "_" + labelIndex.ToString());
-                            string TempLabelID = tempLabelElement.Attribute("ID").Value;
-                            string TempLabelText = tempLabelElement.Attribute("Text").Value;
-                            int TempPosX = int.Parse(tempLabelElement.Attribute("PosX").Value);
-                            int TempPosY = int.Parse(tempLabelElement.Attribute("PosY").Value);
-                            int TempWidth = int.Parse(tempLabelElement.Attribute("Width").Value);
-                            int TempHeight = int.Parse(tempLabelElement.Attribute("Height").Value);
+                            string TempLabelID = labelElement.Attribute("ID").Value;
+                            string TempLabelText = labelElement.Attribute("Text").Value;
+                            int TempPosX = int.Parse(labelElement.Attribute("PosX").Value);
+                            int TempPosY = int.Parse(labelElement.Attribute("PosY").Value);
+                            int TempWidth = int.Parse(labelElement.Attribute("Width").Value);
+                            int TempHeight = int.Parse(labelElement.Attribute("Height").Value);
 
                             Label lbl = new Label();
                             lbl.Location = new Point(TempPosX, TempPosY);
@@ -771,23 +777,25 @@ namespace WifiMonitor
                     }
                     catch (Exception)
                     {
-                        return;
+                        MessageBox.Show("加载标签文本控件错误", "错误",MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
                     try
                     {
-                        for (int textIndex = 1; textIndex <= int.Parse(tempTabElement.Element("TextBoxes").Attribute("Count").Value); textIndex++)
+                        IEnumerable<XElement> textBoxList = from el in tempTabElement.Element("TextBoxes").Elements() select el;
+
+                        foreach (XElement textBoxElement in textBoxList)
                         {
-                            XElement tempTextElement = tempTabElement.Element("TextBoxes").Element("TextBox" + tabIndex.ToString() + "_" + textIndex.ToString());
-                            string TempTextBoxID = tempTextElement.Attribute("ID").Value;
-                            int TempPosX = int.Parse(tempTextElement.Attribute("PosX").Value);
-                            int TempPosY = int.Parse(tempTextElement.Attribute("PosY").Value);
-                            int TempWidth = int.Parse(tempTextElement.Attribute("Width").Value);
-                            int TempHeight = int.Parse(tempTextElement.Attribute("Height").Value);
-                            int tempTextBoxSlaveAddress = int.Parse(tempTextElement.Element("SlaveAddress").Value);  //从站地址
-                            int TempTextBoxRelateVar = int.Parse(tempTextElement.Element("RelateVar").Value);        //变量地址
-                            int TempTextBoxMBInterface = int.Parse(tempTextElement.Element("Interface").Value);      //变量通道
-                            bool tempTextBoxInDataBase = bool.Parse(tempTextElement.Element("IsInDataBase").Value);  //是否在数据库保存
-                            string tempVarName = tempTextElement.Element("VarName").Value;                           //变量名称
+                            string TempTextBoxID = textBoxElement.Attribute("ID").Value;
+                            int TempPosX = int.Parse(textBoxElement.Attribute("PosX").Value);
+                            int TempPosY = int.Parse(textBoxElement.Attribute("PosY").Value);
+                            int TempWidth = int.Parse(textBoxElement.Attribute("Width").Value);
+                            int TempHeight = int.Parse(textBoxElement.Attribute("Height").Value);
+                            IPAddress tempTextBoxSlaveAddress = IPAddress.Parse(textBoxElement.Element("SlaveAddress").Value);  //从站地址
+                            int TempTextBoxRelateVar = int.Parse(textBoxElement.Element("RelateVar").Value);        //变量地址
+                            int TempTextBoxMBInterface = int.Parse(textBoxElement.Element("Interface").Value);      //变量通道
+                            bool tempTextBoxInDataBase = bool.Parse(textBoxElement.Element("IsInDataBase").Value);  //是否在数据库保存
+                            string tempVarName = textBoxElement.Element("VarName").Value;                           //变量名称
 
                             TextBoxEx txt = new TextBoxEx();
                             txt.Location = new Point(TempPosX, TempPosY);
@@ -823,21 +831,23 @@ namespace WifiMonitor
                     }
                     catch (Exception)
                     {
-                        return;
+                        MessageBox.Show("加载数值显示控件错误", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
                     try
                     {
-                        for (int lampIndex = 1; lampIndex <= int.Parse(tempTabElement.Element("Lamps").Attribute("Count").Value); lampIndex++)
+                        IEnumerable<XElement> lampList = from el in tempTabElement.Element("Lamps").Elements() select el;
+
+                        foreach(XElement lampElement in lampList)
                         {
-                            XElement tempLampElement = tempTabElement.Element("Lamps").Element("Lamp" + tabIndex.ToString() + "_" + lampIndex.ToString());
-                            string tempLampID = tempLampElement.Attribute("ID").Value;
-                            int tempPosX = int.Parse(tempLampElement.Attribute("PosX").Value);
-                            int tempPosY = int.Parse(tempLampElement.Attribute("PosY").Value);
-                            int tempLampVar = int.Parse(tempLampElement.Element("RelateVar").Value);
-                            int tempSlaveAddress = int.Parse(tempLampElement.Element("SlaveAddress").Value);
-                            int tempInterface = int.Parse(tempLampElement.Element("Interface").Value);
-                            bool tempInDataBase = bool.Parse(tempLampElement.Element("IsInDataBase").Value);
-                            string tempVarName = tempLampElement.Element("VarName").Value;
+                            string tempLampID = lampElement.Attribute("ID").Value;
+                            int tempPosX = int.Parse(lampElement.Attribute("PosX").Value);
+                            int tempPosY = int.Parse(lampElement.Attribute("PosY").Value);
+                            int tempLampVar = int.Parse(lampElement.Element("RelateVar").Value);
+                            IPAddress tempSlaveAddress = IPAddress.Parse(lampElement.Element("SlaveAddress").Value);
+                            int tempInterface = int.Parse(lampElement.Element("Interface").Value);
+                            bool tempInDataBase = bool.Parse(lampElement.Element("IsInDataBase").Value);
+                            string tempVarName = lampElement.Element("VarName").Value;
 
                             Lamp lamp = new Lamp();
                             lamp.Location = new Point(tempPosX, tempPosY);
@@ -865,7 +875,7 @@ namespace WifiMonitor
                     }
                     catch (Exception)
                     {
-                        return;
+                        MessageBox.Show("加载开关显示控件错误", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
 
@@ -876,32 +886,103 @@ namespace WifiMonitor
             }
             catch (Exception)
             {
-                MessageBox.Show("加载界面配置错误");
+                return;
             }
-            #endregion
+        }
 
-            #region Load node
+        private void LoadVariables(string xmlPath)
+        {
+            //遍历所有节名  用于加载控件
+            XElement formElement = XDocument.Load(xmlPath).Root.Element("MainForm");
+            XElement nodeElement = XDocument.Load(xmlPath).Root.Element("IPMapping");
+
             try
             {
-                IEnumerable<XElement> childNodeList =
-                from el in nodeElement.Elements()
-                select el;
-                foreach (XElement node in childNodeList)
+                IEnumerable<XElement> childNodeList = from el in nodeElement.Elements() select el;
+
+                foreach (XElement childNode in childNodeList)
                 {
-                    RemoteNode tempNode = new RemoteNode();
-                    tempNode.protocolType = node.Element("Protocol").Value;
-                    tempNode.dataCount.discreteInput = UInt16.Parse(node.Element("DataLength").Attribute("DiscreteInput").Value);
-                    tempNode.dataCount.coil = UInt16.Parse(node.Element("DataLength").Attribute("DiscreteOutput").Value);
-                    tempNode.dataCount.inputRegister = UInt16.Parse(node.Element("DataLength").Attribute("InputRegister").Value);
-                    tempNode.dataCount.holdingRegiter = UInt16.Parse(node.Element("DataLength").Attribute("HoldingRegister").Value);
-                    GlobalVar.ipNodeMapping.Add(IPAddress.Parse(node.Attribute("IP").Value), tempNode);
+                    DataCount dataCount = new DataCount();
+                    string protocolType = childNode.Element("Protocol").Value;
+                    string nodeName = childNode.Element("Name").Value;
+                    dataCount.discreteInput = UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteInput").Value);
+                    dataCount.coil = UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteOutput").Value);
+                    dataCount.inputRegister = UInt16.Parse(childNode.Element("DataLength").Attribute("InputRegister").Value);
+                    dataCount.holdingRegiter = UInt16.Parse(childNode.Element("DataLength").Attribute("HoldingRegister").Value);
+                    RemoteNode tempNode = new RemoteNode(protocolType, dataCount, nodeName);
+                    GlobalVar.ipNodeMapping.Add(IPAddress.Parse(childNode.Attribute("IP").Value), tempNode);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("加载节点配置错误");
+                MessageBox.Show("监控终端节点配置错误", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            #endregion
+
+            for (int tabIndex = 1; tabIndex <= int.Parse(formElement.Attribute("Count").Value); tabIndex++)
+            {
+                XElement tempTabElement = formElement.Element("Tabpage" + tabIndex.ToString());
+
+                try
+                {
+                    IEnumerable<XElement> textBoxList = from el in tempTabElement.Element("TextBoxes").Elements() select el;
+
+                    foreach (XElement textBoxElement in textBoxList)
+                    {
+                        IPAddress tempVarSlaveAddress = IPAddress.Parse(textBoxElement.Element("SlaveAddress").Value);  //从站地址
+                        int tempVarRelateVar = int.Parse(textBoxElement.Element("RelateVar").Value);        //变量地址
+                        int tempVarMBInterface = int.Parse(textBoxElement.Element("Interface").Value);      //变量通道
+                        bool tempVarInDataBase = bool.Parse(textBoxElement.Element("IsInDataBase").Value);  //是否在数据库保存
+                        string tempVarName = textBoxElement.Element("VarName").Value;                           //变量名称
+
+                        switch (tempVarMBInterface)
+                        {
+                            case 3:
+                                GlobalVar.ipNodeMapping[tempVarSlaveAddress].varInputRegister[tempVarRelateVar].varName = tempVarName;
+                                GlobalVar.ipNodeMapping[tempVarSlaveAddress].varInputRegister[tempVarRelateVar].inDataBase = tempVarInDataBase;
+                                break;
+                            case 4:
+                                GlobalVar.ipNodeMapping[tempVarSlaveAddress].varHoldingRegister[tempVarRelateVar].varName = tempVarName;
+                                GlobalVar.ipNodeMapping[tempVarSlaveAddress].varHoldingRegister[tempVarRelateVar].inDataBase = tempVarInDataBase;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "加载数值变量信息错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                try
+                {
+                    IEnumerable<XElement> lampList = from el in tempTabElement.Element("Lamps").Elements() select el;
+
+                    foreach (XElement lampElement in lampList)
+                    {
+                        int tempLampVar = int.Parse(lampElement.Element("RelateVar").Value);
+                        IPAddress tempSlaveAddress = IPAddress.Parse(lampElement.Element("SlaveAddress").Value);
+                        int tempInterface = int.Parse(lampElement.Element("Interface").Value);
+                        bool tempInDataBase = bool.Parse(lampElement.Element("IsInDataBase").Value);
+                        string tempVarName = lampElement.Element("VarName").Value;
+
+                        if (tempInterface == 1)
+                        {
+                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteInput[tempLampVar].varName = tempVarName;
+                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteInput[tempLampVar].inDataBase = tempInDataBase;
+                        }
+                        else
+                        {
+                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteOutput[tempLampVar].varName = tempVarName;
+                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteOutput[tempLampVar].inDataBase = tempInDataBase;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "加载开关变量信息错误");
+                }
+            }   
         }
 
         /// <summary>
@@ -915,7 +996,7 @@ namespace WifiMonitor
             xDoc = XDocument.Load(filePath);
             XElement UIElement = xDoc.Root.Element("UI");
             XElement variableElement = xDoc.Root.Element("Parameter");
-            ushort slaveAddress = ushort.Parse(slaveIP.ToString().Split('.')[3]);
+
             #region load controls
             try
             {
@@ -957,7 +1038,6 @@ namespace WifiMonitor
                     int tempPosY = int.Parse(tempTextElement.Attribute("PosY").Value);
                     int tempWidth = int.Parse(tempTextElement.Attribute("Width").Value);
                     int tempHeight = int.Parse(tempTextElement.Attribute("Height").Value);
-                    int tempTextBoxSlaveAddress = slaveAddress;  //从站地址
                     int tempTextBoxRelateVar = int.Parse(tempTextElement.Attribute("RelateVar").Value);        //变量地址
                     int tempTextBoxMBInterface = int.Parse(tempTextElement.Attribute("Interface").Value);      //变量通道
                     bool tempVarInDataBase = false;
@@ -966,10 +1046,15 @@ namespace WifiMonitor
                     {
                         foreach(XElement element in variableElement.Element("IntReadWrite").Elements())
                         {
-                            if ((string)element.Attribute("varAddress") == (tempTextBoxRelateVar + 1).ToString())
+                            if ((string)element.Attribute("varAddress") == tempTextBoxRelateVar.ToString())
                             {
                                 bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
+                            }
+                            else
+                            {
+                                tempVarInDataBase = false;
+                                tempVarName = "未关联变量";
                             }
                         }
                     }
@@ -977,10 +1062,15 @@ namespace WifiMonitor
                     {
                         foreach (XElement element in variableElement.Element("IntReadOnly").Elements())
                         {
-                            if ((string)element.Attribute("varAddress") == (tempTextBoxRelateVar + 1).ToString())
+                            if ((string)element.Attribute("varAddress") == tempTextBoxRelateVar.ToString())
                             {
                                 bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
+                            }
+                            else
+                            {
+                                tempVarInDataBase = false;
+                                tempVarName = "未关联变量";
                             }
                         }
                     }
@@ -993,7 +1083,7 @@ namespace WifiMonitor
                     txt.TextAlign = HorizontalAlignment.Right;//文本内容位置靠右
                     txt.ReadOnly = true;
                     txt.BackColor = Color.White;
-                    txt.SlaveAddress = tempTextBoxSlaveAddress;
+                    txt.SlaveAddress = slaveIP;
                     txt.RelateVar = tempTextBoxRelateVar;
                     txt.mInDataBase = tempVarInDataBase;
                     txt.VarName = tempVarName;
@@ -1030,7 +1120,6 @@ namespace WifiMonitor
                     int tempPosX = int.Parse(tempLampElement.Attribute("PosX").Value);
                     int tempPosY = int.Parse(tempLampElement.Attribute("PosY").Value);
                     int tempLampRelateVar = int.Parse(tempLampElement.Attribute("RelateVar").Value);
-                    int tempSlaveAddress = slaveAddress;
                     int tempInterface = int.Parse(tempLampElement.Attribute("Interface").Value);
                     bool tempVarInDataBase = false;
                     string tempVarName = "";
@@ -1038,10 +1127,15 @@ namespace WifiMonitor
                     {
                         foreach (XElement element in variableElement.Element("BoolReadWrite").Elements())
                         {
-                            if ((string)element.Attribute("varAddress") == (tempLampRelateVar + 1).ToString())
+                            if ((string)element.Attribute("varAddress") == tempLampRelateVar.ToString())
                             {
                                 bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
+                            }
+                            else
+                            {
+                                tempVarInDataBase = false;
+                                tempVarName = "未关联变量";
                             }
                         }
                     }
@@ -1049,10 +1143,15 @@ namespace WifiMonitor
                     {
                         foreach (XElement element in variableElement.Element("BoolReadOnly").Elements())
                         {
-                            if ((string)element.Attribute("varAddress") == (tempLampRelateVar + 1).ToString())
+                            if ((string)element.Attribute("varAddress") == tempLampRelateVar.ToString())
                             {
                                 bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
+                            }
+                            else
+                            {
+                                tempVarInDataBase = false;
+                                tempVarName = "未关联变量";
                             }
                         }
                     }
@@ -1061,7 +1160,7 @@ namespace WifiMonitor
                     lamp.Location = new Point(tempPosX, tempPosY);
                     lamp.Name = tempLampID;
                     lamp.RelateVar = tempLampRelateVar;
-                    lamp.SlaveAddress = tempSlaveAddress;
+                    lamp.SlaveAddress = slaveIP;
                     if (tempInterface == 1)
                     {
                         lamp.ReadOnly = true;
@@ -1090,6 +1189,7 @@ namespace WifiMonitor
             #region Load variables
             RemoteNode tempNode = new RemoteNode();
             tempNode.protocolType = variableElement.Attribute("Protocol").Value;
+            tempNode.name = tabControl.SelectedTab.Text;
             tempNode.dataCount.discreteInput = Convert.ToUInt16(variableElement.Element("BoolReadOnly").Attribute("Length").Value);
             tempNode.dataCount.coil = Convert.ToUInt16(variableElement.Element("BoolReadWrite").Attribute("Length").Value);
             tempNode.dataCount.inputRegister = Convert.ToUInt16(variableElement.Element("IntReadOnly").Attribute("Length").Value);
@@ -1113,6 +1213,9 @@ namespace WifiMonitor
             btnSavEdit.Visible = false; //隐藏保存按钮
             btnEditStop.Visible = false;
             mToolForm.Close();
+            tabControl.TabPages.Clear();
+            LoadControls(GlobalVar.xmlPath);
+            LoadVariables(GlobalVar.xmlPath);
         }
 
         /// <summary>
@@ -1130,15 +1233,22 @@ namespace WifiMonitor
                     for (int i = 0; i < communicate.slaveList.Count; i++)
                     {
                         Slave slave = communicate.slaveList[i];
-                        if (textBox.SlaveAddress == slave.slaveIndex)
+                        if (textBox.SlaveAddress.Equals(slave.slaveIP))
                         {
-                            if (textBox.MbInterface == DataInterface.HoldingRegister)
+                            try
                             {
-                                textBox.Text = slave.DataReadWrite[textBox.RelateVar].ToString();
+                                if (textBox.MbInterface == DataInterface.HoldingRegister)
+                                {
+                                    textBox.Text = slave.remoteNode.varHoldingRegister[textBox.RelateVar].intValue.ToString();
+                                }
+                                if (textBox.MbInterface == DataInterface.InputRegister)
+                                {
+                                    textBox.Text = slave.remoteNode.varInputRegister[textBox.RelateVar].intValue.ToString();
+                                }
                             }
-                            if (textBox.MbInterface == DataInterface.InputRegister)
+                            catch (System.IndexOutOfRangeException)
                             {
-                                textBox.Text = slave.DataReadOnly[textBox.RelateVar].ToString();
+                                textBox.Text = "节点数据未定义";
                             }
                             break;
                         }
@@ -1150,12 +1260,19 @@ namespace WifiMonitor
                     for (int i = 0; i < communicate.slaveList.Count; i++)
                     {
                         Slave slave = communicate.slaveList[i];
-                        if (lamp.SlaveAddress == slave.slaveIndex) 
+                        if (lamp.SlaveAddress.Equals(slave.slaveIP)) 
                         {
-                            if (!lamp.ReadOnly)
-                                lamp.onFlag = slave.DataDiscreteOutput[lamp.RelateVar];
-                            else
-                                lamp.onFlag = slave.DataDiscreteInput[lamp.RelateVar];
+                            try
+                            {
+                                if (!lamp.ReadOnly)
+                                    lamp.onFlag = slave.remoteNode.varDiscreteOutput[lamp.RelateVar].boolValue;
+                                else
+                                    lamp.onFlag = slave.remoteNode.varDiscreteInput[lamp.RelateVar].boolValue;
+                            }
+                            catch (Exception)
+                            {
+                                lamp.onFlag = false;
+                            }
                             break;
                         }
                     }                   
@@ -1163,7 +1280,7 @@ namespace WifiMonitor
             }
         }
 
-        public void OnOffline(int slaveIndex)
+        public void OnOffline(IPAddress slaveIP)
         {
             foreach (TabPage page in tabControl.TabPages)
             {
@@ -1173,20 +1290,20 @@ namespace WifiMonitor
                     {
                         if (ctrl.InvokeRequired)
                         {
-                            Action<int> actionDelegate = (int index) =>
+                            Action<IPAddress> actionDelegate = (IPAddress ip) =>
                             {
                                 TextBoxEx textBox = ctrl as TextBoxEx;
-                                if (textBox.SlaveAddress == index)
+                                if (textBox.SlaveAddress == ip)
                                 {
                                     textBox.Text = "离线";
                                 }
                             };
-                            ctrl.Invoke(actionDelegate, new object[] { slaveIndex });
+                            ctrl.Invoke(actionDelegate, new object[] { slaveIP });
                         }
                         else
                         {
                             TextBoxEx textBox = ctrl as TextBoxEx;
-                            if (textBox.SlaveAddress == slaveIndex)
+                            if (textBox.SlaveAddress == slaveIP)
                             {
                                 textBox.Text = "离线";
                             }

@@ -111,7 +111,7 @@ namespace WifiMonitor
         /// <param name="start">start address</param>
         /// <param name="registers">32 bits data length * 2</param>
         /// <returns></returns>
-        public bool ReadData(ushort start, ushort registers, ref int[] dataReadWrite)
+        public bool GetReadWriteData(ushort start, ushort registers, ref int[] dataReadWrite)
         {
             ushort length = registers;
             int index = 0;
@@ -190,6 +190,94 @@ namespace WifiMonitor
                     dataReadWrite[index] += response[4 * tempIndex + 3];
                     dataReadWrite[index] <<= 8;
                     dataReadWrite[index] += response[4 * tempIndex + 4];
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool GetReadOnlyData(ushort start, ushort registers, ref int[] dataReadOnly)
+        {
+            ushort length = registers;
+            int index = 0;
+            while (length > 120) //每帧长度最大256字节，每次查询120个寄存器
+            {
+                //Function 3 request is always 8 bits
+                byte[] tempMessage = new byte[8];
+                //Function 3 response buffer
+                byte[] tempResponse = new byte[5 + 2 * 120];
+                //Buile outgoing modbus message
+                BuildMessage((byte)1, (byte)4, start, 120, ref tempMessage);
+                //Send modbus message to Slaves
+                try
+                {
+                    lock (lockthis)
+                    {
+                        ns.Write(tempMessage, 0, tempMessage.Length);
+                        GetResponse(ref tempResponse);
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                //Evaluate message:
+                if (CheckResponse(tempResponse))
+                {
+                    //Return request register values:
+                    for (int tempIndex = 0; tempIndex < (tempResponse.Length - 5) / 4; tempIndex++, index++)
+                    {
+                        dataReadOnly[index] = tempResponse[4 * tempIndex + 5];
+                        dataReadOnly[index] <<= 8;
+                        dataReadOnly[index] += tempResponse[4 * tempIndex + 6];
+                        dataReadOnly[index] <<= 8;
+                        dataReadOnly[index] += tempResponse[4 * tempIndex + 3];
+                        dataReadOnly[index] <<= 8;
+                        dataReadOnly[index] += tempResponse[4 * tempIndex + 4];
+                    }
+                    length = (ushort)(length - 120);
+                    Thread.Sleep(60);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            //Function 3 request is always 8 bits
+            byte[] message = new byte[8];
+            //Function 3 response buffer
+            byte[] response = new byte[5 + 2 * length];
+            //Buile outgoing modbus message
+            BuildMessage((byte)1, (byte)4, start, length, ref message);
+            //Send modbus message to Slaves
+            try
+            {
+                lock (lockthis)
+                {
+                    ns.Write(message, 0, message.Length);
+                    GetResponse(ref response);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            //Evaluate message:
+            if (CheckResponse(response))
+            {
+                //Return request register values:
+                for (int tempIndex = 0; tempIndex < (response.Length - 5) / 4; tempIndex++, index++)
+                {
+                    dataReadOnly[index] = response[4 * tempIndex + 5];
+                    dataReadOnly[index] <<= 8;
+                    dataReadOnly[index] += response[4 * tempIndex + 6];
+                    dataReadOnly[index] <<= 8;
+                    dataReadOnly[index] += response[4 * tempIndex + 3];
+                    dataReadOnly[index] <<= 8;
+                    dataReadOnly[index] += response[4 * tempIndex + 4];
                 }
                 return true;
             }

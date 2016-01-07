@@ -1,8 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.IO;
 
 namespace WifiMonitor
 {
@@ -17,40 +17,11 @@ namespace WifiMonitor
         public IPAddress slaveIP;
         public bool onlineFlag;
 
-        private object obj = null;
+        private ICommunicate node;
         private Assembly assembly;
         private Type type;
-        private MethodInfo getSlaveData;
-        private MethodInfo sendIntData;
-        private MethodInfo sendBoolData;
 
-        private bool[] dataDiscreteOutput;
-        public bool[] DataDiscreteOutput         //开关量读写
-        {
-            set { dataDiscreteOutput = value; }
-            get { return dataDiscreteOutput; }
-        }
-
-        private bool[] dataDiscreateInput;
-        public bool[] DataDiscreteInput          //开关量只读
-        {
-            set { dataDiscreateInput = value; }
-            get { return dataDiscreateInput; }
-        }
-
-        private int[] dataReadWrite;
-        public int[] DataReadWrite              //有符号32位二进制
-        {
-            set { dataReadWrite = value; }
-            get { return dataReadWrite; }
-        }
-
-        private int[] dataReadOnly;
-        internal int[] DataReadOnly            //有符号32位二进制
-        {
-            set { dataReadOnly = value; }
-            get { return dataReadOnly; }
-        }
+        public RemoteNode remoteNode;
 
         public Slave(TcpClient tcpClient)
         {
@@ -59,15 +30,12 @@ namespace WifiMonitor
             ns.ReadTimeout = 8000;
             ns.WriteTimeout = 8000;
             slaveIndex = ushort.Parse(client.Client.RemoteEndPoint.ToString().Split('.')[3].Split(':')[0]);
-            slaveIP = IPAddress.Parse(client.Client.RemoteEndPoint.ToString().Split(':')[0]);
+            slaveIP = IPAddress.Parse(client.Client.RemoteEndPoint.ToString().Split(':')[0]);            
         }
 
-        public void SetDataLength(DataCount dataLength)
+        public void SetProperty(RemoteNode newNode)
         {
-            dataDiscreateInput = new bool[dataLength.discreteInput];
-            dataDiscreteOutput = new bool[dataLength.coil];
-            dataReadOnly = new int[dataLength.inputRegister];
-            dataReadWrite = new int[dataLength.holdingRegiter];
+            remoteNode = newNode;
         }
 
         public void Close()
@@ -87,10 +55,8 @@ namespace WifiMonitor
             {
                 assembly = Assembly.LoadFile(Environment.CurrentDirectory.ToString() + "\\Library\\" + protocol + ".dll");
                 type = assembly.GetType("WifiMonitor." + protocol);
-                obj = Activator.CreateInstance(type, new object[] { ns, lockthis });
-                getSlaveData = type.GetMethod("ReadData");
-                sendBoolData = type.GetMethod("WriteBoolData");
-                sendIntData = type.GetMethod("WriteIntData");
+                Object obj = Activator.CreateInstance(type, new object[] { ns, lockthis });
+                node = obj as ICommunicate;
             }
             catch (Exception)
             {
@@ -99,22 +65,27 @@ namespace WifiMonitor
             return true;
         }
 
+        /// <summary>
+        /// Get read only data from remote nodes
+        /// </summary>
+        /// <param name="startAddress">Start address, const 0</param>
+        /// <returns>Success or failure</returns>
         public bool ReadData(ushort startAddress)
         {        
             int[] response;
             bool successFlag = false;
-            if (dataDiscreateInput.Length % 32 != 0)
+            if (remoteNode.varDiscreteInput.Length % 32 != 0)
             {
-                response = new int[dataDiscreteOutput.Length / 32 + 1 + dataReadWrite.Length];
+                response = new int[remoteNode.varDiscreteInput.Length / 32 + 1 + remoteNode.varInputRegister.Length];
             }
             else
             {
-                response = new int[dataDiscreteOutput.Length / 32 + dataReadWrite.Length];
+                response = new int[remoteNode.varDiscreteInput.Length / 32 + remoteNode.varInputRegister.Length];
             }
-            object[] parameters = new object[] { startAddress, (ushort)(response.Length * 2), response };
+
             try
             {
-                successFlag = (bool)(getSlaveData.Invoke(obj, parameters));
+                successFlag = node.GetReadOnlyData(startAddress, (ushort)(response.Length * 2), ref response);
             }
             catch (Exception)
             {
@@ -126,11 +97,10 @@ namespace WifiMonitor
                 return successFlag;
             }
 
-            response = parameters[2] as int[];
             for (int i = 0; i < response.Length; i++)
             {
                 //Get bit value
-                if (i < response.Length - dataReadWrite.Length)
+                if (i < response.Length - remoteNode.varInputRegister.Length)
                 {
                     int mask = 1;
                     for (int offset = 0; offset < 32; offset++)
@@ -138,9 +108,9 @@ namespace WifiMonitor
                         mask <<= offset;
                         int tempData = response[i] & mask;
                         tempData >>= offset;
-                        if ((offset + i * 32) < dataDiscreteOutput.Length)
+                        if ((offset + i * 32) < remoteNode.varDiscreteInput.Length)
                         {
-                            dataDiscreteOutput[offset + i * 32] = (tempData == 0x01 ? true : false);
+                            remoteNode.varDiscreteInput[offset + i * 32].boolValue = (tempData == 0x01 ? true : false);
                         }
                     }
                 }
@@ -148,8 +118,67 @@ namespace WifiMonitor
                 //Get integer value
                 else
                 {
-                    dataReadWrite[i - (response.Length - dataReadWrite.Length)] = response[i];
+                    remoteNode.varInputRegister[i - (response.Length - remoteNode.varInputRegister.Length)].intValue = response[i];
                 } 
+            }
+            return successFlag;
+        }
+
+        /// <summary>
+        /// Get read write data from remote nodes
+        /// </summary>
+        /// <param name="startAddress">Start address, const 0</param>
+        /// <returns>Success or failure</returns>
+        public bool GetReadWriteData(ushort startAddress)
+        {
+            int[] response;
+            bool successFlag = false;
+            if (remoteNode.varDiscreteOutput.Length % 32 != 0)
+            {
+                response = new int[remoteNode.varDiscreteOutput.Length / 32 + 1 + remoteNode.varHoldingRegister.Length];
+            }
+            else
+            {
+                response = new int[remoteNode.varDiscreteOutput.Length / 32 + remoteNode.varHoldingRegister.Length];
+            }
+
+            try
+            {
+                successFlag = node.GetReadWriteData(startAddress, (ushort)(response.Length * 2), ref response);
+            }
+            catch (Exception)
+            {
+                successFlag = false;
+            }
+
+            if (!successFlag)
+            {
+                return successFlag;
+            }
+
+            for (int i = 0; i < response.Length; i++)
+            {
+                //Get bit value
+                if (i < response.Length - remoteNode.varHoldingRegister.Length)
+                {
+                    int mask = 1;
+                    for (int offset = 0; offset < 32; offset++)
+                    {
+                        mask <<= offset;
+                        int tempData = response[i] & mask;
+                        tempData >>= offset;
+                        if ((offset + i * 32) < remoteNode.varDiscreteOutput.Length)
+                        {
+                            remoteNode.varDiscreteOutput[offset + i * 32].boolValue = (tempData == 0x01 ? true : false);
+                        }
+                    }
+                }
+
+                //Get integer value
+                else
+                {
+                    remoteNode.varHoldingRegister[i - (response.Length - remoteNode.varHoldingRegister.Length)].intValue = response[i];
+                }
             }
             return successFlag;
         }
@@ -157,9 +186,18 @@ namespace WifiMonitor
         public bool WriteData(ushort address, int dataValue)
         {
             bool successFlag = false;
+            ushort offset = 0;
+            if (remoteNode.varDiscreteOutput.Length % 32 != 0)
+            {
+                offset = (ushort)(remoteNode.varDiscreteOutput.Length / 32 + 1);
+            }
+            else
+            {
+                offset = (ushort)(remoteNode.varDiscreteOutput.Length / 32);
+            }
             try
             {
-               successFlag = (bool)(sendIntData.Invoke(obj, new object[] { address, dataValue }));
+                successFlag = node.WriteIntData((ushort)(address + offset * 2), dataValue);
             }
             catch (Exception)
             {
@@ -173,7 +211,7 @@ namespace WifiMonitor
             bool successFlag = false;
             try
             {
-                successFlag = (bool)(sendBoolData.Invoke(obj, new object[] { address, dataValue }));
+                successFlag = node.WriteBoolData(address, dataValue);
             }
             catch (Exception)
             {

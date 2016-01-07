@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace WifiMonitor
 {
     public delegate void ConnectionEventHandler(object sender, EventArgs e); //连接信息改变
+    public delegate int DataBaseEventHandler(Slave slave);
 
     class Communicate : IDisposable
     {
@@ -18,6 +19,7 @@ namespace WifiMonitor
         public MainForm.UpdateStatus updateStatus;
         public event MainForm.LostConnectionEventHandler lostConnection;
         public event ConnectionEventHandler connectionChange;
+        public event DataBaseEventHandler insertDataBase;
 
         public List<Slave> slaveList;
         public List<Slave> lowPriortyList;
@@ -72,7 +74,7 @@ namespace WifiMonitor
 
                 //For every client, create a new receive data thread
                 Slave slave = new Slave(tcpClient);
-                slave.SetDataLength(GlobalVar.ipNodeMapping[slave.slaveIP].dataCount);
+                slave.SetProperty(GlobalVar.ipNodeMapping[slave.slaveIP]);
                 slaveList.Add(slave);
                 OnConnectionChange();
 
@@ -91,16 +93,25 @@ namespace WifiMonitor
             short maxTimes = 10;    
             RemoteNode node = GlobalVar.ipNodeMapping[slave.slaveIP];
             slave.LoadLibrary(node.protocolType);
-            slave.SetDataLength(node.dataCount);
+            
+            //while (!slave.GetReadWriteData((ushort)0) && maxTimes > 0)
+            //{
+            //    maxTimes--;
+            //}
 
             while (GlobalVar.runningFlag)
             {
+                Thread.Sleep(60);
                 try
                 {
-                    if (!slave.ReadData((ushort)0))
+                    if (!slave.ReadData((ushort)0) || !slave.GetReadWriteData((ushort)0))
                     {
                         throw new Exception("Read data error");
-                    }                   
+                    }
+                    if (insertDataBase != null)
+                    {
+                        insertDataBase(slave);
+                    }
                 }
                 catch (Exception)
                 {
@@ -111,16 +122,14 @@ namespace WifiMonitor
                         break;
                     }
                 }
-                Thread.Sleep(60);
             }
         }
 
-
-        public void SendSingleValue(ushort slaveNumber, ushort address, int dataValue)
+        public void SendSingleValue(IPAddress slaveAddress, ushort address, int dataValue)
         {
             foreach (Slave slave in slaveList)
             {
-                if (slave.slaveIndex == slaveNumber)
+                if (slave.slaveIP.Equals(slaveAddress))
                 {
                     bool successFlag = false;
                     short maxWriteTimes = 5;  //超过5次未成功则写入失败
@@ -129,6 +138,8 @@ namespace WifiMonitor
                             while (!successFlag && maxWriteTimes > 0)
                             {
                                 successFlag = slave.WriteData((ushort)(address * 2), dataValue);
+                                //Thread.Sleep(60);
+                                //successFlag = slave.GetReadWriteData((ushort)0);
                                 maxWriteTimes--;
                             }
                         });
@@ -136,11 +147,11 @@ namespace WifiMonitor
             }
         }
 
-        public void SendSingleValue(ushort slaveNumber, ushort address, bool dataValue)
+        public void SendSingleValue(IPAddress slaveAddress, ushort address, bool dataValue)
         {
             foreach (Slave slave in slaveList)
             {
-                if (slave.slaveIndex == slaveNumber)
+                if (slave.slaveIP.Equals(slaveAddress))
                 {
                     bool successFlag = false;
                     short maxWriteTimes = 5;  //超过5次未成功则写入失败
@@ -149,6 +160,8 @@ namespace WifiMonitor
                         while (!successFlag && maxWriteTimes > 0)
                         {
                             successFlag = slave.WriteData(address, dataValue);
+                            //Thread.Sleep(60);
+                            //successFlag = slave.GetReadWriteData((ushort)0);
                             maxWriteTimes--;
                         }
                     });

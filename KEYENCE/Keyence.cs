@@ -48,12 +48,13 @@ namespace WifiMonitor
         /// <param name="length">soft element number(for here equal to data length *2)</param>
         /// <param name="data">get int32 data</param>
         /// <returns></returns>
-        public bool ReadData(ushort startAddress, ushort length, ref int[] data)
+        public bool GetReadWriteData(ushort startAddress, ushort length, ref int[] data)
         {
             int dataLength = length / 2;
+
             StartCommunicate();
 
-            string messageSend = "RDS DM" + startAddress.ToString() + ".L " + dataLength.ToString() + "\r";
+            string messageSend = "RDS DM" + startAddress.ToString() + ".L " + dataLength.ToString() + "\r";  //读写数据区定义
             byte[] message = Encoding.ASCII.GetBytes(messageSend);
             byte[] response = new byte[12 * dataLength + 1];
             string receive;
@@ -90,6 +91,50 @@ namespace WifiMonitor
             {
                 return false;  
             }          
+        }
+
+        public bool GetReadOnlyData(ushort startAddress, ushort length, ref int[] data)
+        {
+            int dataLength = length / 2;
+            StartCommunicate();
+
+            string messageSend = "RDS DM" + (startAddress + 2000).ToString() + ".L " + dataLength.ToString() + "\r";  //只读数据区定义
+            byte[] message = Encoding.ASCII.GetBytes(messageSend);
+            byte[] response = new byte[12 * dataLength + 1];
+            string receive;
+            lock (lockthis)
+            {
+                try
+                {
+                    ns.Write(message, 0, messageSend.Length);
+                    GetResponse(ref response);
+                    receive = Encoding.ASCII.GetString(response, 0, response.Length);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            if (!receive.Contains("\r\n")) //no ending data error
+            {
+                return false;
+            }
+
+            string[] stringData = receive.Split('\r')[0].Split(' ');
+            if (stringData.Length == dataLength) //Read length not equal to request data number
+            {
+                //Handling receiveData
+                for (int index = 0; index < stringData.Length; index++)
+                {
+                    data[index] = int.Parse(stringData[index]);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -137,7 +182,7 @@ namespace WifiMonitor
             startAddress = (ushort)(address / 32 * 2); //start address must be even
 
             int[] originalValue = new int[1];
-            if (!ReadData(startAddress, 2, ref originalValue))
+            if (!GetReadWriteData(startAddress, 2, ref originalValue))
             {
                 return false;
             }

@@ -37,8 +37,7 @@ namespace XMLGenerator
                 {
                     case "1 开关量 只读":
                         boolReadOnlyCount++;
-                        XmlElement variables1 = xDoc.CreateElement("Variable" + boolReadOnlyCount);
-                        variables1.SetAttribute(form1.dataGridView.Columns[1].Name, "1");
+                        XmlElement variables1 = xDoc.CreateElement("Variable");
                         variables1.SetAttribute(form1.dataGridView.Columns[0].Name, form1.dataGridView.Rows[i].Cells[0].Value.ToString());
                         variables1.SetAttribute(form1.dataGridView.Columns[2].Name, (string)form1.dataGridView.Rows[i].Cells[2].Value);
                         variables1.SetAttribute(form1.dataGridView.Columns[3].Name, (string)form1.dataGridView.Rows[i].Cells[3].Value);
@@ -50,8 +49,7 @@ namespace XMLGenerator
                         break;
                     case "2 开关量 读写":
                         boolReadWriteCount++;
-                        XmlElement variables2 = xDoc.CreateElement("Variable" + boolReadWriteCount + 1);
-                        variables2.SetAttribute(form1.dataGridView.Columns[1].Name, "2");
+                        XmlElement variables2 = xDoc.CreateElement("Variable");
                         variables2.SetAttribute(form1.dataGridView.Columns[0].Name, (string)form1.dataGridView.Rows[i].Cells[0].Value);
                         variables2.SetAttribute(form1.dataGridView.Columns[2].Name, (string)form1.dataGridView.Rows[i].Cells[2].Value);
                         variables2.SetAttribute(form1.dataGridView.Columns[3].Name, (string)form1.dataGridView.Rows[i].Cells[3].Value);
@@ -63,8 +61,7 @@ namespace XMLGenerator
                         break;
                     case "3 数值量 只读":
                         intReadOnlyCount++;
-                        XmlElement variables3 = xDoc.CreateElement("Variable" + intReadOnlyCount);
-                        variables3.SetAttribute(form1.dataGridView.Columns[1].Name, "3");
+                        XmlElement variables3 = xDoc.CreateElement("Variable");
                         variables3.SetAttribute(form1.dataGridView.Columns[0].Name, (string)form1.dataGridView.Rows[i].Cells[0].Value);
                         variables3.SetAttribute(form1.dataGridView.Columns[2].Name, (string)form1.dataGridView.Rows[i].Cells[2].Value);
                         variables3.SetAttribute(form1.dataGridView.Columns[3].Name, (string)form1.dataGridView.Rows[i].Cells[3].Value);
@@ -76,8 +73,7 @@ namespace XMLGenerator
                         break;
                     case "4 数值量 读写":
                         intReadWriteCount++;
-                        XmlElement variables4 = xDoc.CreateElement("Variable" + intReadWriteCount);
-                        variables4.SetAttribute(form1.dataGridView.Columns[1].Name, "4");
+                        XmlElement variables4 = xDoc.CreateElement("Variable");
                         variables4.SetAttribute(form1.dataGridView.Columns[0].Name, (string)form1.dataGridView.Rows[i].Cells[0].Value);
                         variables4.SetAttribute(form1.dataGridView.Columns[2].Name, (string)form1.dataGridView.Rows[i].Cells[2].Value);
                         variables4.SetAttribute(form1.dataGridView.Columns[3].Name, (string)form1.dataGridView.Rows[i].Cells[3].Value);
@@ -92,10 +88,6 @@ namespace XMLGenerator
                 }
             }
             int totalNumber = boolReadOnlyCount + boolReadWriteCount + intReadOnlyCount + intReadWriteCount;
-            boolReadOnlyElement.SetAttribute("Count", boolReadOnlyCount.ToString());
-            boolReadWriteElement.SetAttribute("Count", boolReadWriteCount.ToString());
-            intReadOnlyElement.SetAttribute("Count", intReadOnlyCount.ToString());
-            intReadWriteElement.SetAttribute("Count", intReadWriteCount.ToString());
             boolReadOnlyElement.SetAttribute("Length", GVL.dataLength.discreteInput.ToString());
             boolReadWriteElement.SetAttribute("Length", GVL.dataLength.coil.ToString());
             intReadOnlyElement.SetAttribute("Length", GVL.dataLength.inputRegister.ToString());
@@ -208,55 +200,55 @@ namespace XMLGenerator
             XmlElement boolReadWriteElement = paraElement["BoolReadWrite"];
             XmlElement intReadOnlyElement = paraElement["IntReadOnly"];
             XmlElement intReadWriteElement = paraElement["IntReadWrite"];
-            int discreteInputCount = Convert.ToUInt16(boolReadOnlyElement.GetAttribute("Count"));
-            int coilCount = Convert.ToUInt16(boolReadWriteElement.GetAttribute("Count"));
-            int inputRegisterCount = Convert.ToUInt16(intReadOnlyElement.GetAttribute("Count"));
-            int holdingRegiterCount = Convert.ToUInt16(intReadWriteElement.GetAttribute("Count"));
             GVL.dataLength.discreteInput = Convert.ToUInt16(boolReadOnlyElement.GetAttribute("Length"));
             GVL.dataLength.coil = Convert.ToUInt16(boolReadWriteElement.GetAttribute("Length"));
             GVL.dataLength.inputRegister = Convert.ToUInt16(intReadOnlyElement.GetAttribute("Length"));
             GVL.dataLength.holdingRegiter = Convert.ToUInt16(intReadWriteElement.GetAttribute("Length"));
 
             int rowNumber = Convert.ToInt32(paraElement.GetAttribute("Count"));
-            int rowIndex = 0;    
+            int rowIndex = 0;
 
-            for (int boolReadOnlyIndex = 1; boolReadOnlyIndex <= discreteInputCount; boolReadOnlyIndex++, rowIndex++)
+            #region Load data grid view
+
+            foreach (XmlNode node in boolReadOnlyElement.ChildNodes)
             {
                 mForm1.dataGridView.Rows.Add();
-                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = boolReadOnlyElement["Variable" + boolReadOnlyIndex].GetAttribute(mForm1.dataGridView.Columns[0].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = boolReadOnlyElement["Variable" + boolReadOnlyIndex].GetAttribute(mForm1.dataGridView.Columns[2].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = boolReadOnlyElement["Variable" + boolReadOnlyIndex].GetAttribute(mForm1.dataGridView.Columns[3].Name);
+                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = node.Attributes[mForm1.dataGridView.Columns[0].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = node.Attributes[mForm1.dataGridView.Columns[2].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = node.Attributes[mForm1.dataGridView.Columns[3].Name].Value;
                 mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "1 开关量 只读";
+                rowIndex++;
             }
-
-            for (int boolReadWriteIndex = 1; boolReadWriteIndex <= coilCount; boolReadWriteIndex++, rowIndex++)
+            foreach (XmlNode node in boolReadWriteElement.ChildNodes)
             {
                 mForm1.dataGridView.Rows.Add();
-                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = boolReadWriteElement["Variable" + boolReadWriteIndex].GetAttribute(mForm1.dataGridView.Columns[0].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = boolReadWriteElement["Variable" + boolReadWriteIndex].GetAttribute(mForm1.dataGridView.Columns[2].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = boolReadWriteElement["Variable" + boolReadWriteIndex].GetAttribute(mForm1.dataGridView.Columns[3].Name);
+                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = node.Attributes[mForm1.dataGridView.Columns[0].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = node.Attributes[mForm1.dataGridView.Columns[2].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = node.Attributes[mForm1.dataGridView.Columns[3].Name].Value;
                 mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "2 开关量 读写";
+                rowIndex++;
             }
-
-            for (int intReadOnlyIndex = 1; intReadOnlyIndex <= inputRegisterCount; intReadOnlyIndex++, rowIndex++)
+            foreach (XmlNode node in intReadOnlyElement.ChildNodes)
             {
                 mForm1.dataGridView.Rows.Add();
-                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = intReadOnlyElement["Variable" + intReadOnlyIndex].GetAttribute(mForm1.dataGridView.Columns[0].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = intReadOnlyElement["Variable" + intReadOnlyIndex].GetAttribute(mForm1.dataGridView.Columns[2].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = intReadOnlyElement["Variable" + intReadOnlyIndex].GetAttribute(mForm1.dataGridView.Columns[3].Name);
+                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = node.Attributes[mForm1.dataGridView.Columns[0].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = node.Attributes[mForm1.dataGridView.Columns[2].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = node.Attributes[mForm1.dataGridView.Columns[3].Name].Value;
                 mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "3 数值量 只读";
+                rowIndex++;
             }
-
-            for (int intReadWriteIndex = 1; intReadWriteIndex <= holdingRegiterCount; intReadWriteIndex++, rowIndex++)
+            foreach (XmlNode node in intReadOnlyElement.ChildNodes)
             {
                 mForm1.dataGridView.Rows.Add();
-                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = intReadWriteElement["Variable" + intReadWriteIndex].GetAttribute(mForm1.dataGridView.Columns[0].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = intReadWriteElement["Variable" + intReadWriteIndex].GetAttribute(mForm1.dataGridView.Columns[2].Name);
-                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = intReadWriteElement["Variable" + intReadWriteIndex].GetAttribute(mForm1.dataGridView.Columns[3].Name);
+                mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = node.Attributes[mForm1.dataGridView.Columns[0].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = node.Attributes[mForm1.dataGridView.Columns[2].Name].Value;
+                mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = node.Attributes[mForm1.dataGridView.Columns[3].Name].Value;
                 mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "4 数值量 读写";
-            }         
+                rowIndex++;
+            }
+            #endregion
 
-            #region 对第二页进行加载
+            #region Load controls
             try
             {
                 for (int labelIndex = 1; labelIndex <= Convert.ToInt32(UIElement["Labels"].GetAttribute("Count")); labelIndex++)
@@ -319,11 +311,23 @@ namespace XMLGenerator
                     {
                         case 3:
                             txt.MbInterface = DataInterface.InputRegister;
-                            txt.VarName = intReadOnlyElement["Variable" + textIndex].GetAttribute("varName");
+                            foreach (XmlNode node in intReadOnlyElement)
+                            {
+                                if (node.Attributes["varAddress"].Value == txt.RelateVar.ToString())
+                                {
+                                    txt.VarName = node.Attributes["varName"].Value;
+                                }
+                            }
                             break;
                         case 4:
                             txt.MbInterface = DataInterface.HoldingRegister;
-                            txt.VarName = intReadWriteElement["Variable" + textIndex].GetAttribute("varName");
+                            foreach (XmlNode node in intReadWriteElement)
+                            {
+                                if (node.Attributes["varAddress"].Value == txt.RelateVar.ToString())
+                                {
+                                    txt.VarName = node.Attributes["varName"].Value;
+                                }
+                            }
                             txt.Cursor = Cursors.Hand;
                             break;
                         default:
@@ -363,13 +367,25 @@ namespace XMLGenerator
                     if (tempInterface == 1)
                     {
                         lamp1.ReadOnly = true;
-                        lamp1.varName = boolReadOnlyElement["Variable" + lampIndex].GetAttribute("varName");
+                        foreach (XmlNode node in boolReadOnlyElement)
+                        {
+                            if (node.Attributes["varAddress"].Value == lamp1.RelateVar.ToString())
+                            {
+                                lamp1.varName = node.Attributes["varName"].Value;
+                            }
+                        }
                     }
                     else
                     {
                         lamp1.ReadOnly = false;
                         lamp1.Cursor = Cursors.Hand;
-                        lamp1.varName = boolReadWriteElement["Variable" + lampIndex].GetAttribute("varName");
+                        foreach (XmlNode node in boolReadWriteElement)
+                        {
+                            if (node.Attributes["varAddress"].Value == lamp1.RelateVar.ToString())
+                            {
+                                lamp1.varName = node.Attributes["varName"].Value;
+                            }
+                        }
                     }
 
                     lamp1.DoubleClick += new EventHandler(mForm1.Lamp_DoubleClick);

@@ -136,7 +136,7 @@
             this.cbDataType.FormattingEnabled = true;
             this.cbDataType.Items.AddRange(new object[] {
             "1 开关量 只读",
-            "2 开关量 读写",
+            "0 开关量 读写",
             "3 数值量 只读",
             "4 数值量 读写"});
             this.cbDataType.Location = new System.Drawing.Point(185, 69);
@@ -184,9 +184,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.TextBox textboxName;
-        private System.Windows.Forms.TextBox textboxAddress;
-        private System.Windows.Forms.CheckBox checkBoxDataBase;
-        private System.Windows.Forms.ComboBox cbDataType;
+        internal System.Windows.Forms.TextBox textboxName;
+        internal System.Windows.Forms.TextBox textboxAddress;
+        internal System.Windows.Forms.CheckBox checkBoxDataBase;
+        internal System.Windows.Forms.ComboBox cbDataType;
     }
 }

@@ -28,6 +28,7 @@ namespace WifiMonitor
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "选择要加载的监控设备模板";
             openFileDialog.InitialDirectory = Environment.CurrentDirectory.ToString() + "\\Config";
             openFileDialog.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
@@ -46,22 +47,25 @@ namespace WifiMonitor
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            IPAddress slaveIP;
+            if (IPAddress.TryParse(mMainForm.tabControl.SelectedTab.ToolTipText, out slaveIP))
+            {
+                GlobalVar.ipNodeMapping.Remove(slaveIP);
+            }
             if (checkBoxBlank.Checked)
             {
                 mMainForm.tabControl.SelectedTab.Text = textBoxTitle.Text;
                 mMainForm.tabControl.SelectedTab.Controls.Clear();
+                mMainForm.tabControl.SelectedTab.ToolTipText = "";
                 this.Close();
             }
             else
             {
-                IPAddress slaveIP;
-                ushort slaveAddress = 0;
                 mMainForm.tabControl.SelectedTab.Text = textBoxTitle.Text;
 
                 try
                 {
                      slaveIP = IPAddress.Parse(textBoxIP.Text);
-                     slaveAddress = ushort.Parse(textBoxIP.Text.Split('.')[3]);
                 }
                 catch (Exception)
                 {
@@ -70,6 +74,7 @@ namespace WifiMonitor
                 }
 
                 mMainForm.tabControl.SelectedTab.Controls.Clear();
+                mMainForm.tabControl.SelectedTab.ToolTipText = textBoxIP.Text;
 
                 try
                 {
