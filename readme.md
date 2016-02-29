@@ -73,6 +73,10 @@ Complete bit data write and read function. Next will implement data base functio
 2015.1.4 ver0.92
 Now implement data base insert function. But data base must be create manualy before insert.
 Bug fixs.
+
+2016.2.28
+Construct a base structure of database, variables now divided into three types (not save, save curent value and save log). Impelement table create and trigger create in program.
+
 Things need to do：
 界面优化:
 是否可以标签透明或自动更改长度;

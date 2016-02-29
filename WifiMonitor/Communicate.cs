@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Configuration;
 using System.Threading.Tasks;
 
 
 namespace WifiMonitor
 {
     public delegate void ConnectionEventHandler(object sender, EventArgs e); //连接信息改变
-    public delegate int DataBaseEventHandler(Slave slave);
+    public delegate int DataBaseEventHandler(IPAddress ip, RemoteNode node);
 
     class Communicate : IDisposable
     {
@@ -22,14 +21,12 @@ namespace WifiMonitor
         public event DataBaseEventHandler insertDataBase;
 
         public List<Slave> slaveList;
-        public List<Slave> lowPriortyList;
         TaskFactory communicateTask = new TaskFactory();   //Communicate tasks
 
 
         public Communicate()
         {
             slaveList = new List<Slave>();
-            lowPriortyList = new List<Slave>();
         }
 
         //连接状态改变时刷新界面显示
@@ -78,8 +75,7 @@ namespace WifiMonitor
                 slaveList.Add(slave);
                 OnConnectionChange();
 
-                Action<object> readAction;
-                readAction = ReadTask;
+                Action<object> readAction = ReadTask;
 
                 Task readTask = communicateTask.StartNew(
                     readAction, slave,
@@ -102,15 +98,19 @@ namespace WifiMonitor
             while (GlobalVar.runningFlag)
             {
                 Thread.Sleep(60);
+                if (!slave.fActive)  //连接异常，增加延时时间
+                {
+                    Thread.Sleep(100000);
+                }
                 try
                 {
                     if (!slave.ReadData((ushort)0) || !slave.GetReadWriteData((ushort)0))
                     {
                         throw new Exception("Read data error");
                     }
-                    if (insertDataBase != null)
+                    else
                     {
-                        insertDataBase(slave);
+                        slave.fActive = true;
                     }
                 }
                 catch (Exception)
@@ -118,8 +118,16 @@ namespace WifiMonitor
                     maxTimes--;
                     if (maxTimes == 0)
                     {
-                        RemoveSlave(slave);
-                        break;
+                        if (slave.fActive)
+                        {
+                            slave.fActive = false;
+                            maxTimes = 0;
+                        }
+                        else
+                        {
+                            RemoveSlave(slave);
+                            break;
+                        }
                     }
                 }
             }

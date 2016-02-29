@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace XMLGenerator
 {
-    class CsaveXML
+    class CSaveXML
     {
         public void SaveXml(string filename , Generator form1)
         {           
@@ -26,6 +26,11 @@ namespace XMLGenerator
             int intReadOnlyCount = 0;
             int intReadWriteCount = 0;
 
+            //clear data lenth
+            GVL.dataLength.discreteInput = 0;
+            GVL.dataLength.coil = 0;
+            GVL.dataLength.inputRegister = 0;
+            GVL.dataLength.holdingRegiter = 0;
             
             XmlElement boolReadOnlyElement = xDoc.CreateElement("BoolReadOnly");
             XmlElement boolReadWriteElement = xDoc.CreateElement("BoolReadWrite");
@@ -47,7 +52,7 @@ namespace XMLGenerator
                             GVL.dataLength.discreteInput = Convert.ToUInt16(form1.dataGridView.Rows[i].Cells[2].Value);
                         }
                         break;
-                    case "2 开关量 读写":
+                    case "0 开关量 读写":
                         boolReadWriteCount++;
                         XmlElement variables2 = xDoc.CreateElement("Variable");
                         variables2.SetAttribute(form1.dataGridView.Columns[0].Name, (string)form1.dataGridView.Rows[i].Cells[0].Value);
@@ -225,7 +230,7 @@ namespace XMLGenerator
                 mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = node.Attributes[mForm1.dataGridView.Columns[0].Name].Value;
                 mForm1.dataGridView.Rows[rowIndex].Cells[2].Value = node.Attributes[mForm1.dataGridView.Columns[2].Name].Value;
                 mForm1.dataGridView.Rows[rowIndex].Cells[3].Value = node.Attributes[mForm1.dataGridView.Columns[3].Name].Value;
-                mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "2 开关量 读写";
+                mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "0 开关量 读写";
                 rowIndex++;
             }
             foreach (XmlNode node in intReadOnlyElement.ChildNodes)
@@ -237,7 +242,7 @@ namespace XMLGenerator
                 mForm1.dataGridView.Rows[rowIndex].Cells[1].Value = "3 数值量 只读";
                 rowIndex++;
             }
-            foreach (XmlNode node in intReadOnlyElement.ChildNodes)
+            foreach (XmlNode node in intReadWriteElement.ChildNodes)
             {
                 mForm1.dataGridView.Rows.Add();
                 mForm1.dataGridView.Rows[rowIndex].Cells[0].Value = node.Attributes[mForm1.dataGridView.Columns[0].Name].Value;

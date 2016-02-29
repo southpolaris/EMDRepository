@@ -53,6 +53,7 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Location = new System.Drawing.Point(208, 225);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonCancel.Name = "buttonCancel";
@@ -67,9 +68,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(17, 34);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 17);
+            this.label1.Size = new System.Drawing.Size(116, 17);
             this.label1.TabIndex = 3;
-            this.label1.Text = "机床配置文件：";
+            this.label1.Text = "机床类型配置文件：";
             // 
             // label2
             // 
@@ -85,14 +86,14 @@
             this.textBoxTitle.Location = new System.Drawing.Point(132, 133);
             this.textBoxTitle.Name = "textBoxTitle";
             this.textBoxTitle.Size = new System.Drawing.Size(163, 23);
-            this.textBoxTitle.TabIndex = 5;
+            this.textBoxTitle.TabIndex = 4;
             // 
             // textBoxIP
             // 
             this.textBoxIP.Location = new System.Drawing.Point(132, 84);
             this.textBoxIP.Name = "textBoxIP";
             this.textBoxIP.Size = new System.Drawing.Size(163, 23);
-            this.textBoxIP.TabIndex = 7;
+            this.textBoxIP.TabIndex = 3;
             // 
             // label3
             // 
@@ -109,7 +110,7 @@
             this.checkBoxBlank.Location = new System.Drawing.Point(160, 183);
             this.checkBoxBlank.Name = "checkBoxBlank";
             this.checkBoxBlank.Size = new System.Drawing.Size(135, 21);
-            this.checkBoxBlank.TabIndex = 8;
+            this.checkBoxBlank.TabIndex = 5;
             this.checkBoxBlank.Text = "空白页（手动配置）";
             this.checkBoxBlank.UseVisualStyleBackColor = true;
             this.checkBoxBlank.CheckedChanged += new System.EventHandler(this.checkBoxBlank_CheckedChanged);
@@ -119,7 +120,7 @@
             this.textBoxXml.Location = new System.Drawing.Point(132, 31);
             this.textBoxXml.Name = "textBoxXml";
             this.textBoxXml.Size = new System.Drawing.Size(123, 23);
-            this.textBoxXml.TabIndex = 9;
+            this.textBoxXml.TabIndex = 1;
             // 
             // buttonBrowse
             // 
@@ -127,15 +128,17 @@
             this.buttonBrowse.Location = new System.Drawing.Point(256, 31);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(39, 23);
-            this.buttonBrowse.TabIndex = 10;
+            this.buttonBrowse.TabIndex = 2;
             this.buttonBrowse.Text = "...";
             this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
             // 
             // TabEditForm
             // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(319, 278);
             this.Controls.Add(this.buttonBrowse);
             this.Controls.Add(this.textBoxXml);

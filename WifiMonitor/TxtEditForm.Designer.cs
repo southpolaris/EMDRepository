@@ -36,7 +36,6 @@
             this.textBoxVarName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxRelateVar = new System.Windows.Forms.TextBox();
-            this.checkBoxDB = new System.Windows.Forms.CheckBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
@@ -51,6 +50,8 @@
             this.txtHeight = new System.Windows.Forms.TextBox();
             this.lblWidth = new System.Windows.Forms.Label();
             this.txtWidth = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBoxDataSave = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPageVar.SuspendLayout();
             this.tabPageCtrl.SuspendLayout();
@@ -78,11 +79,12 @@
             // 
             // tabPageVar
             // 
+            this.tabPageVar.Controls.Add(this.textBoxDataSave);
+            this.tabPageVar.Controls.Add(this.label4);
             this.tabPageVar.Controls.Add(this.cbSlaveAddress);
             this.tabPageVar.Controls.Add(this.textBoxVarName);
             this.tabPageVar.Controls.Add(this.label3);
             this.tabPageVar.Controls.Add(this.textBoxRelateVar);
-            this.tabPageVar.Controls.Add(this.checkBoxDB);
             this.tabPageVar.Controls.Add(this.radioButton4);
             this.tabPageVar.Controls.Add(this.radioButton3);
             this.tabPageVar.Controls.Add(this.label2);
@@ -106,41 +108,32 @@
             // 
             // textBoxVarName
             // 
-            this.textBoxVarName.Location = new System.Drawing.Point(129, 22);
+            this.textBoxVarName.Location = new System.Drawing.Point(129, 17);
             this.textBoxVarName.Name = "textBoxVarName";
+            this.textBoxVarName.ReadOnly = true;
             this.textBoxVarName.Size = new System.Drawing.Size(140, 23);
             this.textBoxVarName.TabIndex = 28;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 25);
+            this.label3.Location = new System.Drawing.Point(12, 20);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(92, 17);
+            this.label3.Size = new System.Drawing.Size(80, 17);
             this.label3.TabIndex = 27;
-            this.label3.Text = "关联变量名称：";
+            this.label3.Text = "关联变量名称";
             // 
             // textBoxRelateVar
             // 
-            this.textBoxRelateVar.Location = new System.Drawing.Point(129, 125);
+            this.textBoxRelateVar.Location = new System.Drawing.Point(129, 130);
             this.textBoxRelateVar.Name = "textBoxRelateVar";
             this.textBoxRelateVar.Size = new System.Drawing.Size(140, 23);
             this.textBoxRelateVar.TabIndex = 26;
             // 
-            // checkBoxDB
-            // 
-            this.checkBoxDB.AutoSize = true;
-            this.checkBoxDB.Location = new System.Drawing.Point(129, 162);
-            this.checkBoxDB.Name = "checkBoxDB";
-            this.checkBoxDB.Size = new System.Drawing.Size(111, 21);
-            this.checkBoxDB.TabIndex = 25;
-            this.checkBoxDB.Text = "信息存入数据库";
-            this.checkBoxDB.UseVisualStyleBackColor = true;
-            // 
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(207, 93);
+            this.radioButton4.Location = new System.Drawing.Point(207, 95);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(62, 21);
             this.radioButton4.TabIndex = 22;
@@ -152,7 +145,7 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(129, 93);
+            this.radioButton3.Location = new System.Drawing.Point(129, 95);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(62, 21);
             this.radioButton3.TabIndex = 21;
@@ -166,27 +159,27 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 60);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(103, 17);
+            this.label2.Size = new System.Drawing.Size(91, 17);
             this.label2.TabIndex = 23;
-            this.label2.Text = "设备通信模块IP：";
+            this.label2.Text = "设备通信模块IP";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 95);
+            this.label1.Location = new System.Drawing.Point(12, 97);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 17);
+            this.label1.Size = new System.Drawing.Size(56, 17);
             this.label1.TabIndex = 20;
-            this.label1.Text = "数据通道：";
+            this.label1.Text = "数据通道";
             // 
             // lblTxtVar
             // 
             this.lblTxtVar.AutoSize = true;
-            this.lblTxtVar.Location = new System.Drawing.Point(12, 128);
+            this.lblTxtVar.Location = new System.Drawing.Point(12, 133);
             this.lblTxtVar.Name = "lblTxtVar";
-            this.lblTxtVar.Size = new System.Drawing.Size(123, 17);
+            this.lblTxtVar.Size = new System.Drawing.Size(111, 17);
             this.lblTxtVar.TabIndex = 19;
-            this.lblTxtVar.Text = "数据地址（0起始）：";
+            this.lblTxtVar.Text = "数据地址（0起始）";
             // 
             // tabPageCtrl
             // 
@@ -209,7 +202,7 @@
             // lblPosY
             // 
             this.lblPosY.AutoSize = true;
-            this.lblPosY.Location = new System.Drawing.Point(12, 128);
+            this.lblPosY.Location = new System.Drawing.Point(12, 134);
             this.lblPosY.Name = "lblPosY";
             this.lblPosY.Size = new System.Drawing.Size(87, 17);
             this.lblPosY.TabIndex = 26;
@@ -217,7 +210,7 @@
             // 
             // txtPosY
             // 
-            this.txtPosY.Location = new System.Drawing.Point(129, 125);
+            this.txtPosY.Location = new System.Drawing.Point(129, 131);
             this.txtPosY.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosY.Name = "txtPosY";
             this.txtPosY.Size = new System.Drawing.Size(139, 23);
@@ -227,7 +220,7 @@
             // lblPosX
             // 
             this.lblPosX.AutoSize = true;
-            this.lblPosX.Location = new System.Drawing.Point(12, 94);
+            this.lblPosX.Location = new System.Drawing.Point(12, 97);
             this.lblPosX.Name = "lblPosX";
             this.lblPosX.Size = new System.Drawing.Size(88, 17);
             this.lblPosX.TabIndex = 24;
@@ -235,7 +228,7 @@
             // 
             // txtPosX
             // 
-            this.txtPosX.Location = new System.Drawing.Point(129, 91);
+            this.txtPosX.Location = new System.Drawing.Point(129, 94);
             this.txtPosX.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPosX.Name = "txtPosX";
             this.txtPosX.Size = new System.Drawing.Size(139, 23);
@@ -263,7 +256,7 @@
             // lblWidth
             // 
             this.lblWidth.AutoSize = true;
-            this.lblWidth.Location = new System.Drawing.Point(12, 23);
+            this.lblWidth.Location = new System.Drawing.Point(12, 20);
             this.lblWidth.Name = "lblWidth";
             this.lblWidth.Size = new System.Drawing.Size(80, 17);
             this.lblWidth.TabIndex = 20;
@@ -271,12 +264,29 @@
             // 
             // txtWidth
             // 
-            this.txtWidth.Location = new System.Drawing.Point(129, 22);
+            this.txtWidth.Location = new System.Drawing.Point(129, 19);
             this.txtWidth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWidth.Name = "txtWidth";
             this.txtWidth.Size = new System.Drawing.Size(139, 23);
             this.txtWidth.TabIndex = 19;
             this.txtWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 175);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(80, 17);
+            this.label4.TabIndex = 30;
+            this.label4.Text = "数据保存形式";
+            // 
+            // textBoxDataSave
+            // 
+            this.textBoxDataSave.Location = new System.Drawing.Point(129, 172);
+            this.textBoxDataSave.Name = "textBoxDataSave";
+            this.textBoxDataSave.ReadOnly = true;
+            this.textBoxDataSave.Size = new System.Drawing.Size(140, 23);
+            this.textBoxDataSave.TabIndex = 31;
             // 
             // TxtEditForm
             // 
@@ -324,11 +334,12 @@
         private System.Windows.Forms.Label lblWidth;
         internal System.Windows.Forms.TextBox textBoxVarName;
         internal System.Windows.Forms.TextBox textBoxRelateVar;
-        internal System.Windows.Forms.CheckBox checkBoxDB;
         internal System.Windows.Forms.TextBox txtPosY;
         internal System.Windows.Forms.TextBox txtPosX;
         internal System.Windows.Forms.TextBox txtHeight;
         internal System.Windows.Forms.TextBox txtWidth;
         internal System.Windows.Forms.ComboBox cbSlaveAddress;
+        internal System.Windows.Forms.TextBox textBoxDataSave;
+        private System.Windows.Forms.Label label4;
     }
 }

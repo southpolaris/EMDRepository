@@ -51,10 +51,10 @@
             this.deltextbox = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripLamp = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.dellamp = new System.Windows.Forms.ToolStripMenuItem();
-            this.varName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.varInterface = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.varAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.varInDataBase = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.varAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.varInterface = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.varName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl.SuspendLayout();
             this.pageVariable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
@@ -88,6 +88,7 @@
             this.pageVariable.Controls.Add(this.label2);
             this.pageVariable.Controls.Add(this.label1);
             this.pageVariable.Controls.Add(this.dataGridView);
+            this.pageVariable.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.pageVariable.Location = new System.Drawing.Point(4, 29);
             this.pageVariable.Margin = new System.Windows.Forms.Padding(0);
             this.pageVariable.Name = "pageVariable";
@@ -102,7 +103,7 @@
             this.cbProtocol.Location = new System.Drawing.Point(157, 60);
             this.cbProtocol.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.cbProtocol.Name = "cbProtocol";
-            this.cbProtocol.Size = new System.Drawing.Size(147, 28);
+            this.cbProtocol.Size = new System.Drawing.Size(147, 25);
             this.cbProtocol.TabIndex = 7;
             // 
             // textBoxModel
@@ -110,7 +111,7 @@
             this.textBoxModel.Location = new System.Drawing.Point(157, 22);
             this.textBoxModel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.textBoxModel.Name = "textBoxModel";
-            this.textBoxModel.Size = new System.Drawing.Size(147, 26);
+            this.textBoxModel.Size = new System.Drawing.Size(147, 23);
             this.textBoxModel.TabIndex = 6;
             // 
             // textBoxName
@@ -127,7 +128,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(15, 63);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(93, 20);
+            this.label3.Size = new System.Drawing.Size(80, 17);
             this.label3.TabIndex = 3;
             this.label3.Text = "数据通信协议";
             // 
@@ -136,7 +137,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(36, 21);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 20);
+            this.label2.Size = new System.Drawing.Size(56, 17);
             this.label2.TabIndex = 2;
             this.label2.Text = "设备型号";
             // 
@@ -145,13 +146,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(404, 21);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 20);
+            this.label1.Size = new System.Drawing.Size(56, 17);
             this.label1.TabIndex = 1;
             this.label1.Text = "设备名称";
             // 
             // dataGridView
             // 
             this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.AllowUserToResizeRows = false;
             this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -165,6 +167,7 @@
             this.varInDataBase});
             this.dataGridView.Location = new System.Drawing.Point(3, 100);
             this.dataGridView.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.dataGridView.MultiSelect = false;
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
             this.dataGridView.RowHeadersVisible = false;
@@ -291,17 +294,12 @@
             this.dellamp.Text = "删除指示灯";
             this.dellamp.Click += new System.EventHandler(this.delLamp_Click);
             // 
-            // varName
+            // varInDataBase
             // 
-            this.varName.HeaderText = "变量名";
-            this.varName.Name = "varName";
-            this.varName.ReadOnly = true;
-            // 
-            // varInterface
-            // 
-            this.varInterface.HeaderText = "数据通道";
-            this.varInterface.Name = "varInterface";
-            this.varInterface.ReadOnly = true;
+            this.varInDataBase.HeaderText = "数据保存方式";
+            this.varInDataBase.Name = "varInDataBase";
+            this.varInDataBase.ReadOnly = true;
+            this.varInDataBase.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // varAddress
             // 
@@ -309,11 +307,18 @@
             this.varAddress.Name = "varAddress";
             this.varAddress.ReadOnly = true;
             // 
-            // varInDataBase
+            // varInterface
             // 
-            this.varInDataBase.HeaderText = "是否存入数据库";
-            this.varInDataBase.Name = "varInDataBase";
-            this.varInDataBase.ReadOnly = true;
+            this.varInterface.HeaderText = "数据通道";
+            this.varInterface.Name = "varInterface";
+            this.varInterface.ReadOnly = true;
+            this.varInterface.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // varName
+            // 
+            this.varName.HeaderText = "变量名";
+            this.varName.Name = "varName";
+            this.varName.ReadOnly = true;
             // 
             // Generator
             // 

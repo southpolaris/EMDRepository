@@ -19,6 +19,7 @@ namespace XMLGenerator
 
         public DataInterface modbusInterface;
         public ModbusDataType modbusDataType;
+        public GetVarName getVarName;
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
@@ -26,7 +27,7 @@ namespace XMLGenerator
             {
                 this.modbusInterface = DataInterface.InputRegister;
                 cbbTxtVar.Items.Clear();
-                for (int address = 1; address <= GVL.dataLength.inputRegister; address++)
+                for (int address = 0; address <= GVL.dataLength.inputRegister; address++)
                 {
                     cbbTxtVar.Items.Add(address);
                 }
@@ -39,32 +40,22 @@ namespace XMLGenerator
             {
                 this.modbusInterface = DataInterface.HoldingRegister;
                 cbbTxtVar.Items.Clear();
-                for (int address = 1; address <= GVL.dataLength.holdingRegiter; address++)
+                for (int address = 0; address <= GVL.dataLength.holdingRegiter; address++)
                 {
                     cbbTxtVar.Items.Add(address);
                 }
             }
         }
 
-        public void Initial()
+        private void cbbTxtVar_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (radioButton3.Checked)
             {
-                this.modbusInterface = DataInterface.InputRegister;
-                cbbTxtVar.Items.Clear();
-                for (int address = 1; address <= GVL.dataLength.inputRegister; address++)
-                {
-                    cbbTxtVar.Items.Add(address);
-                }
+                txtVarName.Text = getVarName("3 数值量 只读", cbbTxtVar.SelectedIndex);
             }
             if (radioButton4.Checked)
             {
-                this.modbusInterface = DataInterface.HoldingRegister;
-                cbbTxtVar.Items.Clear();
-                for (int address = 1; address <= GVL.dataLength.holdingRegiter; address++)
-                {
-                    cbbTxtVar.Items.Add(address);
-                }
+                txtVarName.Text = getVarName("4 数值量 读写", cbbTxtVar.SelectedIndex);
             }
         }
     }

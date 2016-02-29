@@ -6,4 +6,8 @@ F:\Project\emd\WifiMonitor\ICommunicate\bin\Debug\ICommunicate.dll
 F:\Project\emd\WifiMonitor\ICommunicate\bin\Debug\ICommunicate.pdb
 F:\Project\emd\WifiMonitor\ICommunicate\obj\Debug\ICommunicate.dll
 F:\Project\emd\WifiMonitor\ICommunicate\obj\Debug\ICommunicate.pdb
-F:\Project\emd\WifiMonitor\ICommunicate\obj\Debug\ICommunicate.csprojResolveAssemblyReference.cache
+F:\RemoteMonitor\WifiMonitor\ICommunicate\bin\Debug\ICommunicate.dll
+F:\RemoteMonitor\WifiMonitor\ICommunicate\bin\Debug\ICommunicate.pdb
+F:\RemoteMonitor\WifiMonitor\ICommunicate\obj\Debug\ICommunicate.csprojResolveAssemblyReference.cache
+F:\RemoteMonitor\WifiMonitor\ICommunicate\obj\Debug\ICommunicate.dll
+F:\RemoteMonitor\WifiMonitor\ICommunicate\obj\Debug\ICommunicate.pdb

@@ -14,7 +14,7 @@ namespace WifiMonitor
             InitializeComponent();
             MbInterface = DataInterface.HoldingRegister;
             RelateVar = 0;
-            mInDataBase = false;
+            mInDataBase = DataSave.DoNotSave;
             VarName = "未关联变量";
         }
 
@@ -22,7 +22,7 @@ namespace WifiMonitor
         private IPAddress mSlave = IPAddress.None;
         private DataType mbDataType;
         private DataInterface mbInterface;
-        public bool mInDataBase;
+        public DataSave mInDataBase;
         private string mName;
 
 

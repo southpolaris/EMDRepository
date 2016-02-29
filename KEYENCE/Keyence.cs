@@ -7,8 +7,8 @@ namespace WifiMonitor
 {
     public class KEYENCE : ICommunicate
     {
-        private NetworkStream ns { get; set; }
-        private object lockthis { get; set; }
+        public NetworkStream ns { get; set; }
+        public object lockthis { get; set; }
         private static bool startFlag = false;
 
         public KEYENCE(NetworkStream networkStream, object lockObj)

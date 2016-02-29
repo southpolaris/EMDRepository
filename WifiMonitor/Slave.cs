@@ -15,7 +15,7 @@ namespace WifiMonitor
 
         public ushort slaveIndex;
         public IPAddress slaveIP;
-        public bool onlineFlag;
+        public bool fActive;   //false if remote node is inactive.
 
         private ICommunicate node;
         private Assembly assembly;

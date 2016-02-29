@@ -77,7 +77,7 @@ namespace WifiMonitor
                             dataGridView.Rows[index].Cells[0].Value = System.DateTime.Now;
                             dataGridView.Rows[index].Cells[1].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[0];
                             dataGridView.Rows[index].Cells[2].Value = slave.client.Client.RemoteEndPoint.ToString().Split(':')[1];
-                            if (slave.onlineFlag)
+                            if (slave.fActive)
                             {
                                 dataGridView.Rows[index].Cells[3].Value = "连接正常";
                             }

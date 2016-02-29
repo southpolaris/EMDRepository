@@ -11,8 +11,8 @@ namespace WifiMonitor
 {
     public class ModbusRTU : ICommunicate
     {
-        private NetworkStream ns { get; set; }
-        private object lockthis { get; set; }
+        public NetworkStream ns { get; set; }
+        public object lockthis { get; set; }
 
         private string modbusStatus;
 

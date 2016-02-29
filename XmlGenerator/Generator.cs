@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace XMLGenerator
 {
+    public delegate string GetVarName(string varInterface, int varAddress);
     public partial class Generator : Form
     {
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("user32", EntryPoint = "HideCaret")]
         static extern bool HideCaret(IntPtr hWnd);//用于隐藏TextBox的光标
 
@@ -48,9 +48,10 @@ namespace XMLGenerator
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             this.tabControl.SelectedTab = pageVariable;
-            EditVariable edivariable1;
-            edivariable1 = new EditVariable(this);
-            edivariable1.Show();
+            EditVariable edivariable;
+            edivariable = new EditVariable(this);
+            edivariable.cbDatabase.SelectedIndex = 0;
+            edivariable.Show();
             buttonAdd.Enabled = false;
             GVL.alterornot = 2;
         }
@@ -78,7 +79,7 @@ namespace XMLGenerator
                 edivariable.textboxAddress.Text = dataGridView.SelectedRows[0].Cells[2].Value.ToString();
                 edivariable.textboxName.Text = dataGridView.SelectedRows[0].Cells[0].Value.ToString();
                 edivariable.cbDataType.Text = dataGridView.SelectedRows[0].Cells[1].Value.ToString();
-                edivariable.checkBoxDataBase.Checked = Convert.ToBoolean(dataGridView.SelectedRows[0].Cells[3].Value);
+                edivariable.cbDatabase.Text = dataGridView.SelectedRows[0].Cells[3].Value.ToString();
                 GVL.alterornot = 1;
                 edivariable.ShowDialog();
             }      
@@ -116,7 +117,7 @@ namespace XMLGenerator
                 GVL.dataLength.inputRegister = 0;
                 GVL.dataLength.holdingRegiter = 0;
 
-                CsaveXML saveXml = new CsaveXML();
+                CSaveXML saveXml = new CSaveXML();
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "XML files (*.xml)|*.xml|All Files (*.*)|*.*";
                 openFileDialog.InitialDirectory = Environment.CurrentDirectory + "\\Config";
@@ -155,10 +156,10 @@ namespace XMLGenerator
             else if (cbProtocol.Text == "")
             {
                 MessageBox.Show("没有定义数据通道协议");
-                return; ;
+                return;
             }
-
-            CsaveXML save = new CsaveXML();
+           
+            CSaveXML save = new CSaveXML();
             if (filePath == "")
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -319,13 +320,15 @@ namespace XMLGenerator
                     currTxt = (TextboxEX)sender;
                     mCurrTxtEditForm = new TextEditForm();
 
+                    mCurrTxtEditForm.getVarName += new GetVarName(FindVarName);
+
                     mCurrTxtEditForm.txtWidth.Text = currTxt.Width.ToString();
                     mCurrTxtEditForm.txtHeight.Text = currTxt.Height.ToString();
                     mCurrTxtEditForm.txtPosX.Text = currTxt.Location.X.ToString();
                     mCurrTxtEditForm.txtPosY.Text = currTxt.Location.Y.ToString();
-                    mCurrTxtEditForm.Text = currTxt.VarName + " - 数值量选项";
+                    mCurrTxtEditForm.txtVarName.Text = currTxt.VarName;
 
-                    mCurrTxtEditForm.txtSlaveAddress.Text = currTxt.SlaveAddress.ToString();
+                    mCurrTxtEditForm.txtVarName.Text = currTxt.SlaveAddress.ToString();
                     switch (currTxt.MbInterface)
                     {
                         case DataInterface.InputRegister:
@@ -356,11 +359,12 @@ namespace XMLGenerator
             {
                 currTxt.RelateVar = mCurrTxtEditForm.cbbTxtVar.SelectedIndex;//将该文本框关联的变量标号赋给该文本框属性
                 currTxt.MbInterface = mCurrTxtEditForm.modbusInterface;  //变量通道
-                currTxt.SlaveAddress = int.Parse(mCurrTxtEditForm.txtSlaveAddress.Text); //modbus slave 对应 id
+                currTxt.SlaveAddress = 0; //modbus slave 对应 id
+                currTxt.VarName = mCurrTxtEditForm.txtVarName.Text;
             }
             catch (System.Exception)
             {
-                MessageBox.Show("请完整设置从站地址、变量位置、变量通道和变量类型。", "注意");
+                MessageBox.Show("请完整设置变量名称、变量位置、变量通道和变量类型。", "注意");
                 currTxt.Text = "";
                 currTxt.RelateVar = 0;//将该文本框关联的变量标号赋给该文本框属性
             }
@@ -370,14 +374,14 @@ namespace XMLGenerator
                 {
                     if (row.Cells[1].Value.ToString() == "3 数值量 只读" && row.Cells[2].Value.ToString() == (currTxt.RelateVar + 1).ToString())
                     {
-                        currTxt.VarName = row.Cells[0].Value.ToString();
+                        row.Cells[0].Value = currTxt.VarName;
                     }
                 }
                 else
                 {
                     if (row.Cells[1].Value.ToString() == "4 数值量 读写" && row.Cells[2].Value.ToString() == (currTxt.RelateVar + 1).ToString())
                     {
-                        currTxt.VarName = row.Cells[0].Value.ToString();
+                        row.Cells[0].Value = currTxt.VarName;
                     }
                 }                
             }
@@ -447,9 +451,10 @@ namespace XMLGenerator
                     currLamp = sender as Lamp;
                 }
                 mCurrLampEditForm = new LampEditForm();
+                mCurrLampEditForm.getVarName = new GetVarName(FindVarName);
                 mCurrLampEditForm.tbLampX.Text = currLamp.Location.X.ToString();
                 mCurrLampEditForm.tbLampY.Text = currLamp.Location.Y.ToString();
-                mCurrLampEditForm.textBoxSlaveAddress.Text = currLamp.SlaveAddress.ToString();
+                mCurrLampEditForm.textBoxVarName.Text = currLamp.SlaveAddress.ToString();
                 mCurrLampEditForm.ReadOnly = currLamp.ReadOnly;
                 mCurrLampEditForm.cbLampVar.SelectedIndex = currLamp.RelateVar;
                 mCurrLampEditForm.Text = currLamp.varName + " - 开关量选项";
@@ -465,7 +470,7 @@ namespace XMLGenerator
             int posX = int.Parse(mCurrLampEditForm.tbLampX.Text);
             int posY = int.Parse(mCurrLampEditForm.tbLampY.Text);
             currLamp.Location = new Point(posX, posY);
-            currLamp.SlaveAddress = int.Parse(mCurrLampEditForm.textBoxSlaveAddress.Text);
+            currLamp.SlaveAddress = int.Parse(mCurrLampEditForm.textBoxVarName.Text);
             currLamp.RelateVar = mCurrLampEditForm.cbLampVar.SelectedIndex;
             currLamp.ReadOnly = mCurrLampEditForm.ReadOnly;
             foreach (DataGridViewRow row in dataGridView.Rows)
@@ -494,6 +499,20 @@ namespace XMLGenerator
             tabControl.SelectedTab.Controls.Remove(currLamp);
         }
         #endregion
+
+
+        public string FindVarName(string varInterface, int varAddress)
+        {
+            string varName = "未设置变量";
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                if (row.Cells[1].Value.ToString() == varInterface && row.Cells[2].Value.ToString() == varAddress.ToString())
+                {
+                    varName = row.Cells[0].Value.ToString();
+                }
+            }
+            return varName;
+        }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {

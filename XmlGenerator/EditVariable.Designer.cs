@@ -36,8 +36,8 @@
             this.textboxAddress = new System.Windows.Forms.TextBox();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.checkBoxDataBase = new System.Windows.Forms.CheckBox();
             this.cbDataType = new System.Windows.Forms.ComboBox();
+            this.cbDatabase = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -56,9 +56,9 @@
             this.label2.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label2.Location = new System.Drawing.Point(14, 70);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 19);
+            this.label2.Size = new System.Drawing.Size(65, 19);
             this.label2.TabIndex = 1;
-            this.label2.Text = "数据通道类型";
+            this.label2.Text = "数据类型";
             // 
             // label3
             // 
@@ -78,7 +78,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(93, 19);
             this.label4.TabIndex = 3;
-            this.label4.Text = "是否需要存储";
+            this.label4.Text = "数据存储方式";
             // 
             // textboxName
             // 
@@ -119,17 +119,6 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // checkBoxDataBase
-            // 
-            this.checkBoxDataBase.AutoSize = true;
-            this.checkBoxDataBase.Location = new System.Drawing.Point(185, 175);
-            this.checkBoxDataBase.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.checkBoxDataBase.Name = "checkBoxDataBase";
-            this.checkBoxDataBase.Size = new System.Drawing.Size(87, 21);
-            this.checkBoxDataBase.TabIndex = 4;
-            this.checkBoxDataBase.Text = "存入数据库";
-            this.checkBoxDataBase.UseVisualStyleBackColor = true;
-            // 
             // cbDataType
             // 
             this.cbDataType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -144,6 +133,19 @@
             this.cbDataType.Size = new System.Drawing.Size(131, 25);
             this.cbDataType.TabIndex = 2;
             // 
+            // cbDatabase
+            // 
+            this.cbDatabase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbDatabase.FormattingEnabled = true;
+            this.cbDatabase.Items.AddRange(new object[] {
+            "不保存",
+            "保存实时数据",
+            "保留历史数据"});
+            this.cbDatabase.Location = new System.Drawing.Point(185, 176);
+            this.cbDatabase.Name = "cbDatabase";
+            this.cbDatabase.Size = new System.Drawing.Size(131, 25);
+            this.cbDatabase.TabIndex = 7;
+            // 
             // EditVariable
             // 
             this.AcceptButton = this.buttonOK;
@@ -151,8 +153,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(331, 288);
+            this.Controls.Add(this.cbDatabase);
             this.Controls.Add(this.cbDataType);
-            this.Controls.Add(this.checkBoxDataBase);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.textboxAddress);
@@ -186,7 +188,7 @@
         private System.Windows.Forms.Button buttonCancel;
         internal System.Windows.Forms.TextBox textboxName;
         internal System.Windows.Forms.TextBox textboxAddress;
-        internal System.Windows.Forms.CheckBox checkBoxDataBase;
         internal System.Windows.Forms.ComboBox cbDataType;
+        internal System.Windows.Forms.ComboBox cbDatabase;
     }
 }

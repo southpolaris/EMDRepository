@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
-
-using System.Collections;//ArrayList
 
 namespace WifiMonitor
 {
@@ -26,6 +22,13 @@ namespace WifiMonitor
         public static bool runningFlag = false;
         //编辑 标志位
         public static bool editFlag = false;
+        //数据库
+        public static string schemaName = "remotemonitor";
+        public static string dataSource = "localhost";
+        public static string userID = "root";
+        public static string password = "12345";
+
+        public static string[] strDataSave = { "不保存", "保存实时数据", "保留历史数据" };
     }
 
     public struct RemoteNode
@@ -66,7 +69,7 @@ namespace WifiMonitor
         public string varName;
         public int intValue;
         public bool boolValue;
-        public bool inDataBase;
+        public DataSave inDataBase;
     }
 
     //各个模块对应的参数的个数
@@ -91,5 +94,12 @@ namespace WifiMonitor
         UnsignedShort = 0,
         SignedInt = 1,
         Float = 2
+    }
+
+    public enum DataSave
+    {
+        DoNotSave = 0,
+        SaveCurrnetValue = 1,
+        SaveAsLog = 2
     }
 }

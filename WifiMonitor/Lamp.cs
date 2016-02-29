@@ -15,7 +15,7 @@ namespace WifiMonitor
             this.Image = Properties.Resources.lampoff;
             onFlag = false;
             ReadOnly = true;
-            mInDataBase = false;
+            mInDataBase = DataSave.DoNotSave;
             mName = "未关联变量";
         }
 
@@ -23,7 +23,7 @@ namespace WifiMonitor
         private bool mReadOnly;
         private int mRelateVar; //当前关联项
         private IPAddress mSlaveAddress = IPAddress.None;
-        public bool mInDataBase;
+        public DataSave mInDataBase;
         public string mName;
         
         /// <summary>

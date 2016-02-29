@@ -299,7 +299,7 @@ namespace WifiMonitor
                     }
                     
                     mCurrTxtEditForm.textBoxRelateVar.Text = currTxt.RelateVar.ToString();
-                    mCurrTxtEditForm.checkBoxDB.Checked = currTxt.mInDataBase;
+                    mCurrTxtEditForm.textBoxDataSave.Text = GlobalVar.strDataSave[(int)currTxt.mInDataBase];
                     mCurrTxtEditForm.btnTxtSav.Click += new EventHandler(mCurrTxtEditForm_btnTxtSav_Click);
                     mCurrTxtEditForm.ShowDialog();
                 }
@@ -318,7 +318,6 @@ namespace WifiMonitor
                 currTxt.RelateVar = int.Parse(mCurrTxtEditForm.textBoxRelateVar.Text);//将该文本框关联的变量标号赋给该文本框属性
                 currTxt.MbInterface = mCurrTxtEditForm.modbusInterface;  //变量通道
                 currTxt.SlaveAddress = IPAddress.Parse(mCurrTxtEditForm.cbSlaveAddress.Text); //modbus slave 对应 id
-                currTxt.mInDataBase = mCurrTxtEditForm.checkBoxDB.Checked;
             }
             catch (System.Exception)
             {
@@ -423,7 +422,7 @@ namespace WifiMonitor
                 mCurrLampEditForm.cbSlaveAddress.Text = currLamp.SlaveAddress.ToString();
                 mCurrLampEditForm.textBoxLampVar.Text = currLamp.RelateVar.ToString();
                 mCurrLampEditForm.ReadOnly = currLamp.ReadOnly;
-                mCurrLampEditForm.checkBoxDB.Checked = currLamp.mInDataBase;
+                mCurrLampEditForm.textBoxDataSave.Text = GlobalVar.strDataSave[(int)currLamp.mInDataBase];
                 mCurrLampEditForm.buttonOk.Click += new EventHandler(LampEditbuttonOk_Click);
                 mCurrLampEditForm.ShowDialog();
             }
@@ -440,7 +439,6 @@ namespace WifiMonitor
                 currLamp.SlaveAddress = IPAddress.Parse(mCurrLampEditForm.cbSlaveAddress.Text);
                 currLamp.RelateVar = int.Parse(mCurrLampEditForm.textBoxLampVar.Text);
                 currLamp.ReadOnly = mCurrLampEditForm.ReadOnly;
-                currLamp.mInDataBase = mCurrLampEditForm.checkBoxDB.Checked;
                 currLamp.mName = mCurrLampEditForm.textBoxVarName.Text;
                 mCurrLampEditForm.Close();
             }
@@ -637,7 +635,7 @@ namespace WifiMonitor
                             new XElement("RelateVar", (ctrl as TextBoxEx).RelateVar.ToString()),
                             new XElement("SlaveAddress", (ctrl as TextBoxEx).SlaveAddress.ToString()),
                             new XElement("Interface", ((int)((ctrl as TextBoxEx).MbInterface)).ToString()),
-                            new XElement("IsInDataBase", (ctrl as TextBoxEx).mInDataBase.ToString()),
+                            new XElement("IsInDataBase", (ctrl as TextBoxEx).mInDataBase),
                             new XElement("VarName", (ctrl as TextBoxEx).VarName),
                             new XAttribute("PosX", ctrl.Location.X.ToString()),
                             new XAttribute("PosY", ctrl.Location.Y.ToString()),
@@ -660,7 +658,7 @@ namespace WifiMonitor
                             new XElement("RelateVar", (ctrl as Lamp).RelateVar.ToString()),
                             new XElement("SlaveAddress", (ctrl as Lamp).SlaveAddress.ToString()),
                             new XElement("Interface", ((Lamp)ctrl).ReadOnly == true ? "1" : "0"),
-                            new XElement("IsInDataBase", (ctrl as Lamp).mInDataBase.ToString()),
+                            new XElement("IsInDataBase", (ctrl as Lamp).mInDataBase),
                             new XElement("VarName", (ctrl as Lamp).mName),
                             new XAttribute("PosX", ctrl.Location.X.ToString()),
                             new XAttribute("PosY", ctrl.Location.Y.ToString())
@@ -696,6 +694,8 @@ namespace WifiMonitor
             }
 
             xDoc.Root.Save(GlobalVar.xmlPath);
+            
+
         }
 
         //Monitor connection
@@ -717,6 +717,7 @@ namespace WifiMonitor
 
             LoadControls(GlobalVar.xmlPath);
             LoadVariables(GlobalVar.xmlPath);
+            DataBaseInitial();
 
             //显示配置文件中设定的主窗体大小、标题
             this.Width = GlobalVar.nMainFormWidth;
@@ -724,7 +725,7 @@ namespace WifiMonitor
             this.Text = GlobalVar.sMainFormTitle;
         }
 
-
+        //加载界面控件信息
         private void LoadControls(string xmlPath)
         {
             FileInfo fileInfo = new FileInfo(xmlPath);
@@ -794,10 +795,15 @@ namespace WifiMonitor
                             IPAddress tempTextBoxSlaveAddress = IPAddress.Parse(textBoxElement.Element("SlaveAddress").Value);  //从站地址
                             int TempTextBoxRelateVar = int.Parse(textBoxElement.Element("RelateVar").Value);        //变量地址
                             int TempTextBoxMBInterface = int.Parse(textBoxElement.Element("Interface").Value);      //变量通道
-                            bool tempTextBoxInDataBase = bool.Parse(textBoxElement.Element("IsInDataBase").Value);  //是否在数据库保存
-                            string tempVarName = textBoxElement.Element("VarName").Value;                           //变量名称
+                            string tempVarName = textBoxElement.Element("VarName").Value;                           //变量名称                            
 
                             TextBoxEx txt = new TextBoxEx();
+                            if (Enum.IsDefined(typeof(DataSave), textBoxElement.Element("IsInDataBase").Value))
+                            {
+                                txt.mInDataBase = (DataSave)Enum.Parse(typeof(DataSave), textBoxElement.Element("IsInDataBase").Value);//数据保存形式
+                            }
+                            else
+                                throw new Exception("Data base not defined!");
                             txt.Location = new Point(TempPosX, TempPosY);
                             txt.Name = TempTextBoxID;
                             txt.Width = TempWidth;
@@ -807,7 +813,6 @@ namespace WifiMonitor
                             txt.BackColor = Color.White;
                             txt.SlaveAddress = tempTextBoxSlaveAddress;
                             txt.RelateVar = TempTextBoxRelateVar;
-                            txt.mInDataBase = tempTextBoxInDataBase;
                             txt.VarName = tempVarName;
                             switch (TempTextBoxMBInterface)
                             {
@@ -846,15 +851,19 @@ namespace WifiMonitor
                             int tempLampVar = int.Parse(lampElement.Element("RelateVar").Value);
                             IPAddress tempSlaveAddress = IPAddress.Parse(lampElement.Element("SlaveAddress").Value);
                             int tempInterface = int.Parse(lampElement.Element("Interface").Value);
-                            bool tempInDataBase = bool.Parse(lampElement.Element("IsInDataBase").Value);
                             string tempVarName = lampElement.Element("VarName").Value;
 
                             Lamp lamp = new Lamp();
+                            if (Enum.IsDefined(typeof(DataSave), lampElement.Element("IsInDataBase").Value))
+                            {
+                                lamp.mInDataBase = (DataSave)Enum.Parse(typeof(DataSave), lampElement.Element("IsInDataBase").Value);//数据保存形式
+                            }
+                            else
+                                throw new Exception("Data base not defined!");
                             lamp.Location = new Point(tempPosX, tempPosY);
                             lamp.Name = tempLampID;
                             lamp.RelateVar = tempLampVar;
                             lamp.SlaveAddress = tempSlaveAddress;
-                            lamp.mInDataBase = tempInDataBase;
                             lamp.mName = tempVarName;
                             if (tempInterface == 1)
                             {
@@ -890,6 +899,7 @@ namespace WifiMonitor
             }
         }
 
+        //加载变量信息
         private void LoadVariables(string xmlPath)
         {
             //遍历所有节名  用于加载控件
@@ -905,10 +915,10 @@ namespace WifiMonitor
                     DataCount dataCount = new DataCount();
                     string protocolType = childNode.Element("Protocol").Value;
                     string nodeName = childNode.Element("Name").Value;
-                    dataCount.discreteInput = UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteInput").Value);
-                    dataCount.coil = UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteOutput").Value);
-                    dataCount.inputRegister = UInt16.Parse(childNode.Element("DataLength").Attribute("InputRegister").Value);
-                    dataCount.holdingRegiter = UInt16.Parse(childNode.Element("DataLength").Attribute("HoldingRegister").Value);
+                    dataCount.discreteInput = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteInput").Value) + 1);
+                    dataCount.coil = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteOutput").Value) + 1);
+                    dataCount.inputRegister = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("InputRegister").Value) + 1);
+                    dataCount.holdingRegiter = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("HoldingRegister").Value) + 1);
                     RemoteNode tempNode = new RemoteNode(protocolType, dataCount, nodeName);
                     GlobalVar.ipNodeMapping.Add(IPAddress.Parse(childNode.Attribute("IP").Value), tempNode);
                 }
@@ -931,8 +941,14 @@ namespace WifiMonitor
                         IPAddress tempVarSlaveAddress = IPAddress.Parse(textBoxElement.Element("SlaveAddress").Value);  //从站地址
                         int tempVarRelateVar = int.Parse(textBoxElement.Element("RelateVar").Value);        //变量地址
                         int tempVarMBInterface = int.Parse(textBoxElement.Element("Interface").Value);      //变量通道
-                        bool tempVarInDataBase = bool.Parse(textBoxElement.Element("IsInDataBase").Value);  //是否在数据库保存
-                        string tempVarName = textBoxElement.Element("VarName").Value;                           //变量名称
+                        string tempVarName = textBoxElement.Element("VarName").Value;                       //变量名称
+                        DataSave tempVarInDataBase = DataSave.DoNotSave;
+                        if (Enum.IsDefined(typeof(DataSave), textBoxElement.Element("IsInDataBase").Value))
+                        {
+                            tempVarInDataBase = (DataSave)Enum.Parse(typeof(DataSave), textBoxElement.Element("IsInDataBase").Value);//数据保存形式
+                        }
+                        else
+                            throw new Exception("Data base not defined!");
 
                         switch (tempVarMBInterface)
                         {
@@ -946,7 +962,7 @@ namespace WifiMonitor
                                 break;
                             default:
                                 break;
-                        }
+                        }   
                     }
                 }
                 catch (Exception ex)
@@ -963,27 +979,48 @@ namespace WifiMonitor
                         int tempLampVar = int.Parse(lampElement.Element("RelateVar").Value);
                         IPAddress tempSlaveAddress = IPAddress.Parse(lampElement.Element("SlaveAddress").Value);
                         int tempInterface = int.Parse(lampElement.Element("Interface").Value);
-                        bool tempInDataBase = bool.Parse(lampElement.Element("IsInDataBase").Value);
                         string tempVarName = lampElement.Element("VarName").Value;
+                        DataSave tempVarInDataBase = DataSave.DoNotSave;
+                        if (Enum.IsDefined(typeof(DataSave), lampElement.Element("IsInDataBase").Value))
+                        {
+                            tempVarInDataBase = (DataSave)Enum.Parse(typeof(DataSave), lampElement.Element("IsInDataBase").Value);//数据保存形式
+                        }
+                        else
+                            throw new Exception("Data base not defined!");
 
                         if (tempInterface == 1)
                         {
                             GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteInput[tempLampVar].varName = tempVarName;
-                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteInput[tempLampVar].inDataBase = tempInDataBase;
+                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteInput[tempLampVar].inDataBase = tempVarInDataBase;
                         }
                         else
                         {
                             GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteOutput[tempLampVar].varName = tempVarName;
-                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteOutput[tempLampVar].inDataBase = tempInDataBase;
+                            GlobalVar.ipNodeMapping[tempSlaveAddress].varDiscreteOutput[tempLampVar].inDataBase = tempVarInDataBase;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "加载开关变量信息错误");
+                    MessageBox.Show(ex.Message, "加载开关变量信息错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }   
         }
+
+        /// <summary>
+        /// Create table and triggers in database
+        /// </summary>
+        private void DataBaseInitial()
+        {
+            foreach (var node in GlobalVar.ipNodeMapping)
+            {
+                dataBase.CreateMappingTable();
+                dataBase.CreateDataTable(node.Key, node.Value);
+                dataBase.CreateDataLogTable(node.Key, node.Value);
+                dataBase.CreateTrigger(node.Key, node.Value);
+            }
+        }
+
 
         /// <summary>
         /// Load tab page control from template config file
@@ -998,7 +1035,7 @@ namespace WifiMonitor
             XElement variableElement = xDoc.Root.Element("Parameter");
 
             #region load controls
-            try
+            try //labels
             {
                 for (int labelIndex = 1; labelIndex <= int.Parse(UIElement.Element("Labels").Attribute("Count").Value); labelIndex++)
                 {
@@ -1028,7 +1065,8 @@ namespace WifiMonitor
             {
                 return;
             }
-            try
+
+            try //TextBoxes
             {
                 for (int textIndex = 1; textIndex <= int.Parse(UIElement.Element("TextBoxes").Attribute("Count").Value); textIndex++)
                 {
@@ -1040,23 +1078,29 @@ namespace WifiMonitor
                     int tempHeight = int.Parse(tempTextElement.Attribute("Height").Value);
                     int tempTextBoxRelateVar = int.Parse(tempTextElement.Attribute("RelateVar").Value);        //变量地址
                     int tempTextBoxMBInterface = int.Parse(tempTextElement.Attribute("Interface").Value);      //变量通道
-                    bool tempVarInDataBase = false;
-                    string tempVarName = "";
+                    DataSave tempVarInDataBase = DataSave.DoNotSave;
+                    string tempVarName = "未关联变量";
                     if (tempTextBoxMBInterface == 4) //Interface 4
                     {
                         foreach(XElement element in variableElement.Element("IntReadWrite").Elements())
                         {
                             if ((string)element.Attribute("varAddress") == tempTextBoxRelateVar.ToString())
                             {
-                                bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
+                                for (int i = 0; i < GlobalVar.strDataSave.Length; i++)
+                                {
+                                    if (GlobalVar.strDataSave[i] == element.Attribute("varInDataBase").Value)
+                                    {
+                                        if (Enum.IsDefined(typeof(DataSave), i))
+                                        {
+                                            tempVarInDataBase = (DataSave)i;//数据保存形式
+                                        }
+                                        else
+                                            throw new Exception(i + "is not defined.");
+                                    }
+                                }
                             }
-                            else
-                            {
-                                tempVarInDataBase = false;
-                                tempVarName = "未关联变量";
-                            }
-                        }
+                        }                        
                     }
                     else //Interface 3
                     {
@@ -1064,13 +1108,19 @@ namespace WifiMonitor
                         {
                             if ((string)element.Attribute("varAddress") == tempTextBoxRelateVar.ToString())
                             {
-                                bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
-                            }
-                            else
-                            {
-                                tempVarInDataBase = false;
-                                tempVarName = "未关联变量";
+                                for (int i = 0; i < GlobalVar.strDataSave.Length; i++)
+                                {
+                                    if (GlobalVar.strDataSave[i] == element.Attribute("varInDataBase").Value)
+                                    {
+                                        if (Enum.IsDefined(typeof(DataSave), i))
+                                        {
+                                            tempVarInDataBase = (DataSave)i;//数据保存形式
+                                        }
+                                        else
+                                            throw new Exception(i + "is not defined.");
+                                    }
+                                }                                
                             }
                         }
                     }
@@ -1087,6 +1137,7 @@ namespace WifiMonitor
                     txt.RelateVar = tempTextBoxRelateVar;
                     txt.mInDataBase = tempVarInDataBase;
                     txt.VarName = tempVarName;
+                    txt.Text = tempVarName;
                     switch (tempTextBoxMBInterface)
                     {
                         case 3:
@@ -1121,21 +1172,27 @@ namespace WifiMonitor
                     int tempPosY = int.Parse(tempLampElement.Attribute("PosY").Value);
                     int tempLampRelateVar = int.Parse(tempLampElement.Attribute("RelateVar").Value);
                     int tempInterface = int.Parse(tempLampElement.Attribute("Interface").Value);
-                    bool tempVarInDataBase = false;
-                    string tempVarName = "";
+                    DataSave tempVarInDataBase = DataSave.DoNotSave;
+                    string tempVarName = "未关联变量";
                     if (tempInterface == 2) //Interface 2
                     {
                         foreach (XElement element in variableElement.Element("BoolReadWrite").Elements())
                         {
                             if ((string)element.Attribute("varAddress") == tempLampRelateVar.ToString())
                             {
-                                bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
-                            }
-                            else
-                            {
-                                tempVarInDataBase = false;
-                                tempVarName = "未关联变量";
+                                for (int i = 0; i < GlobalVar.strDataSave.Length; i++)
+                                {
+                                    if (GlobalVar.strDataSave[i] == element.Attribute("varInDataBase").Value)
+                                    {
+                                        if (Enum.IsDefined(typeof(DataSave), i))
+                                        {
+                                            tempVarInDataBase = (DataSave)i;//数据保存形式
+                                        }
+                                        else
+                                            throw new Exception(i + "is not defined.");
+                                    }
+                                }                                
                             }
                         }
                     }
@@ -1145,13 +1202,19 @@ namespace WifiMonitor
                         {
                             if ((string)element.Attribute("varAddress") == tempLampRelateVar.ToString())
                             {
-                                bool.TryParse(element.Attribute("varInDataBase").Value, out tempVarInDataBase);
                                 tempVarName = element.Attribute("varName").Value;
-                            }
-                            else
-                            {
-                                tempVarInDataBase = false;
-                                tempVarName = "未关联变量";
+                                for (int i = 0; i < GlobalVar.strDataSave.Length; i++)
+                                {
+                                    if (GlobalVar.strDataSave[i] == element.Attribute("varInDataBase").Value)
+                                    {
+                                        if (Enum.IsDefined(typeof(DataSave), i))
+                                        {
+                                            tempVarInDataBase = (DataSave)i;//数据保存形式
+                                        }
+                                        else
+                                            throw new Exception(i + "is not defined.");
+                                    }
+                                }  
                             }
                         }
                     }
@@ -1187,13 +1250,15 @@ namespace WifiMonitor
             #endregion
 
             #region Load variables
-            RemoteNode tempNode = new RemoteNode();
-            tempNode.protocolType = variableElement.Attribute("Protocol").Value;
-            tempNode.name = tabControl.SelectedTab.Text;
-            tempNode.dataCount.discreteInput = Convert.ToUInt16(variableElement.Element("BoolReadOnly").Attribute("Length").Value);
-            tempNode.dataCount.coil = Convert.ToUInt16(variableElement.Element("BoolReadWrite").Attribute("Length").Value);
-            tempNode.dataCount.inputRegister = Convert.ToUInt16(variableElement.Element("IntReadOnly").Attribute("Length").Value);
-            tempNode.dataCount.holdingRegiter = Convert.ToUInt16(variableElement.Element("IntReadWrite").Attribute("Length").Value);
+            string nodeProtocolType = variableElement.Attribute("Protocol").Value;
+            string nodeName = tabControl.SelectedTab.Text;
+            DataCount dataCount = new DataCount();
+            dataCount.discreteInput = Convert.ToUInt16(variableElement.Element("BoolReadOnly").Attribute("Length").Value);
+            dataCount.coil = Convert.ToUInt16(variableElement.Element("BoolReadWrite").Attribute("Length").Value);
+            dataCount.inputRegister = Convert.ToUInt16(variableElement.Element("IntReadOnly").Attribute("Length").Value);
+            dataCount.holdingRegiter = Convert.ToUInt16(variableElement.Element("IntReadWrite").Attribute("Length").Value);
+            RemoteNode tempNode = new RemoteNode(nodeProtocolType, dataCount, nodeName);
+
             if (GlobalVar.ipNodeMapping.ContainsKey(slaveIP))
             {                
                 GlobalVar.ipNodeMapping[slaveIP] = tempNode;
@@ -1214,6 +1279,7 @@ namespace WifiMonitor
             btnEditStop.Visible = false;
             mToolForm.Close();
             tabControl.TabPages.Clear();
+            GlobalVar.ipNodeMapping.Clear();
             LoadControls(GlobalVar.xmlPath);
             LoadVariables(GlobalVar.xmlPath);
         }
@@ -1312,5 +1378,6 @@ namespace WifiMonitor
                 }
             }
         }
+
     }
 }

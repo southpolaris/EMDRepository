@@ -31,11 +31,12 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageVar = new System.Windows.Forms.TabPage();
+            this.textBoxDataSave = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.cbSlaveAddress = new System.Windows.Forms.ComboBox();
             this.textBoxVarName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxLampVar = new System.Windows.Forms.TextBox();
-            this.checkBoxDB = new System.Windows.Forms.CheckBox();
             this.radioButton0 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
@@ -73,11 +74,12 @@
             // 
             // tabPageVar
             // 
+            this.tabPageVar.Controls.Add(this.textBoxDataSave);
+            this.tabPageVar.Controls.Add(this.label7);
             this.tabPageVar.Controls.Add(this.cbSlaveAddress);
             this.tabPageVar.Controls.Add(this.textBoxVarName);
             this.tabPageVar.Controls.Add(this.label6);
             this.tabPageVar.Controls.Add(this.textBoxLampVar);
-            this.tabPageVar.Controls.Add(this.checkBoxDB);
             this.tabPageVar.Controls.Add(this.radioButton0);
             this.tabPageVar.Controls.Add(this.radioButton1);
             this.tabPageVar.Controls.Add(this.label5);
@@ -91,6 +93,23 @@
             this.tabPageVar.Text = "变量属性";
             this.tabPageVar.UseVisualStyleBackColor = true;
             // 
+            // textBoxDataSave
+            // 
+            this.textBoxDataSave.Location = new System.Drawing.Point(130, 163);
+            this.textBoxDataSave.Name = "textBoxDataSave";
+            this.textBoxDataSave.ReadOnly = true;
+            this.textBoxDataSave.Size = new System.Drawing.Size(138, 23);
+            this.textBoxDataSave.TabIndex = 32;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(16, 166);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(80, 17);
+            this.label7.TabIndex = 31;
+            this.label7.Text = "数据保存形式";
+            // 
             // cbSlaveAddress
             // 
             this.cbSlaveAddress.FormattingEnabled = true;
@@ -103,6 +122,7 @@
             // 
             this.textBoxVarName.Location = new System.Drawing.Point(130, 13);
             this.textBoxVarName.Name = "textBoxVarName";
+            this.textBoxVarName.ReadOnly = true;
             this.textBoxVarName.Size = new System.Drawing.Size(138, 23);
             this.textBoxVarName.TabIndex = 29;
             // 
@@ -121,16 +141,6 @@
             this.textBoxLampVar.Name = "textBoxLampVar";
             this.textBoxLampVar.Size = new System.Drawing.Size(138, 23);
             this.textBoxLampVar.TabIndex = 27;
-            // 
-            // checkBoxDB
-            // 
-            this.checkBoxDB.AutoSize = true;
-            this.checkBoxDB.Location = new System.Drawing.Point(130, 166);
-            this.checkBoxDB.Name = "checkBoxDB";
-            this.checkBoxDB.Size = new System.Drawing.Size(111, 21);
-            this.checkBoxDB.TabIndex = 26;
-            this.checkBoxDB.Text = "信息存入数据库";
-            this.checkBoxDB.UseVisualStyleBackColor = true;
             // 
             // radioButton0
             // 
@@ -260,7 +270,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageVar;
         private System.Windows.Forms.Label label6;
-        public System.Windows.Forms.CheckBox checkBoxDB;
         public System.Windows.Forms.RadioButton radioButton0;
         public System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.Label label5;
@@ -274,5 +283,7 @@
         internal System.Windows.Forms.TextBox tbLampY;
         internal System.Windows.Forms.TextBox tbLampX;
         internal System.Windows.Forms.ComboBox cbSlaveAddress;
+        private System.Windows.Forms.Label label7;
+        internal System.Windows.Forms.TextBox textBoxDataSave;
     }
 }

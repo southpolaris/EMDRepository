@@ -13,12 +13,13 @@ namespace WifiMonitor
     //MySQL连接类
     static class MySQLHelper
     {
-        private static string connectionString = "Database='remotemonitor';Data Source='localhost';User Id='root';Password='12345';charset='utf8';pooling=true";
+        private static string connectionString = string.Format("Database='{0}';Data Source='{1}';User Id='{2}';Password='{3}';charset='utf8';pooling=true",
+            GlobalVar.schemaName, GlobalVar.dataSource, GlobalVar.userID, GlobalVar.password);
 
         private static Hashtable paraCache = Hashtable.Synchronized(new Hashtable());//用于缓存参数
 
         /// <summary>
-        /// 给定连接参数用假设参数执行一条SQL指令
+        /// 给定连接参数执行一条SQL指令
         /// </summary>
         /// <param name="cmdType">命令类型（存储过程、文本等）</param>
         /// <param name="cmdText">存储过程名称或SQL语句</param> 
@@ -133,7 +134,7 @@ namespace WifiMonitor
         /// <param name="cmdType"></param>
         /// <param name="cmdText"></param>
         /// <param name="cmdParameter"></param>
-        /// <returns>第一列数据，使用Convert转化</returns>
+        /// <returns>返回首行查询数据，使用Convert转化</returns>
         public static object ExecuteScalar(CommandType cmdType, string cmdText, params MySqlParameter[] cmdParameter)
         {
             MySqlCommand cmd = new MySqlCommand();

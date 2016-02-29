@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace WifiMonitor
 {
     public interface ICommunicate
     {
+        NetworkStream ns { get; set; }
+        object lockthis { get; set; }
         /// <summary>
         /// Read 32 bits data from PLC memory
         /// </summary>

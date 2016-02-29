@@ -143,7 +143,7 @@
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl.Location = new System.Drawing.Point(3, 2);
+            this.tabControl.Location = new System.Drawing.Point(4, 2);
             this.tabControl.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.tabControl.Multiline = true;
             this.tabControl.Name = "tabControl";
