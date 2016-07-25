@@ -16,6 +16,7 @@ namespace WifiMonitor
         List<string> varName;
         List<int> varValue;
         string nodeName;
+        private object datalock = new object();
 
         public DataBase() { }
 
@@ -162,7 +163,7 @@ namespace WifiMonitor
         /// Create new data table for every node connect to the mechine
         /// </summary>
         /// <param name="remoteNode">Struct of remote node</param>
-        /// <returns>SQL语句影响的行数</returns>
+        /// <returns>SQL语句影响的行数,-1代表函数执行错误</returns>
         public int CreateDataTable(IPAddress nodeIP, RemoteNode remoteNode)
         {
             /*CREATE TABLE `remotemonitor`.`new_table` (
@@ -178,6 +179,8 @@ namespace WifiMonitor
                 string tempStr = Convert.ToString(MySQLHelper.ExecuteScalar(CommandType.Text, findDataTableSql, null));
                 if (string.Compare(tempStr,  nodeIP.ToString()) == 0)
                 {
+                    //Insert a blank log record to update
+                    InsertBlankRecord(nodeIP, remoteNode);
                     return 0;
                 }
             }
@@ -219,7 +222,7 @@ namespace WifiMonitor
                 }
             }
 
-            string createSql = string.Format("CREATE TABLE `{0}`.`{1}` (`IP` VARCHAR(20) NOT NULL, `datetime` DATETIME NOT NULL, ", GlobalVar.schemaName, nodeIP);
+            string createSql = string.Format("CREATE TABLE `{0}`.`{1}` (`IP` VARCHAR(20) NOT NULL, `datetime` DATETIME NOT NULL, ", GlobalVar.schemaName, remoteNode.name);
             foreach (string varname in varNameBool)
             {
                 createSql += string.Format("`{0}` TINYINT(1) NULL DEFAULT NULL, ", varname);
@@ -240,7 +243,14 @@ namespace WifiMonitor
             }
 
             //Insert a blank log record to update
+            InsertBlankRecord(nodeIP, remoteNode);
+            return 0;
+        }
+
+        private int InsertBlankRecord(IPAddress nodeIP, RemoteNode remoteNode)
+        {
             InitalParameter(remoteNode);
+            int lineNumber = -1;
             string coloumnName = "(`IP`, `datetime`, ";
             for (int index = 0; index < varName.Count; index++)
             {
@@ -265,7 +275,7 @@ namespace WifiMonitor
                     values += string.Format("'{0}', ", varValue[index]);
                 }
             }
-            string insertCmd = string.Format("INSERT INTO `{0}`.`{1}` ", GlobalVar.schemaName, nodeIP) + coloumnName + values;
+            string insertCmd = string.Format("INSERT INTO `{0}`.`{1}` ", GlobalVar.schemaName, remoteNode.name) + coloumnName + values;
             try
             {
                 lineNumber = MySQLHelper.ExecuteNonQuerty(CommandType.Text, insertCmd, null);
@@ -273,7 +283,7 @@ namespace WifiMonitor
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, remoteNode.name + "插入出错");
+                MessageBox.Show(ex.Message, remoteNode.name + "初始化出错");
                 return -1;
             }      
         }
@@ -357,7 +367,7 @@ namespace WifiMonitor
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "数据库建立出错");
+                MessageBox.Show(ex.Message, "数据表建立出错");
                 return -1;
             }
         }
@@ -405,7 +415,7 @@ namespace WifiMonitor
                 }
             }
             string insertCmd = string.Format("INSERT INTO `{0}`.`{1}` ", GlobalVar.schemaName, nodeIP + "log") + coloumnName + values;
-            string triggerCmd = string.Format("CREATE TRIGGER updatedata{0} AFTER UPDATE ON `{1}`.`{2}`\n", nodeIP.ToString().Split('.')[3], GlobalVar.schemaName, nodeIP.ToString()) +
+            string triggerCmd = string.Format("CREATE TRIGGER updatedata{0} AFTER UPDATE ON `{1}`.`{2}`\n", nodeIP.ToString().Split('.')[3], GlobalVar.schemaName, remoteNode.name.ToLower()) +
                 "FOR EACH ROW\nBEGIN\n" +
                 conditionStr +
                 insertCmd +
@@ -419,6 +429,29 @@ namespace WifiMonitor
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "触发器建立出错");
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// 建立节点当前状态视图，暂时感觉没卵用
+        /// </summary>
+        /// <param name="nodeIP"></param>
+        /// <param name="remoteNode"></param>
+        /// <returns></returns>
+        public int CreateView(IPAddress nodeIP, RemoteNode remoteNode)
+        {
+            int lineNumber = -1;
+            string createViewSql = string.Format("CREATE VIEW `{0}view` AS\n SELECT `ipmap`.`name` AS `节点名称`,\n `{0}`.*\nFROM (`ipmap` JOIN `{0}`)",
+                remoteNode.name.ToLower());
+            try
+            {
+                lineNumber = MySQLHelper.ExecuteNonQuerty(CommandType.Text, createViewSql, null);
+                return lineNumber;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "视图建立出错");
                 return -1;
             }
         }
@@ -465,7 +498,7 @@ namespace WifiMonitor
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "数据库插入出错");
-                throw ex;
+                return -1;
             }              
         }
 
@@ -477,39 +510,45 @@ namespace WifiMonitor
         public int UpdateRecord(IPAddress nodeIP, RemoteNode remotenode)
         {
             //UPDATE `remotemonitor`.`modbusnode` SET `开关量`='1', `只读数值1`='234', `读写数值1`='-567' WHERE `datetime`='2015-12-25';
-            InitalParameter(remotenode);
-            string updateString = "";
-            for (int index = 0; index < varName.Count; index++)
+            lock (datalock) 
             {
+                InitalParameter(remotenode);
+                string updateString = "";
+                for (int index = 0; index < varName.Count; index++)
+                {
+                    try
+                    {
+                        if (index == varName.Count - 1)
+                        {
+                            updateString += "`" + varName[index] + "`=";
+                            updateString += "'" + varValue[index] + "', ";
+                        }
+                        else
+                        {
+                            updateString += "`" + varName[index] + "`=";
+                            updateString += "'" + varValue[index] + "', ";
+                        }
+                      
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "插入数据库");
+                        return -1;
+                    }
+                }
+                updateString += string.Format("`datetime`='{0}' ", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                string updateCmd = string.Format("UPDATE `{0}`.`{1}` SET ", GlobalVar.schemaName, nodeIP.ToString()) + updateString + "WHERE `IP` = '" + nodeIP.ToString() + "';";
                 try
                 {
-                    if (index == varName.Count - 1)
-                    {
-                        updateString += "`" + varName[index] + "`=";
-                        updateString += "'" + varValue[index] + "' ";
-                    }
-                    else
-                    {
-                        updateString += "`" + varName[index] + "`=";
-                        updateString += "'" + varValue[index] + "', ";
-                    }
+                    int lineNumber = MySQLHelper.ExecuteNonQuerty(CommandType.Text, updateCmd, null);
+                    return lineNumber;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "插入数据库");
-                }                
-            }
-            string updateCmd = string.Format("UPDATE `{0}`.`{1}` SET ", GlobalVar.schemaName, nodeName) + updateString + "WHERE `IP` = '" + nodeIP.ToString() + "';";
-            try
-            {
-                int lineNumber = MySQLHelper.ExecuteNonQuerty(CommandType.Text, updateCmd, null);
-                return lineNumber;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, nodeIP + "数据库更新出错");
-                return -1;
-            }  
+                    MessageBox.Show(ex.Message, nodeIP + "数据库更新出错");
+                    return -1;
+                }
+            }              
         }
     }
 }

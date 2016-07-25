@@ -1,3 +1,6 @@
+# A UI configurable remote communicate system.
+[TOC]
+## prototypes
 2015.08.05
 This program is used for monitor data received from serial port.
 Implement function:
@@ -47,6 +50,7 @@ Problems
 thread syncronazition, need optimize in efficiency.
 not test fc2 and write coil because of not finish mcgs problem.
 
+## Alpha develop
 2015.11.04 ver0.8
 Complie with Visual Sutdio 2013, update .Net framework to 4.0;
 Using taskfactory replace threadpool, and some other efficient improvements.
@@ -76,8 +80,15 @@ Bug fixs.
 
 2016.2.28
 Construct a base structure of database, variables now divided into three types (not save, save curent value and save log). Impelement table create and trigger create in program.
+Detial in database:
+* Create database table name by ipaddress, each remote node has a realtime table and a log table.
+* Using trigger to find the value change in realtime table and automatically add to log table.
+* Create a view for each remote node.
 
-Things need to do：
-界面优化:
-是否可以标签透明或自动更改长度;
-Set the limitation of the control move area and prevent controls overlap.(Important)
+2016.3.9
+Add a setting form to remote monitor main program to setting database connection and monitor settings.
+Change connection form to show all the remote node would be connect to the system server.
+Change in database:
+Change the realtime table name from ipaddress to machine type number to remarkable reduce the table number.
+Use model to replace nodename in struct `remotenode`
+

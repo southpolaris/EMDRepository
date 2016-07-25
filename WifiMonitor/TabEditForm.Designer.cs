@@ -33,11 +33,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
-            this.textBoxIP = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.checkBoxBlank = new System.Windows.Forms.CheckBox();
             this.textBoxXml = new System.Windows.Forms.TextBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
+            this.textBoxIP = new WifiMonitor.IPBox();
             this.SuspendLayout();
             // 
             // buttonOK
@@ -68,14 +68,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(17, 34);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(116, 17);
+            this.label1.Size = new System.Drawing.Size(188, 17);
             this.label1.TabIndex = 3;
-            this.label1.Text = "机床类型配置文件：";
+            this.label1.Text = "机床类型配置文件（路径名称）：";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 136);
+            this.label2.Location = new System.Drawing.Point(17, 151);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(92, 17);
             this.label2.TabIndex = 4;
@@ -83,22 +83,15 @@
             // 
             // textBoxTitle
             // 
-            this.textBoxTitle.Location = new System.Drawing.Point(132, 133);
+            this.textBoxTitle.Location = new System.Drawing.Point(160, 148);
             this.textBoxTitle.Name = "textBoxTitle";
-            this.textBoxTitle.Size = new System.Drawing.Size(163, 23);
+            this.textBoxTitle.Size = new System.Drawing.Size(135, 23);
             this.textBoxTitle.TabIndex = 4;
-            // 
-            // textBoxIP
-            // 
-            this.textBoxIP.Location = new System.Drawing.Point(132, 84);
-            this.textBoxIP.Name = "textBoxIP";
-            this.textBoxIP.Size = new System.Drawing.Size(163, 23);
-            this.textBoxIP.TabIndex = 3;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 87);
+            this.label3.Location = new System.Drawing.Point(17, 112);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 17);
             this.label3.TabIndex = 6;
@@ -117,21 +110,30 @@
             // 
             // textBoxXml
             // 
-            this.textBoxXml.Location = new System.Drawing.Point(132, 31);
+            this.textBoxXml.Location = new System.Drawing.Point(20, 63);
             this.textBoxXml.Name = "textBoxXml";
-            this.textBoxXml.Size = new System.Drawing.Size(123, 23);
+            this.textBoxXml.Size = new System.Drawing.Size(196, 23);
             this.textBoxXml.TabIndex = 1;
             // 
             // buttonBrowse
             // 
             this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonBrowse.Location = new System.Drawing.Point(256, 31);
+            this.buttonBrowse.Location = new System.Drawing.Point(217, 62);
             this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(39, 23);
+            this.buttonBrowse.Size = new System.Drawing.Size(78, 24);
             this.buttonBrowse.TabIndex = 2;
-            this.buttonBrowse.Text = "...";
+            this.buttonBrowse.Text = "浏览...";
             this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
+            // 
+            // textBoxIP
+            // 
+            this.textBoxIP.Location = new System.Drawing.Point(160, 109);
+            this.textBoxIP.Name = "textBoxIP";
+            this.textBoxIP.Size = new System.Drawing.Size(135, 23);
+            this.textBoxIP.TabIndex = 7;
+            this.textBoxIP.Text = "0.0.0.0";
+            this.textBoxIP.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // TabEditForm
             // 
@@ -140,10 +142,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(319, 278);
+            this.Controls.Add(this.textBoxIP);
             this.Controls.Add(this.buttonBrowse);
             this.Controls.Add(this.textBoxXml);
             this.Controls.Add(this.checkBoxBlank);
-            this.Controls.Add(this.textBoxIP);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBoxTitle);
             this.Controls.Add(this.label2);
@@ -175,7 +177,7 @@
         private System.Windows.Forms.Button buttonBrowse;
         public System.Windows.Forms.Button buttonOK;
         public System.Windows.Forms.TextBox textBoxTitle;
-        public System.Windows.Forms.TextBox textBoxIP;
         public System.Windows.Forms.TextBox textBoxXml;
+        internal IPBox textBoxIP;
     }
 }

@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace WifiMonitor
 {
@@ -476,6 +477,7 @@ namespace WifiMonitor
             GlobalVar.nMainFormHeight = this.Height;
             GlobalVar.nMainFormPosX = this.Location.X;
             GlobalVar.nMainFormPosY = this.Location.Y;
+            labelInfo.Text = "编辑模式";
 
             if (false == GlobalVar.editFlag)
             {
@@ -512,12 +514,12 @@ namespace WifiMonitor
                 btnStart.BackgroundImage = Properties.Resources.Reset;
                 btnStart.ImageAlign = ContentAlignment.MiddleLeft;
                 btnStart.BackgroundImageLayout = ImageLayout.None;
-                btnStart.Text = "停止";
+                btnStart.Text = "停止(&S)";
                 btnStart.TextAlign = ContentAlignment.MiddleRight;
             }
             else
             {
-                this.btnEdit.Visible = true;
+                //this.btnEdit.Visible = true;
                 this.btnConnectionList.Visible = false;
                 timerRefresh.Stop();
                 try
@@ -531,10 +533,12 @@ namespace WifiMonitor
                 }
                 GlobalVar.runningFlag = false;
                 btnStart.BackColor = Color.LightGreen;
-                btnStart.Text = " 启动";
+                btnStart.Text = "启动(&S)";
                 btnStart.TextAlign = ContentAlignment.MiddleRight;
                 btnStart.BackgroundImage = Properties.Resources.Start;
                 btnStart.ImageAlign = ContentAlignment.MiddleLeft;
+
+                labelInfo.Text = "F2-界面编辑 F12-系统设定";
             }
         }
 
@@ -683,8 +687,8 @@ namespace WifiMonitor
             {
                 xDoc.Root.Element("IPMapping").Add(new XElement("Node",
                     new XAttribute("IP", ipMapping.Key.ToString()),
+                    new XElement("Model", ipMapping.Value.name),
                     new XElement("Protocol", ipMapping.Value.protocolType),
-                    new XElement("Name", ipMapping.Value.name),
                     new XElement("DataLength",
                         new XAttribute("DiscreteInput", ipMapping.Value.dataCount.discreteInput.ToString()),
                         new XAttribute("DiscreteOutput", ipMapping.Value.dataCount.coil.ToString()),
@@ -713,11 +717,10 @@ namespace WifiMonitor
         private void MainForm_Load(object sender, EventArgs e)
         {
             communicate.updateStatus += new UpdateStatus(SetStatusLable);
-            communicate.insertDataBase += new DataBaseEventHandler(dataBase.InsertNewRecord);
+            communicate.insertDataBase += new DataBaseEventHandler(dataBase.UpdateRecord);
 
             LoadControls(GlobalVar.xmlPath);
             LoadVariables(GlobalVar.xmlPath);
-            DataBaseInitial();
 
             //显示配置文件中设定的主窗体大小、标题
             this.Width = GlobalVar.nMainFormWidth;
@@ -732,7 +735,8 @@ namespace WifiMonitor
             if (!fileInfo.Exists)
             {
                 XDocument xDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Root",
-                    new XElement("MainForm", new XAttribute("Count", 0)), new XElement("IPMaping")));
+                    new XElement("MainForm", new XAttribute("Count", 0)), new XElement("IPMapping"), new XElement("Settings")));
+                xDoc.Root.Add(new XElement("Password", "f80cc41cf06335bd1bec122a5ca05a08")); //默认密码：szcrd
                 xDoc.Save(xmlPath);
             }
 
@@ -914,12 +918,13 @@ namespace WifiMonitor
                 {
                     DataCount dataCount = new DataCount();
                     string protocolType = childNode.Element("Protocol").Value;
-                    string nodeName = childNode.Element("Name").Value;
+                    //string nodeName = childNode.Element("Name").Value;
+                    string modelName = childNode.Element("Model").Value;
                     dataCount.discreteInput = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteInput").Value) + 1);
                     dataCount.coil = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("DiscreteOutput").Value) + 1);
                     dataCount.inputRegister = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("InputRegister").Value) + 1);
                     dataCount.holdingRegiter = (ushort)(UInt16.Parse(childNode.Element("DataLength").Attribute("HoldingRegister").Value) + 1);
-                    RemoteNode tempNode = new RemoteNode(protocolType, dataCount, nodeName);
+                    RemoteNode tempNode = new RemoteNode(protocolType, dataCount, modelName);
                     GlobalVar.ipNodeMapping.Add(IPAddress.Parse(childNode.Attribute("IP").Value), tempNode);
                 }
             }
@@ -1007,10 +1012,41 @@ namespace WifiMonitor
             }   
         }
 
+        //加载程序参数信息
+        public void LoadSettings(string xmlPath)
+        {
+            using (XmlReader xReader = XmlReader.Create(xmlPath))
+            {
+                while (xReader.Read())
+                {
+                    if (xReader.Name.Equals("CycleTime"))
+                    {
+                        GlobalVar.cycleTime = int.Parse(xReader.ReadString().Trim());
+                    }
+                    if (xReader.Name.Equals("DataBase"))
+                    {
+                        GlobalVar.dataSource = xReader.ReadString().Trim();
+                    }
+                    if (xReader.Name.Equals("UserID"))
+                    {
+                        GlobalVar.userID = xReader.ReadString().Trim();
+                    }
+                    if (xReader.Name.Equals("UserPassword"))
+                    {
+                        GlobalVar.password = xReader.ReadString().Trim();
+                    }
+                    if (xReader.Name.Equals("Schema"))
+                    {
+                        GlobalVar.schemaName = xReader.ReadString().Trim();
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Create table and triggers in database
         /// </summary>
-        private void DataBaseInitial()
+        internal void DataBaseInitial()
         {
             foreach (var node in GlobalVar.ipNodeMapping)
             {
@@ -1018,6 +1054,7 @@ namespace WifiMonitor
                 dataBase.CreateDataTable(node.Key, node.Value);
                 dataBase.CreateDataLogTable(node.Key, node.Value);
                 dataBase.CreateTrigger(node.Key, node.Value);
+                dataBase.CreateView(node.Key, node.Value);
             }
         }
 
@@ -1251,13 +1288,14 @@ namespace WifiMonitor
 
             #region Load variables
             string nodeProtocolType = variableElement.Attribute("Protocol").Value;
+            string model = variableElement.Attribute("Model").Value; //型号
             string nodeName = tabControl.SelectedTab.Text;
             DataCount dataCount = new DataCount();
             dataCount.discreteInput = Convert.ToUInt16(variableElement.Element("BoolReadOnly").Attribute("Length").Value);
             dataCount.coil = Convert.ToUInt16(variableElement.Element("BoolReadWrite").Attribute("Length").Value);
             dataCount.inputRegister = Convert.ToUInt16(variableElement.Element("IntReadOnly").Attribute("Length").Value);
             dataCount.holdingRegiter = Convert.ToUInt16(variableElement.Element("IntReadWrite").Attribute("Length").Value);
-            RemoteNode tempNode = new RemoteNode(nodeProtocolType, dataCount, nodeName);
+            RemoteNode tempNode = new RemoteNode(nodeProtocolType, dataCount, model);
 
             if (GlobalVar.ipNodeMapping.ContainsKey(slaveIP))
             {                
@@ -1282,6 +1320,7 @@ namespace WifiMonitor
             GlobalVar.ipNodeMapping.Clear();
             LoadControls(GlobalVar.xmlPath);
             LoadVariables(GlobalVar.xmlPath);
+            labelInfo.Text = "F2-界面编辑 F12-系统设定";
         }
 
         /// <summary>
@@ -1376,6 +1415,29 @@ namespace WifiMonitor
                         }                        
                     }
                 }
+            }
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F2:
+                    btnEdit_Click(this, EventArgs.Empty);
+                    break;
+                case Keys.F12:
+                    if (!GlobalVar.runningFlag)
+                    {
+                        AuthorityForm authorityForm = new AuthorityForm();
+                        if (authorityForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            SettingForm settingForm = new SettingForm(this);
+                            settingForm.ShowDialog();
+                        }
+                    }                   
+                    break;
+                default:
+                    break;
             }
         }
 

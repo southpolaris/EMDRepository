@@ -224,5 +224,30 @@ namespace WifiMonitor
             return cloneParameter;
         }
 
+
+        //测试数据库连接函数.
+        public static bool TestCommunicate(string connectionString)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    if (connection.State != ConnectionState.Open)
+                    {
+                        connection.Open();
+                        connection.Close();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

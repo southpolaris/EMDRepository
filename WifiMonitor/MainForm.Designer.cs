@@ -58,13 +58,14 @@
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEdit.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEdit.Location = new System.Drawing.Point(3, 383);
+            this.btnEdit.Location = new System.Drawing.Point(4, 383);
             this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(84, 30);
             this.btnEdit.TabIndex = 0;
             this.btnEdit.Text = "开始编辑...";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Visible = false;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnSavEdit
@@ -179,9 +180,9 @@
             this.labelInfo.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelInfo.Location = new System.Drawing.Point(1, 390);
             this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(43, 17);
+            this.labelInfo.Size = new System.Drawing.Size(151, 17);
             this.labelInfo.TabIndex = 4;
-            this.labelInfo.Text = "label1";
+            this.labelInfo.Text = "F2-界面编辑 F12-系统设置";
             // 
             // btnConnectionList
             // 
@@ -192,7 +193,7 @@
             this.btnConnectionList.Name = "btnConnectionList";
             this.btnConnectionList.Size = new System.Drawing.Size(115, 30);
             this.btnConnectionList.TabIndex = 6;
-            this.btnConnectionList.Text = "查看连接信息...";
+            this.btnConnectionList.Text = "监控设备信息...";
             this.btnConnectionList.UseVisualStyleBackColor = true;
             this.btnConnectionList.Visible = false;
             this.btnConnectionList.Click += new System.EventHandler(this.btnConnectionList_Click);
@@ -231,6 +232,7 @@
             this.Controls.Add(this.btnSavEdit);
             this.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.MinimizeBox = false;
             this.Name = "MainForm";
@@ -240,6 +242,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.Move += new System.EventHandler(this.MainForm_Move);
             this.contextMenuStripLbl.ResumeLayout(false);
             this.contextMenuStripTxt.ResumeLayout(false);

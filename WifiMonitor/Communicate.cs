@@ -30,12 +30,12 @@ namespace WifiMonitor
         }
 
         //连接状态改变时刷新界面显示
-        private void OnConnectionChange()
+        private void OnConnectionChange(Slave slave)
         {
             updateStatus(string.Format("当前 {0} 台设备已经连接", slaveList.Count));
             if (this.connectionChange != null)
             {
-                this.connectionChange(this, new EventArgs()); //更改连接列表
+                this.connectionChange(slave, new EventArgs()); //更改连接列表
             }    
         }
 
@@ -73,7 +73,8 @@ namespace WifiMonitor
                 Slave slave = new Slave(tcpClient);
                 slave.SetProperty(GlobalVar.ipNodeMapping[slave.slaveIP]);
                 slaveList.Add(slave);
-                OnConnectionChange();
+                OnConnectionChange(slave);
+                slave.fActive = true;
 
                 Action<object> readAction = ReadTask;
 
@@ -89,18 +90,13 @@ namespace WifiMonitor
             short maxTimes = 10;    
             RemoteNode node = GlobalVar.ipNodeMapping[slave.slaveIP];
             slave.LoadLibrary(node.protocolType);
-            
-            //while (!slave.GetReadWriteData((ushort)0) && maxTimes > 0)
-            //{
-            //    maxTimes--;
-            //}
 
             while (GlobalVar.runningFlag)
             {
-                Thread.Sleep(60);
+                Thread.Sleep(GlobalVar.cycleTime);
                 if (!slave.fActive)  //连接异常，增加延时时间
                 {
-                    Thread.Sleep(100000);
+                    Thread.Sleep(GlobalVar.cycleTime * 10);
                 }
                 try
                 {
@@ -111,16 +107,18 @@ namespace WifiMonitor
                     else
                     {
                         slave.fActive = true;
+                        insertDataBase(slave.slaveIP, slave.remoteNode); //Update database
                     }
                 }
                 catch (Exception)
                 {
                     maxTimes--;
-                    if (maxTimes == 0)
+                    if (maxTimes <= 0)
                     {
                         if (slave.fActive)
                         {
                             slave.fActive = false;
+                            OnConnectionChange(slave);
                             maxTimes = 0;
                         }
                         else
@@ -146,9 +144,11 @@ namespace WifiMonitor
                             while (!successFlag && maxWriteTimes > 0)
                             {
                                 successFlag = slave.WriteData((ushort)(address * 2), dataValue);
-                                //Thread.Sleep(60);
-                                //successFlag = slave.GetReadWriteData((ushort)0);
                                 maxWriteTimes--;
+                                if (successFlag)
+                                {
+                                    insertDataBase(slave.slaveIP, slave.remoteNode); //Update database
+                                }
                             }
                         });
                 }
@@ -168,9 +168,11 @@ namespace WifiMonitor
                         while (!successFlag && maxWriteTimes > 0)
                         {
                             successFlag = slave.WriteData(address, dataValue);
-                            //Thread.Sleep(60);
-                            //successFlag = slave.GetReadWriteData((ushort)0);
                             maxWriteTimes--;
+                            if (successFlag)
+                            {
+                                insertDataBase(slave.slaveIP, slave.remoteNode); //Update database
+                            }
                         }
                     });
                 }
@@ -184,8 +186,8 @@ namespace WifiMonitor
             {
                 this.lostConnection(slave.slaveIndex);
             }
+            OnConnectionChange(slave);
             slave.Dispose();
-            OnConnectionChange();
         }
 
         private void StopCommunication()

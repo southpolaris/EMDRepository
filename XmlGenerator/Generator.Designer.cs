@@ -39,6 +39,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.varName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.varInterface = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.varAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.varInDataBase = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pageUI = new System.Windows.Forms.TabPage();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonEdit = new System.Windows.Forms.Button();
@@ -51,10 +55,6 @@
             this.deltextbox = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripLamp = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.dellamp = new System.Windows.Forms.ToolStripMenuItem();
-            this.varInDataBase = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.varAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.varInterface = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.varName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl.SuspendLayout();
             this.pageVariable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
@@ -108,7 +108,7 @@
             // 
             // textBoxModel
             // 
-            this.textBoxModel.Location = new System.Drawing.Point(157, 22);
+            this.textBoxModel.Location = new System.Drawing.Point(157, 18);
             this.textBoxModel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.textBoxModel.Name = "textBoxModel";
             this.textBoxModel.Size = new System.Drawing.Size(147, 23);
@@ -116,7 +116,7 @@
             // 
             // textBoxName
             // 
-            this.textBoxName.Location = new System.Drawing.Point(545, 22);
+            this.textBoxName.Location = new System.Drawing.Point(541, 18);
             this.textBoxName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.textBoxName.Multiline = true;
             this.textBoxName.Name = "textBoxName";
@@ -144,7 +144,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(404, 21);
+            this.label1.Location = new System.Drawing.Point(420, 21);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(56, 17);
             this.label1.TabIndex = 1;
@@ -175,6 +175,32 @@
             this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView.Size = new System.Drawing.Size(814, 288);
             this.dataGridView.TabIndex = 0;
+            // 
+            // varName
+            // 
+            this.varName.HeaderText = "变量名";
+            this.varName.Name = "varName";
+            this.varName.ReadOnly = true;
+            // 
+            // varInterface
+            // 
+            this.varInterface.HeaderText = "数据通道";
+            this.varInterface.Name = "varInterface";
+            this.varInterface.ReadOnly = true;
+            this.varInterface.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // varAddress
+            // 
+            this.varAddress.HeaderText = "变量地址";
+            this.varAddress.Name = "varAddress";
+            this.varAddress.ReadOnly = true;
+            // 
+            // varInDataBase
+            // 
+            this.varInDataBase.HeaderText = "数据保存方式";
+            this.varInDataBase.Name = "varInDataBase";
+            this.varInDataBase.ReadOnly = true;
+            this.varInDataBase.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // pageUI
             // 
@@ -293,32 +319,6 @@
             this.dellamp.Size = new System.Drawing.Size(136, 22);
             this.dellamp.Text = "删除指示灯";
             this.dellamp.Click += new System.EventHandler(this.delLamp_Click);
-            // 
-            // varInDataBase
-            // 
-            this.varInDataBase.HeaderText = "数据保存方式";
-            this.varInDataBase.Name = "varInDataBase";
-            this.varInDataBase.ReadOnly = true;
-            this.varInDataBase.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // varAddress
-            // 
-            this.varAddress.HeaderText = "变量地址";
-            this.varAddress.Name = "varAddress";
-            this.varAddress.ReadOnly = true;
-            // 
-            // varInterface
-            // 
-            this.varInterface.HeaderText = "数据通道";
-            this.varInterface.Name = "varInterface";
-            this.varInterface.ReadOnly = true;
-            this.varInterface.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // varName
-            // 
-            this.varName.HeaderText = "变量名";
-            this.varName.Name = "varName";
-            this.varName.ReadOnly = true;
             // 
             // Generator
             // 
